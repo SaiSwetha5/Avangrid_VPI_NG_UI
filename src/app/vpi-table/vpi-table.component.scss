@@ -1,0 +1,172 @@
+ 
+::ng-deep .custom-table .p-datatable-thead > tr > th {
+  background-color: #8fbc8f !important;
+  color: black !important;
+}
+
+ .header-class{
+  text-align: center;
+ }
+ 
+::ng-deep .p-paginator .p-paginator-page,
+::ng-deep .p-paginator .p-paginator-next,
+::ng-deep .p-paginator .p-paginator-prev {
+  color: #007bff;
+  border: 1px solid darkblue;
+}
+.opco-rge {
+  color: #22baf6;
+  font-weight: bold;
+}
+
+.opco-nyseg {
+  color: green;
+  font-weight: bold;
+}
+
+.opco-cmp {
+  color: orange;
+  font-weight: bold;
+}
+
+.custom-table .p-paginator .p-paginator-page,
+.custom-table .p-paginator .p-paginator-next,
+.custom-table .p-paginator .p-paginator-prev {
+  color: #007bff;
+  border: 1px solid darkblue;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+.active-filters-box {
+  padding: 10px 16px;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+
+::ng-deep .p-paginator .p-paginator-page.p-highlight {
+  background-color:darkgreen;
+  color: white;
+}
+
+ 
+.status-ok {
+  color: green;
+  font-weight: bold;
+}
+
+.status-error {
+  color: red;
+  font-weight: bold;
+}
+
+.dashboard-chip {
+  color: darkgreen;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 16px;
+  padding: 4px 8px;
+   box-shadow: 0 2px 4px;
+}
+
+.audio-error {
+  margin: 1rem auto;
+  padding: 1rem;
+  max-width: 800px;
+  text-align: center;
+  background-color: white; 
+  border: 1px solid white;  
+  border-radius: 8px;
+  color: #b71c1c; 
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.custom-table {
+    --p-datatable-row-hover-background: #FFF3B0; 
+    --p-datatable-row-selected-background: #EAF8FF;
+  
+  input {
+    width: 100%;
+  }
+}
+ 
+ 
+.disabled-icon {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+
+.cardPadding{
+  margin-top: 20px;
+}
+
+ 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  width: 100vw;  
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;  
+}
+
+
+
+.empty-panel {
+  margin: 2rem auto;
+  max-width: 600px;
+  text-align: center;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --p-panel-background: #d0f0c0;  
+  --p-panel-border-color: darkgreen;
+  --p-panel-border-radius: 12px; 
+}
+
+.empty-message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  color: #666;
+}
+
+.empty-message-container i.pi {
+  font-size: 2.5rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.empty-message-container p {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+
+.tab-header {
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.download-icon {
+  font-size: 1.2rem;
+  color: #007bff;
+  transition: transform 0.3s ease;
+}
+
+ 
+.export-class {
+ margin-right: 5px;
+}
+  

@@ -1,0 +1,78 @@
+<p-button label="Apply filters" icon="pi pi-search" [rounded]="true" [text]="true" severity="warn" [raised]="true"
+  (click)="openDrawerFunction(filterForm)" />
+<p-drawer [(visible)]="openDrawer" header="Apply Filters" position="left" [style]="{width: '500px'}"
+  styleClass="my-green-drawer">
+<p-card>
+    <form #filterForm="ngForm">
+      <div class="form-grid">
+        <label for="fromDate">From Date</label>
+        <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate"
+          name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" (onSelect)="validateToDate()"
+          [showTime]="true" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
+        <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="error">
+          From Date is required.
+        </div>
+        <div *ngIf="fromDateError" class="error">
+          From Date cannot be in the future.
+        </div>
+      </div>
+      <div class="form-grid">
+        <label for="toDate">To Date</label>
+        <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate"
+          [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'"
+          #toDateRef="ngModel"  [showOnFocus]="false" (onSelect)="validateToDate()"> </p-datepicker>
+        <div *ngIf="toDateRef.invalid && toDateRef.touched" class="error">
+          To Date is required.
+        </div>
+        <div *ngIf="toDateError" class="error">
+          To Date cannot be in the future.
+        </div>
+        <div *ngIf="dateRangeError" class="error">
+          From Date cannot be later than To Date.
+        </div>
+      </div>
+      <div class="form-grid">
+        <label for="opcode">Select Opcode</label>
+        <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"
+          placeholder="  Select Opcode" #opCodeRef="ngModel"></p-select>
+      </div>
+      <div class="form-grid">
+        <label for="objectId">Object ID</label>
+        <input placeholder="   Object ID" type="text" pInputText [(ngModel)]="objectIdModel" id="objectId"
+          name="objId" />
+      </div>
+      <div class="form-grid">
+        <label for="aniAliDigits">Ani Ali Digits</label>
+        <input placeholder="   Ani Ali Digits" type="text" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
+          name="aniId" />
+      </div>
+      <div class="form-grid">
+        <label for="name">Name</label>
+        <input placeholder="   Name" type="text" pInputText [(ngModel)]="nameModel" id="name" name="name" />
+      </div>
+      <div class="form-grid">
+        <label for="fileName">FileName</label>
+        <input placeholder="  FileName" type="text" pInputText [(ngModel)]="fileNameModel" id="fileName"
+          name="fileName" />
+      </div>
+      <div class="form-grid">
+        <label for="channelNumber">Channel ID</label>
+        <input type="text" placeholder="   Channel ID" pInputText [(ngModel)]="channelNumberModel" id="channelNumber"
+          name="channelId" />
+      </div>
+      <div class="form-grid">
+        <label for="extensionNumber">Extension ID</label>
+        <input type="text" placeholder="   Extension ID" pInputText [(ngModel)]="extensionNumberModel"
+          id="extensionNumber" name="extId" />
+      </div>
+      <div class="form-grid">
+        <div class="button-row">
+          <p-button label="Apply" type="submit" [disabled]="filterForm.invalid"
+            (click)="applyDateFilters(filterForm)"></p-button>
+          <p-button label="Reset" severity="info" (click)="resetFilters(filterForm)"></p-button>
+          <p-button label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</p-drawer>

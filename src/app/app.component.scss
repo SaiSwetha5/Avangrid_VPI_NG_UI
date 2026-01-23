@@ -1,0 +1,46 @@
+
+.logo {
+  height: 60px;  
+} 
+ 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  flex-wrap: wrap;
+} 
+
+ .settings-icon{
+  margin-left: 5px;
+ }
+ 
+.split-button {
+  margin-left: 10px;
+}
+
+ @media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .split-button,
+  .pi-home {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .main-class {
+    height: auto;
+    padding: 10px;
+  }
+}
+
+ 

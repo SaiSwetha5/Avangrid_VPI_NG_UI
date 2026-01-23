@@ -1,0 +1,228 @@
+<div style="background-image: linear-gradient(135deg, #00A443, lightyellow); min-height: 88vh; overflow-y: auto;">
+  <p-toolbar class="toolbar-color">
+    <ng-template #start>
+      <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
+    </ng-template>
+    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> Active
+          Filters applied From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
+          |date: 'dd/MM/yyyy' }} </b></span>
+    </ng-template>
+    <ng-template #end>
+
+      <p-button [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
+        [disabled]="!selectedRow || selectedRow.length === 0" iconPos="right" label="Export" [outlined]="true"
+        severity="info" icon="pi pi-download" />
+      <app-vpi-slider></app-vpi-slider>
+    </ng-template>
+  </p-toolbar>
+  <p-toast />
+  <div class="spinner-container" *ngIf="loading()">
+    <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
+  </div>
+  <p-table ngSkipHydration showGridlines #dt class="custom-table" size="small" selectionMode="multiple"
+    [(selection)]="selectedRow" dataKey="fileName" [paginator]="_dataService.pagedDataSignal().length > 0"
+    [first]="first()" [rowsPerPageOptions]="[10, 20, 50]" [responsiveLayout]="'scroll'"
+    [tableStyle]="{ 'width': '100%' }" [resizableColumns]="true" columnResizeMode="fit"
+    [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
+    [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true">
+
+    <ng-template pTemplate="header">
+      <tr *ngIf="_dataService.pagedDataSignal().length > 0">
+        <th style="width: 4rem">Select</th>
+        <th *ngFor="let header of displayLabels" pResizableColumn class="header-class">
+          {{ header }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+
+      <tr [pSelectableRow]="rowData" [pSelectableRowDisabled]="true">
+        <td>
+          <p-tableCheckbox [value]="rowData" (click)="$event.stopPropagation()"
+            (onChange)="onCheckboxChange($event, rowData)" />
+        </td>
+
+        <td *ngFor="let header of displayHeaders" class="header-class" (click)="onRowClick(rowData)"
+          [pTooltip]="rowData[header]" tooltipPosition="top">
+
+          <ng-container *ngIf="header === 'opco'; else defaultCell">
+            <span [ngClass]="{
+    'opco-rge': rowData[header] === 'RGE',
+    'opco-nyseg': rowData[header] === 'NYSEG',
+    'opco-cmp': rowData[header] === 'CMP'
+  }">
+              {{ rowData[header] }}
+            </span>
+          </ng-container>
+          <ng-template #defaultCell>
+            {{ rowData[header] }}
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <p-panel class="empty-panel">
+        <div class="empty-message-container">
+          <i class="pi pi-search"></i>
+          <p>No call recordings found. Please select filters to get VPI data</p>
+        </div>
+      </p-panel>
+    </ng-template>
+  </p-table>
+
+</div>
+
+
+<p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
+  appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
+    'background-image': 'linear-gradient(to right, #d0f0c0,#e0f7fa,  #d0f0c0)',
+    'width': '40rem',
+    'height': '40rem',
+    'color': '#004d40'
+  }">
+  <div class="card">
+    <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
+</div>
+  <div class="audio-error" *ngIf="hasErrorForAudioFile">
+    Recording not found!! {{audioErrorMessage}} 
+  </div>
+  <ng-template pTemplate="header">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <strong style="color: darkgreen;">Audio Recording Details </strong>
+      <button *ngIf="audioUrl" pButton type="button" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
+        style="color: darkblue;" aria-label="Download audio"></button>
+    </div>
+  </ng-template>
+
+  <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
+
+  <div class="cardPadding">
+    <p-tabs value="0">
+      <p-tablist class="tab-header d-flex justify-content-between align-items-center">
+        <p-tab value="0">VPI META DATA</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+
+          <div class="card">
+            <p-tabs value="0">
+              <p-tablist>
+                <p-tab value="0">Basic Details</p-tab>
+                <p-tab value="1">Technical</p-tab>
+                <p-tab value="2">Time</p-tab>
+
+              </p-tablist>
+              <p-tabpanels>
+                <p-tabpanel value="0">
+                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}">
+                    <ng-template pTemplate="body" let-interaction>
+                      <tr>
+
+                        <td><b>File Name</b></td>
+                        <td>{{ interaction.fileName }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Call Type</b></td>
+                        <td>{{ interaction.objectId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Start Time</b></td>
+                        <td>{{ interaction.dateAdded }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>End Time</b></td>
+                        <td>{{ interaction.dateAdded }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Talk Time</b></td>
+                        <td>{{ interaction.duration * 1000 }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Extension Number</b></td>
+                        <td>{{ interaction.extensionNum }}</td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+
+                </p-tabpanel>
+                <p-tabpanel value="1">
+
+                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}">
+                    <ng-template pTemplate="body" let-interaction>
+                      <tr>
+                        <td><b>Customer Contact Number</b></td>
+                        <td>{{ interaction.extensionNum }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Display Name</b></td>
+                        <td>{{ interaction.channelNum }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Agent Name</b></td>
+                        <td>{{ interaction.aniAliDigits }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Handling agent</b></td>
+                        <td>{{ interaction.name }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Team</b></td>
+                        <td>{{ interaction.duration }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Transfer</b></td>
+                        <td>{{ interaction.duration }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Agent ID</b></td>
+                        <td>{{ interaction.agentID }}</td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+
+
+                </p-tabpanel>
+                <p-tabpanel value="2">
+
+                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}">
+                    <ng-template pTemplate="body" let-interaction>
+                      <tr>
+                        <td><b>Hangup</b></td>
+                        <td>{{ interaction.extensionNum }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>In Business</b></td>
+                        <td>{{ interaction.channelNum }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Callback From Queue</b></td>
+                        <td>{{ interaction.fullName }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Waiting time</b></td>
+                        <td>{{ interaction.dateAdded }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Agent Speed to Answer</b></td>
+                        <td>{{ interaction.duration }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Holding time</b></td>
+                        <td>{{ interaction.agentId }}</td>
+                      </tr>
+
+                    </ng-template>
+                  </p-table>
+                </p-tabpanel>
+              </p-tabpanels>
+            </p-tabs>
+          </div>
+
+        </p-tabpanel>
+
+
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+
+</p-dialog>

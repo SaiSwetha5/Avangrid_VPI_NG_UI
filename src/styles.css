@@ -1,0 +1,17 @@
+@import "primeicons/primeicons.css";
+
+.my-green-drawer {
+  --p-drawer-background: linear-gradient(135deg, #00A443,#DCEBE1,#00A443); 
+  --p-drawer-color: Black;         
+  --p-drawer-border-color: transparent;
+  --p-drawer-border-radius: 0.5rem;   
+  --p-drawer-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+}
+ 
+.split-button {
+   --splitbutton-border-radius: 12px;
+}
+
+.p-card {
+  --p-card-background : none
+}
