@@ -10,8 +10,8 @@ import { environment } from 'environments/environment';
 })
 export class ApiCallsService {
   public apiResponse = ''; 
-  private http = inject(HttpClient);
-  private auth = inject(AuthService);
+  private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthService);
 
   public getFilteredData(payload: SearchFilteredDataInput): Observable<SearchFilteredDataOutput> {
     return this.auth.getAccessToken().pipe(

@@ -3,8 +3,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
 import { DataService } from 'services/data.service';
-import { NgForm, ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
+import { NgForm, ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
@@ -51,9 +50,9 @@ export class VpiSliderComponent implements OnInit {
   public nameModel = '';
   public validIDs : string[] = [];
   public invalidIDs : string[] = [];
-  private datePipe = inject(DatePipe);
-  private _dataService = inject(DataService);
-  private router = inject(Router);
+  private readonly datePipe = inject(DatePipe);
+  private readonly _dataService = inject(DataService);
+  private readonly router = inject(Router);
 
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';

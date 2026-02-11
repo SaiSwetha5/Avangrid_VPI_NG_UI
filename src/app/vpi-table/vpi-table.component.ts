@@ -46,9 +46,9 @@ export class VpiTableComponent {
   };
   public payload = computed(() => this._dataService.getPayload());
   public _dataService = inject(DataService);
-  private _apiService = inject(ApiCallsService);
-  private _messageService = inject(MessageService);
-  private _router = inject(Router);
+  private readonly _apiService = inject(ApiCallsService);
+  private readonly _messageService = inject(MessageService);
+  private readonly _router = inject(Router);
   public getSelectedOpcode = this._dataService.selectedOpcode;
   public first = signal<number>(0);
   public rows = signal<number>(10);
@@ -76,8 +76,7 @@ export class VpiTableComponent {
   public successToaster = computed(() => this._dataService.successToasterSignal());
   public effectData = effect(() => {
     this.currentPayload = this.payload();
-
-    if (!this.currentPayload || !this.currentPayload.filters) {
+    if (!this.currentPayload?.filters) {
       return;
     }
     this.fetchData(this.payload()).subscribe();

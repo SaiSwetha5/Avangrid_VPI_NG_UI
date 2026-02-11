@@ -8,7 +8,7 @@
     </ng-template>
     <ng-template #end>
 
-      <p-button [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
+      <p-button type="button" [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
         [disabled]="!selectedRow || selectedRow.length === 0" iconPos="right" label="Export" [outlined]="true"
         severity="info" icon="pi pi-download" />
       <app-vpi-slider></app-vpi-slider>
@@ -27,8 +27,8 @@
 
     <ng-template pTemplate="header">
       <tr *ngIf="_dataService.pagedDataSignal().length > 0">
-        <th style="width: 4rem">Select</th>
-        <th *ngFor="let header of displayHeaders;trackBy: trackById"  pResizableColumn class="header-class">
+        <th style="width: 4rem" scope="col">Select</th>
+        <th scope="col" *ngFor="let header of displayHeaders;trackBy: trackById"  pResizableColumn class="header-class">
           {{ header.label }}
         </th>
       </tr>

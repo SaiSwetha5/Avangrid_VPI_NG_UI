@@ -2,11 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { NavigationEnd, RouterModule } from '@angular/router';
+import { NavigationEnd, RouterModule,RouterOutlet,Router } from '@angular/router';
 import { SplitButton } from 'primeng/splitbutton';
-import { RouterOutlet } from '@angular/router';
 import { ToolbarModule } from 'primeng/toolbar';
-import { Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu'
 import { MsalService } from '@azure/msal-angular';

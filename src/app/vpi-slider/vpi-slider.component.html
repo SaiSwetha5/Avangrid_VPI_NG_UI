@@ -84,8 +84,8 @@
         <div class="button-row">
           <p-button label="Apply" type="submit" [disabled]="filterForm.invalid"
             (click)="applyDateFilters(filterForm)"></p-button>
-          <p-button label="Reset" severity="info" (click)="resetFilters(filterForm)"></p-button>
-          <p-button label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
+          <p-button type="button" label="Reset" severity="info" (click)="resetFilters(filterForm)"></p-button>
+          <p-button type="button" label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
         </div>
       </div>
 
