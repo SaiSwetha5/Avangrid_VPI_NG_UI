@@ -10,8 +10,8 @@
  
     </ng-template>
     <ng-template #end>
-      <p-button type="button" label="VPI Dashboard" *ngIf="currentUrl === '/error'" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
- <p-button type="button" icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (click)="navigateHomePage()"> </p-button>
+      <p-button type="button"  role="button" tabindex="0" label="VPI Dashboard" *ngIf="currentUrl === '/error'" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
+ <p-button type="button"  role="button" tabindex="0"  icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"
         class="split-button"
@@ -20,7 +20,7 @@
         [model]="items" 
         severity="warn">
       </p-splitButton>
-      <p-button type="button"  *ngIf="currentUrl === '/home'" class="settings-icon" severity="warn" icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
+      <p-button type="button"  role="button" tabindex="0"  *ngIf="currentUrl === '/home'" class="settings-icon" severity="warn" icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
 <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
     </ng-template>
 </p-toolbar>
