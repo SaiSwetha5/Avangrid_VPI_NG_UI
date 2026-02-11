@@ -1,4 +1,4 @@
-<p-button label="Filters" icon="pi pi-search"   role="button" tabindex="0"
+<p-button label="Filters" icon="pi pi-search" 
  [rounded]="true" [text]="true" severity="warn" [raised]="true"
   (click)="openDrawerFunction(filterForm)" />
 <p-drawer [(visible)]="openDrawer"  position="left" [style]="{width: '500px'}"
@@ -85,8 +85,8 @@
         <div class="button-row">
           <p-button label="Apply" type="submit"   role="button" tabindex="0"  [disabled]="filterForm.invalid"
             (click)="applyDateFilters(filterForm)"></p-button>
-          <p-button type="button"  role="button" tabindex="0"  label="Reset" severity="info" (click)="resetFilters(filterForm)"></p-button>
-          <p-button type="button"  role="button" tabindex="0"  label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
+          <p-button type="button"  label="Reset" severity="info" (click)="resetFilters(filterForm)"></p-button>
+          <p-button type="button"  label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
         </div>
       </div>
 

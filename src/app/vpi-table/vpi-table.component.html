@@ -8,7 +8,7 @@
     </ng-template>
     <ng-template #end>
 
-      <p-button role="button" tabindex="0" [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
+      <p-button  [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
         [disabled]="!selectedRow || selectedRow.length === 0" iconPos="right" label="Export" [outlined]="true"
         severity="info" icon="pi pi-download" />
       <app-vpi-slider></app-vpi-slider>
@@ -94,7 +94,7 @@
   <ng-template pTemplate="header">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <strong style="color: darkgreen;">Audio Recording Details </strong>
-      <p-button *ngIf="audioUrl" pButton type="button" role="button" tabindex="0" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
+      <p-button *ngIf="audioUrl" pButton type="button" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
         style="color: darkblue;" aria-label="Download audio"> </p-button>
     </div>
   </ng-template>
