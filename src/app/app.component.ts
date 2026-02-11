@@ -57,7 +57,8 @@ export class AppComponent implements OnInit {
       }
 
       this.updateUserMenu();
-    });
+    }); 
+    
     this.opCodes = [
       { name: 'RGE', code: 'RGE' },
       { name: 'NYSEG', code: 'NYSEG' },
@@ -101,18 +102,13 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  public navigateVPIPage(): void {
+    this._dataService.setPayload({});
+    this.router.navigate(['/vpi']);
+  }
+
   public updateUserMenu(): void {
-
-    let account = this.msalService.instance.getActiveAccount();
-
-    if (!account) {
-      const allAccounts = this.msalService.instance.getAllAccounts();
-      if (allAccounts.length > 0) {
-        account = allAccounts[0];
-        this.msalService.instance.setActiveAccount(account);
-      }
-    }
-
+  const account = this.msalService.instance.getActiveAccount(); 
     const username = account?.name || account?.username || 'Guest';
     this.userMenu = [
       { label: username },
@@ -123,7 +119,7 @@ export class AppComponent implements OnInit {
 
 
   public logout(): void {
-    this.msalService.logoutRedirect();
+     this.msalService.logoutRedirect();
   }
 
 }

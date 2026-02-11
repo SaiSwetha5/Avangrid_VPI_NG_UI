@@ -1,7 +1,15 @@
-<p-button label="Apply filters" icon="pi pi-search" [rounded]="true" [text]="true" severity="warn" [raised]="true"
+<p-button label="Filters" icon="pi pi-search" [rounded]="true" [text]="true" severity="warn" [raised]="true"
   (click)="openDrawerFunction(filterForm)" />
-<p-drawer [(visible)]="openDrawer" header="Apply Filters" position="left" [style]="{width: '500px'}"
+<p-drawer [(visible)]="openDrawer"  position="left" [style]="{width: '500px'}"
   styleClass="my-green-drawer">
+  
+ <ng-template pTemplate="header">
+    <div class="drawer-header">
+      <div class="drawer-title">Apply Filters</div>
+      <div class="drawer-subtitle">Input values can be comma separated</div>
+    </div>
+  </ng-template>
+
 <p-card>
     <form #filterForm="ngForm">
       <div class="form-grid">
@@ -31,39 +39,46 @@
           From Date cannot be later than To Date.
         </div>
       </div>
-      <div class="form-grid">
-        <label for="opcode">Select Opcode</label>
-        <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"
-          placeholder="  Select Opcode" #opCodeRef="ngModel"></p-select>
-      </div>
+    <div class="form-grid"> <label for="opcode">Select Opcode</label>
+       <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" placeholder="Select Opcode" #opCodeRef="ngModel" required> </p-select>
+       <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)"> <small class="error">Opcode is required.</small> </div> </div>
       <div class="form-grid">
         <label for="objectId">Object ID</label>
         <input placeholder="   Object ID" type="text" pInputText [(ngModel)]="objectIdModel" id="objectId"
           name="objId" />
+          <div *ngIf="invalidIDs?.length > 0" class="error"> Please enter in UUID format
       </div>
+      </div>
+      
       <div class="form-grid">
-        <label for="aniAliDigits">Ani Ali Digits</label>
-        <input placeholder="   Ani Ali Digits" type="text" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
-          name="aniId" />
+        <label for="direction">Direction</label>
+     <p-select [options]="directions" [(ngModel)]="selectedDirection" optionLabel="name" placeholder="Select a Direction"   name="direction" />
+
+      </div> 
+      <div class="form-grid">
+        <label for="aniAliDigits">AniAliDigits</label>
+        <input placeholder="   AniAliDigits" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
+          name="aniId" /> 
       </div>
       <div class="form-grid">
         <label for="name">Name</label>
-        <input placeholder="   Name" type="text" pInputText [(ngModel)]="nameModel" id="name" name="name" />
+        <input placeholder="   Name" type="text" pInputText   #nameCtrl="ngModel" [(ngModel)]="nameModel" id="name" name="name" />
+      
       </div>
       <div class="form-grid">
-        <label for="fileName">FileName</label>
-        <input placeholder="  FileName" type="text" pInputText [(ngModel)]="fileNameModel" id="fileName"
-          name="fileName" />
+        <label for="agentId">Agent ID</label>
+        <input placeholder="   Agent ID" type="text" pInputText  maxlength="32" [(ngModel)]="agentIdModel" id="agentId"
+          name="agentId" /> 
       </div>
       <div class="form-grid">
-        <label for="channelNumber">Channel ID</label>
-        <input type="text" placeholder="   Channel ID" pInputText [(ngModel)]="channelNumberModel" id="channelNumber"
-          name="channelId" />
+        <label for="channelNumber">Channel Num</label>
+        <input type="text" placeholder="   Channel Num" pInputText  maxlength="32" [(ngModel)]="channelNumberModel" id="channelNumber"
+          name="channelId" /> 
       </div>
       <div class="form-grid">
-        <label for="extensionNumber">Extension ID</label>
-        <input type="text" placeholder="   Extension ID" pInputText [(ngModel)]="extensionNumberModel"
-          id="extensionNumber" name="extId" />
+        <label for="extensionNumber">Extension Num</label>
+        <input type="text" placeholder="   Extension Num" pInputText  maxlength="32" [(ngModel)]="extensionNumberModel"
+          id="extensionNumber" name="extId" /> 
       </div>
       <div class="form-grid">
         <div class="button-row">
@@ -73,6 +88,7 @@
           <p-button label="Cancel" severity="warn" (click)="cancelFilters(filterForm)"></p-button>
         </div>
       </div>
+
     </form>
   </p-card>
 </p-drawer>

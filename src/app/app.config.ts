@@ -8,6 +8,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { msalProviders } from './msal.config';
+import { InteractionType } from '@azure/msal-browser';
 
 import {
   MSAL_GUARD_CONFIG,
@@ -27,9 +28,9 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MSAL_GUARD_CONFIG,
       useValue: {
-        interactionType: 'redirect',
+        interactionType: InteractionType.Redirect,
         authRequest: {
-          scopes: ['User.read', 'api://23007d1f-aba6-4e26-9b91-1ea8cc9a8d40/access_as_user']
+          scopes: ['User.Read', 'api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access']
         }
       } as MsalGuardConfiguration
     },
@@ -37,10 +38,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useValue: {
-        interactionType: 'redirect',
+        interactionType: InteractionType.Redirect,
         protectedResourceMap: new Map([
-          ['https://graph.microsoft.com/v1.0', ['User.read']],
-          ['https://avangrid-springboot.onrender.com', ['api://23007d1f-aba6-4e26-9b91-1ea8cc9a8d40/access_as_user']]
+          ['https://graph.microsoft.com/v1.0', ['User.Read']],
+          ['https://spring-boot-v1-final.onrender.com', ['api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access']]
         ])
 
       } as MsalInterceptorConfiguration

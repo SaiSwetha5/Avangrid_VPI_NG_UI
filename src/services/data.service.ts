@@ -1,19 +1,20 @@
-import {  Injectable, signal } from '@angular/core'; 
-import {  FilteredPayload, VPIDataItem } from '../interfaces/vpi-interface';
+import {  Injectable, signal, WritableSignal } from '@angular/core'; 
+import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interface';
    
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-public pagedDataSignal = signal<VPIDataItem[]>([]);
-public totalRecordsSignal = signal(0);
-public loadingTableDataSignal = signal<boolean>(false);
-public loadingAudioFile = signal<boolean>(false);
-public successToasterSignal = signal<boolean>(true);
-public vpiDataSignal = signal<VPIDataItem[]>([]);        
+public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
+public readonly totalRecordsSignal = signal(0);
+public readonly loadingTableDataSignal = signal<boolean>(false);
+public readonly loadingAudioFile = signal<boolean>(false);
+public readonly successToasterSignal = signal<boolean>(true);
+public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
+public selectedOpcode: WritableSignal<string | null> = signal(null);
 
-private payloadSignal = signal<FilteredPayload>({
+private payloadSignal = signal<SearchFilteredDataInput>({
   filters: {},
   pagination: {
     pageNumber: 1,
@@ -27,7 +28,7 @@ private payloadSignal = signal<FilteredPayload>({
     return this.payloadSignal();
   }
 
-  public setPayload(payload: FilteredPayload) { 
+  public setPayload(payload: SearchFilteredDataInput) { 
      this.payloadSignal.set(payload);
   }
 

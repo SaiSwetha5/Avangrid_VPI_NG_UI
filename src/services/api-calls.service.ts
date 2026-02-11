@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
-import { FilteredDataInterface, FilteredPayload, MetaDataPayload, VPIDataItem } from '../interfaces/vpi-interface';
+import { AudioRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
 
@@ -13,7 +13,7 @@ export class ApiCallsService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  public getFilteredData(payload: FilteredPayload): Observable<FilteredDataInterface> {
+  public getFilteredData(payload: SearchFilteredDataInput): Observable<SearchFilteredDataOutput> {
     return this.auth.getAccessToken().pipe(
       switchMap(token => {
         const headers = new HttpHeaders({
@@ -21,26 +21,33 @@ export class ApiCallsService {
           'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post<FilteredDataInterface>(`${environment.apiBaseUrl}/fetch-metadata`, payload, { headers });
+        return this.http.post<SearchFilteredDataOutput>(`${environment.apiBaseUrl}/search`, payload, { headers });
       })
     );
   }
 
-  public getMetaData(payload: MetaDataPayload): Observable<VPIDataItem> {
+public getMetaData(id: string, opco: string | null): Observable<VPIMetaDataOutput> {
+  const params = new HttpParams()
+    .set('id', id ?? '')
+    .set('opco', opco ?? '');
 
-    return this.auth.getAccessToken().pipe(
-      switchMap(token => {
-        const headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        });
+  return this.auth.getAccessToken().pipe(
+    switchMap(token => {
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
 
-        return this.http.post<VPIDataItem>(`${environment.apiBaseUrl}/recording-metadata`, payload, { headers });
-      })
-    );
-  }
+       return this.http.get<VPIMetaDataOutput>(
+        `${environment.apiBaseUrl}/metadata`,
+        { params, headers }
+      );
+    })
+  );
+}
 
-  public getAudioRecordings(payload: MetaDataPayload): Observable<Blob> {
+
+  public getAudioRecordings(payload: AudioRecordingInput): Observable<Blob> {
 
     return this.auth.getAccessToken().pipe(
       switchMap(token => {
@@ -55,7 +62,7 @@ export class ApiCallsService {
 
   }
 
-  public downloadRecordings(payload: MetaDataPayload[]): Observable<Blob> {
+  public downloadRecordings(payload: AudioRecordingInput[]): Observable<Blob> {
 
     return this.auth.getAccessToken().pipe(
       switchMap(token => {
@@ -63,7 +70,7 @@ export class ApiCallsService {
           'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post(`${environment.apiBaseUrl}/download-recordings`, payload, {
+        return this.http.post(`${environment.apiBaseUrl}/download`, payload, {
           headers,
           responseType: 'blob'
         });

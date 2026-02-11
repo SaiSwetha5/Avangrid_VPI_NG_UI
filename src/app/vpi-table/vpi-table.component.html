@@ -3,9 +3,8 @@
     <ng-template #start>
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
-    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> Active
-          Filters applied From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
-          |date: 'dd/MM/yyyy' }} </b></span>
+    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> Total {{_dataService.totalRecordsSignal()}} records (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
+          |date: 'dd/MM/yyyy' }}) </b></span>
     </ng-template>
     <ng-template #end>
 
@@ -20,44 +19,50 @@
     <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
   </div>
   <p-table ngSkipHydration showGridlines #dt class="custom-table" size="small" selectionMode="multiple"
-    [(selection)]="selectedRow" dataKey="fileName" [paginator]="_dataService.pagedDataSignal().length > 0"
+    [(selection)]="selectedRow" dataKey="objectId" [paginator]="_dataService.pagedDataSignal().length > 0"
     [first]="first()" [rowsPerPageOptions]="[10, 20, 50]" [responsiveLayout]="'scroll'"
-    [tableStyle]="{ 'width': '100%' }" [resizableColumns]="true" columnResizeMode="fit"
+    [tableStyle]="{ 'width': '100%', 'padding': '0 0px 0 0px' }" [resizableColumns]="true" columnResizeMode="fit"
     [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
     [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true">
 
     <ng-template pTemplate="header">
       <tr *ngIf="_dataService.pagedDataSignal().length > 0">
         <th style="width: 4rem">Select</th>
-        <th *ngFor="let header of displayLabels" pResizableColumn class="header-class">
-          {{ header }}
+        <th *ngFor="let header of displayHeaders;trackBy: trackById"  pResizableColumn class="header-class">
+          {{ header.label }}
         </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData>
 
-      <tr [pSelectableRow]="rowData" [pSelectableRowDisabled]="true">
+      <tr [pSelectableRow]="rowData">
         <td>
-          <p-tableCheckbox [value]="rowData" (click)="$event.stopPropagation()"
-            (onChange)="onCheckboxChange($event, rowData)" />
+          <p-tableCheckbox [value]="rowData" />
         </td>
+        <td  *ngFor="let header of displayHeaders;trackBy: trackById" class="header-class"
+    (click)="onRowClick(rowData)"   [pTooltip]="rowData[header.id]"
+    tooltipPosition="top">
 
-        <td *ngFor="let header of displayHeaders" class="header-class" (click)="onRowClick(rowData)"
-          [pTooltip]="rowData[header]" tooltipPosition="top">
+  <ng-container [ngSwitch]="header"> 
+    <ng-container *ngSwitchCase="'opco'">
+      <span [ngClass]="{
+        'opco-rge': rowData[header.id] === 'RGE',
+        'opco-nyseg': rowData[header.id] === 'NYSEG',
+        'opco-cmp': rowData[header.id] === 'CMP'
+      }">
+        {{ rowData[header.id] }}
+      </span>
+    </ng-container> 
+    <ng-container *ngSwitchCase="'direction'">
+      {{ rowData[header.id] === true ? true : false }}
+    </ng-container>
 
-          <ng-container *ngIf="header === 'opco'; else defaultCell">
-            <span [ngClass]="{
-    'opco-rge': rowData[header] === 'RGE',
-    'opco-nyseg': rowData[header] === 'NYSEG',
-    'opco-cmp': rowData[header] === 'CMP'
-  }">
-              {{ rowData[header] }}
-            </span>
-          </ng-container>
-          <ng-template #defaultCell>
-            {{ rowData[header] }}
-          </ng-template>
-        </td>
+     <ng-container *ngSwitchDefault>
+      {{ rowData[header.id] }}
+    </ng-container>
+
+  </ng-container>
+</td>
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -96,6 +101,8 @@
 
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
 
+  
+
   <div class="cardPadding">
     <p-tabs value="0">
       <p-tablist class="tab-header d-flex justify-content-between align-items-center">
@@ -107,7 +114,7 @@
           <div class="card">
             <p-tabs value="0">
               <p-tablist>
-                <p-tab value="0">Basic Details</p-tab>
+                <p-tab value="0">Overview</p-tab>
                 <p-tab value="1">Technical</p-tab>
                 <p-tab value="2">Time</p-tab>
 
@@ -118,64 +125,104 @@
                     <ng-template pTemplate="body" let-interaction>
                       <tr>
 
-                        <td><b>File Name</b></td>
-                        <td>{{ interaction.fileName }}</td>
+                        <td><b>Call Id</b></td>
+                        <td>{{ interaction.callId }}</td>
                       </tr>
-                      <tr>
-                        <td><b>Call Type</b></td>
+                         <tr>
+                        <td><b>Object Id</b></td>
                         <td>{{ interaction.objectId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Start Time</b></td>
-                        <td>{{ interaction.dateAdded }}</td>
+                        <td><b>Resource Id</b></td>
+                        <td>{{ interaction.resourceId }}</td>
                       </tr>
                       <tr>
-                        <td><b>End Time</b></td>
-                        <td>{{ interaction.dateAdded }}</td>
+                        <td><b>Global Call Id</b></td>
+                        <td>{{ interaction.globalCallId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Talk Time</b></td>
+                        <td><b>Previous Call Id</b></td>
+                        <td>{{ interaction.previousCallId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Direction</b></td>
+                        <td>{{ interaction.direction }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Duration</b></td>
                         <td>{{ interaction.duration * 1000 }}</td>
                       </tr>
                       <tr>
-                        <td><b>Extension Number</b></td>
-                        <td>{{ interaction.extensionNum }}</td>
+                        <td><b>Class Of Service</b></td>
+                        <td>{{ interaction.classOfService }}</td>
                       </tr>
+                       <tr>
+                        <td><b>Class Of Service Date</b></td>
+                        <td>{{ interaction.classOfServiceDate }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Client Id</b></td>
+                        <td>{{ interaction.clientId }}</td>
+                      </tr>
+                    
                     </ng-template>
                   </p-table>
 
                 </p-tabpanel>
                 <p-tabpanel value="1">
-
                   <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}">
                     <ng-template pTemplate="body" let-interaction>
                       <tr>
-                        <td><b>Customer Contact Number</b></td>
-                        <td>{{ interaction.extensionNum }}</td>
+                        <td><b>Start Time</b></td>
+                        <td>{{ interaction.startTime }}</td>
                       </tr>
                       <tr>
-                        <td><b>Display Name</b></td>
-                        <td>{{ interaction.channelNum }}</td>
+                        <td><b>Date Added</b></td>
+                        <td>{{ interaction.dateAdded }}</td>
                       </tr>
                       <tr>
-                        <td><b>Agent Name</b></td>
-                        <td>{{ interaction.aniAliDigits }}</td>
+                        <td><b>GMT StartTime</b></td>
+                        <td>{{ interaction.gmtStartTime }}</td>
                       </tr>
                       <tr>
-                        <td><b>Handling agent</b></td>
-                        <td>{{ interaction.name }}</td>
+                        <td><b>GMT Offset</b></td>
+                        <td>{{ interaction.gmtOffset }}</td>
                       </tr>
                       <tr>
-                        <td><b>Team</b></td>
-                        <td>{{ interaction.duration }}</td>
+                        <td><b>Transcript Status</b></td>
+                        <td>{{ interaction.transcriptStatus }}</td>
                       </tr>
                       <tr>
-                        <td><b>Transfer</b></td>
-                        <td>{{ interaction.duration }}</td>
+                        <td><b>Transcript Result</b></td>
+                        <td>{{ interaction.transcriptResult }}</td>
                       </tr>
                       <tr>
-                        <td><b>Agent ID</b></td>
-                        <td>{{ interaction.agentID }}</td>
+                        <td><b>Tags</b></td>
+                        <td>{{ interaction.tags }}</td>
+                      </tr>
+                         <tr>
+                        <td><b>Transcript Status</b></td>
+                        <td>{{ interaction.transcriptStatus }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Transcript Result</b></td>
+                        <td>{{ interaction.transcriptResult }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Tags</b></td>
+                        <td>{{ interaction.tags }}</td>
+                      </tr>
+                         <tr>
+                        <td><b>Flag Id</b></td>
+                        <td>{{ interaction.flagId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Sensitivity Level</b></td>
+                        <td>{{ interaction.sensitivityLevel }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>hasTalkover</b></td>
+                        <td>{{ interaction.hasTalkover }}</td>
                       </tr>
                     </ng-template>
                   </p-table>
@@ -186,32 +233,49 @@
 
                   <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}">
                     <ng-template pTemplate="body" let-interaction>
+
+                 
                       <tr>
-                        <td><b>Hangup</b></td>
+                        <td><b>Agent ID</b></td>
+                        <td>{{ interaction.agentId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>User Id</b></td>
+                        <td>{{ interaction.userId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>extensionNum</b></td>
                         <td>{{ interaction.extensionNum }}</td>
                       </tr>
                       <tr>
-                        <td><b>In Business</b></td>
+                        <td><b>pbxDnis</b></td>
+                        <td>{{ interaction.pbxDnis }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>channel Name</b></td>
+                        <td>{{ interaction.channelName }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Channel Number</b></td>
                         <td>{{ interaction.channelNum }}</td>
                       </tr>
                       <tr>
-                        <td><b>Callback From Queue</b></td>
-                        <td>{{ interaction.fullName }}</td>
+                        <td><b>Audio Channels</b></td>
+                        <td>{{ interaction.audioChannels }}</td>
                       </tr>
                       <tr>
-                        <td><b>Waiting time</b></td>
-                        <td>{{ interaction.dateAdded }}</td>
+                        <td><b>Media File Id</b></td>
+                        <td>{{ interaction.mediaFileId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Agent Speed to Answer</b></td>
-                        <td>{{ interaction.duration }}</td>
+                        <td><b>Media Manager Id</b></td>
+                        <td>{{ interaction.mediaManagerId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Holding time</b></td>
-                        <td>{{ interaction.agentId }}</td>
+                        <td><b>Media Retention</b></td>
+                        <td>{{ interaction.mediaRetention }}</td>
                       </tr>
-
-                    </ng-template>
+                     </ng-template>
                   </p-table>
                 </p-tabpanel>
               </p-tabpanels>

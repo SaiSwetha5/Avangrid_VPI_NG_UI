@@ -1,0 +1,19 @@
+
+.error-box {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 16px;
+  border-radius: 6px;
+   color: #b00000;       
+  font-family: Arial, sans-serif;
+  background: #ffe5e5;     
+}
+
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 88vh;
+  background-image: linear-gradient(135deg, #00A443, lightyellow);
+}

@@ -4,7 +4,7 @@ import { from, map, Observable, throwError } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly scope = 'api://23007d1f-aba6-4e26-9b91-1ea8cc9a8d40/access_as_user';
+  private readonly scope = 'api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access';
   private msalService = inject(MsalService);
 
 

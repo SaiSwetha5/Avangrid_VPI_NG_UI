@@ -10,6 +10,7 @@
  
     </ng-template>
     <ng-template #end>
+      <p-button label="VPI Dashboard" *ngIf="currentUrl === '/error'" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
  <p-button  icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"
@@ -23,11 +24,8 @@
 <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
     </ng-template>
 </p-toolbar>
- 
 <div>
-  
   <router-outlet></router-outlet>
-
 </div>
 
  

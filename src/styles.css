@@ -15,3 +15,19 @@
 .p-card {
   --p-card-background : none
 }
+
+
+.my-green-drawer .drawer-title {
+  font-size: 1.5rem;
+   color:  Black;  
+  line-height: 1;
+  font-family: sans-serif;
+  font-weight: bold;
+
+}
+
+.my-green-drawer .drawer-subtitle {
+  font-size: 0.875rem;
+  color: orangered;
+  margin-top: 0.25rem;
+}
