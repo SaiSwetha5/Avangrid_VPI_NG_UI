@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, Input, signal, ViewChild } from '@angular/core';
 import { DISPLAY_HEADERS } from 'app/app.component.mock';
 import { AudioRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -40,6 +40,7 @@ import { Router } from '@angular/router';
 
 export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
+   @Input() activate?: (e: KeyboardEvent) => void;
   public pagination = {
     pageNumber: 1,
     pageSize: 10,
@@ -227,7 +228,9 @@ export class VpiTableComponent {
     a.download = 'avangridRecording.mp3';
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    if(a) {
+      document.body.removeChild(a);
+    }
     setTimeout(() => {
       this._messageService.add({
         severity: 'success',
@@ -249,13 +252,13 @@ export class VpiTableComponent {
     this._apiService.downloadRecordings(payload).subscribe({
       next: (response) => {
         const blob = new Blob([response], { type: 'application/zip' });
-        const url = window.URL.createObjectURL(blob);
+        const url = globalThis.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
         anchor.download = 'avangrid-recordings.zip';
         anchor.click();
         setTimeout(() => {
-          window.URL.revokeObjectURL(url);
+          globalThis.URL.revokeObjectURL(url);
           this._messageService.add({
             severity: 'success',
             summary: 'Success',

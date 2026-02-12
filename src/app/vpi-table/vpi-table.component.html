@@ -94,8 +94,8 @@
   <ng-template pTemplate="header">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <strong style="color: darkgreen;">Audio Recording Details </strong>
-      <p-button *ngIf="audioUrl" pButton type="button" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
-        style="color: darkblue;" aria-label="Download audio"> </p-button>
+      <button *ngIf="audioUrl" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
+        style="color: darkblue;" aria-label="Download audio"> </button>
     </div>
   </ng-template>
 
