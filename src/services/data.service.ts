@@ -1,4 +1,4 @@
-import {  Injectable, signal, WritableSignal } from '@angular/core'; 
+import {  HostListener, Injectable, Input, signal, WritableSignal } from '@angular/core'; 
 import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interface';
    
 
@@ -6,6 +6,8 @@ import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interfa
   providedIn: 'root'
 })
 export class DataService {
+ @Input() activate?: (e: KeyboardEvent) => void;
+
 public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
 public readonly totalRecordsSignal = signal(0);
 public readonly loadingTableDataSignal = signal<boolean>(false);
@@ -39,5 +41,14 @@ public payloadSignal = signal<SearchFilteredDataInput>({
   public setTotalRecords(count: number) {
     this.totalRecordsSignal.set(count);
   }
+
+    
+  @HostListener('keydown.enter', ['$event'])
+  @HostListener('keydown.space', ['$event'])
+  onKeydown(e: KeyboardEvent) {
+     e.preventDefault();
+    this.activate?.(e);
+  }
+
 }
  

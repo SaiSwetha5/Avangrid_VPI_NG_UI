@@ -51,7 +51,7 @@ export class VpiSliderComponent implements OnInit {
   public validIDs : string[] = [];
   public invalidIDs : string[] = [];
   private readonly datePipe = inject(DatePipe);
-  private readonly _dataService = inject(DataService);
+  public readonly _dataService = inject(DataService);
   private readonly router = inject(Router);
 
   public getFormattedDate(date: Date | null): string {

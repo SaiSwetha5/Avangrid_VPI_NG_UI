@@ -29,7 +29,7 @@ interface UserMenuItem {
 })
 export class AppComponent implements OnInit {
   
-   @Input() activate?: (e: KeyboardEvent) => void;
+  //  @Input() activate?: (e: KeyboardEvent) => void;
   public title = "Avangrid VPI GUI";
   public msalService = inject(MsalService);
   public router = inject(Router);
@@ -124,12 +124,12 @@ export class AppComponent implements OnInit {
 
 
   
-  @HostListener('keydown.enter', ['$event'])
-  @HostListener('keydown.space', ['$event'])
-  onKeydown(e: KeyboardEvent) {
-     e.preventDefault();
-    this.activate?.(e);
-  }
+  // @HostListener('keydown.enter', ['$event'])
+  // @HostListener('keydown.space', ['$event'])
+  // onKeydown(e: KeyboardEvent) {
+  //    e.preventDefault();
+  //   this.activate?.(e);
+  // }
 
 
 }

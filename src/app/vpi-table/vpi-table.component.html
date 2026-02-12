@@ -8,7 +8,8 @@
     </ng-template>
     <ng-template #end>
 
-      <p-button  [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()"
+      <p-button  [rounded]="true" [text]="true" class="export-class" (click)="downloadAudioFiles()" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)"
         [disabled]="!selectedRow || selectedRow.length === 0" iconPos="right" label="Export" [outlined]="true"
         severity="info" icon="pi pi-download" />
       <app-vpi-slider></app-vpi-slider>
@@ -40,7 +41,8 @@
           <p-tableCheckbox [value]="rowData" />
         </td>
         <td  *ngFor="let header of displayHeaders;trackBy: trackById" class="header-class"
-    (click)="onRowClick(rowData)"   [pTooltip]="rowData[header.id]"
+    (click)="onRowClick(rowData)"  (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)"  [pTooltip]="rowData[header.id]"
     tooltipPosition="top">
 
   <ng-container [ngSwitch]="header"> 

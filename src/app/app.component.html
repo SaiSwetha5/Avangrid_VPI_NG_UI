@@ -10,10 +10,10 @@
  
     </ng-template>
     <ng-template #end>
-      <p-button type="button"  label="VPI Dashboard" *ngIf="currentUrl === '/error'" (keydown.enter)="onKeydown($event)"
-  (keydown.space)="onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
- <p-button type="button"   icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (keydown.enter)="onKeydown($event)"
-  (keydown.space)="onKeydown($event)" (click)="navigateHomePage()"> </p-button>
+      <p-button type="button"  label="VPI Dashboard" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataServiceonKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
+ <p-button type="button"   icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"
         class="split-button"
@@ -22,8 +22,8 @@
         [model]="items" 
         severity="warn">
       </p-splitButton>
-      <p-button type="button" *ngIf="currentUrl === '/home'" class="settings-icon" (keydown.enter)="onKeydown($event)"
-  (keydown.space)="onKeydown($event)"
+      <p-button type="button" *ngIf="currentUrl === '/home'" class="settings-icon" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)"
  severity="warn" icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
 <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
     </ng-template>
