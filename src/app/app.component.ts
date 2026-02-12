@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -28,8 +28,6 @@ interface UserMenuItem {
   standalone: true,
 })
 export class AppComponent implements OnInit {
-  
-  //  @Input() activate?: (e: KeyboardEvent) => void;
   public title = "Avangrid VPI GUI";
   public msalService = inject(MsalService);
   public router = inject(Router);
