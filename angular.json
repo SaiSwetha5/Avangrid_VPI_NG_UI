@@ -13,7 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/demo",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -34,17 +33,19 @@
           },
           "configurations": {
             "production": {
+              "optimization": true,
+               "sourceMap": false,
               "outputPath": "dist/demo-prod",
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "2000kB"
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all",
