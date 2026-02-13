@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
   templateUrl: './error.component.html',
   styleUrl: './error.component.scss'
 })
+
 export class ErrorComponent{
    public error = history.state.error || {};
 }

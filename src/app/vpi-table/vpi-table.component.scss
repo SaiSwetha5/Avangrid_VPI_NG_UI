@@ -46,7 +46,6 @@
   margin: 10px 0;
 }
 
-
 ::ng-deep .p-paginator .p-paginator-page.p-highlight {
   background-color:darkgreen;
   color: white;
@@ -85,7 +84,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-
 .custom-table {  
     --p-datatable-row-hover-background: #FFF3B0; 
     --p-datatable-row-selected-background: #EAF8FF;
@@ -94,19 +92,16 @@
     width: 100%;
   }
 }
- 
- 
+
 .disabled-icon {
   opacity: 0.5;
   pointer-events: none;
 }
 
-
 .cardPadding{
   margin-top: 20px;
 }
 
- 
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -118,8 +113,6 @@
   left: 0;
   z-index: 9999;  
 }
-
-
 
 .empty-panel {
   margin: 2rem auto;
@@ -152,7 +145,6 @@
   font-weight: 500;
 }
 
-
 .tab-header {
   padding: 0.5rem 1rem;
   background-color: #f8f9fa;
@@ -165,7 +157,6 @@
   transition: transform 0.3s ease;
 }
 
- 
 .export-class {
  margin-right: 5px;
 }

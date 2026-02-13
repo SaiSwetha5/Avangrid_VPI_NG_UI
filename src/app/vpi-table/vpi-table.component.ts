@@ -1,6 +1,5 @@
 import { Component, computed, effect, ElementRef, inject, Input, signal, ViewChild } from '@angular/core';
-import { DISPLAY_HEADERS } from 'app/app.component.mock';
-import { AudioRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
+import {  DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -176,10 +175,15 @@ export class VpiTableComponent {
           );
         }
         this.audioUrl = null;
-        const audioRecordingInput: AudioRecordingInput = {
-          date: rowData.dateAdded ? rowData.dateAdded : '',
+        const audioRecordingInput = {
+          date: rowData.startTime ? rowData.startTime : '',
           opco: this._dataService.selectedOpcode() || '',
-          username: rowData.userName ? rowData.userName : ''
+          username: rowData.username ? rowData.username : '',
+          aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
+          extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
+          channelNum: rowData.channelNum ? rowData.channelNum : 0,
+          objectId: rowData.objectId ? rowData.objectId : '',
+          duration: rowData.duration ? rowData.duration : 0
         };
 
         this._apiService.getAudioRecordings(audioRecordingInput).pipe(
@@ -243,11 +247,15 @@ export class VpiTableComponent {
 
   public downloadAudioFiles(): void {
     if (this.selectedRow.length === 0) return;
-    const payload = this.selectedRow.map(row => ({
-      date: row.dateAdded ? row.dateAdded : '',
-      opco: this._dataService.selectedOpcode() || '',
-      username: row.userName
-
+    const payload: DownloadRecordingInput[] = this.selectedRow.map(row => ({
+      date: row.startTime ? row.startTime : null,
+      opco: row.opco ?  row.opco :null,
+      username: row.username ? row.username : null,
+      aniAliDigits: row.aniAliDigits ? row.aniAliDigits : null,
+      extensionNum: row.extensionNum ? row.extensionNum  : null,
+      channelNum: row.channelNum ? row.channelNum : null,
+      objectId: row.objectId ? row.objectId : null,
+      duration: row.duration ? row.duration : null
     }));
     this._apiService.downloadRecordings(payload).subscribe({
       next: (response) => {

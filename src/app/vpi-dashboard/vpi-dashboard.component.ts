@@ -11,5 +11,4 @@ import { ButtonModule } from 'primeng/button';
   imports: [ CardModule, CommonModule, ButtonModule]
 })
 export class VpiDashboardComponent {
- 
-}
+ }

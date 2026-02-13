@@ -11,3 +11,4 @@ import { msalInstance } from 'app/msal.config';
     console.error(err);
   }
 })();
+  

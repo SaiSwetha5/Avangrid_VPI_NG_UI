@@ -4,7 +4,7 @@
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
     <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> Total {{_dataService.totalRecordsSignal()}} records (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
-          |date: 'dd/MM/yyyy' }}) </b></span>
+          |date: 'dd/MM/yyyy' }} UTC) </b></span>
     </ng-template>
     <ng-template #end>
 

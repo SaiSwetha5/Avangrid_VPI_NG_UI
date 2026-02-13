@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
-import { AudioRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
+import {  DownloadRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
 
@@ -47,7 +47,7 @@ public getMetaData(id: string, opco: string | null): Observable<VPIMetaDataOutpu
 }
 
 
-  public getAudioRecordings(payload: AudioRecordingInput): Observable<Blob> {
+  public getAudioRecordings(payload: DownloadRecordingInput): Observable<Blob> {
 
     return this.auth.getAccessToken().pipe(
       switchMap(token => {
@@ -62,7 +62,7 @@ public getMetaData(id: string, opco: string | null): Observable<VPIMetaDataOutpu
 
   }
 
-  public downloadRecordings(payload: AudioRecordingInput[]): Observable<Blob> {
+  public downloadRecordings(payload: DownloadRecordingInput[]): Observable<Blob> {
 
     return this.auth.getAccessToken().pipe(
       switchMap(token => {

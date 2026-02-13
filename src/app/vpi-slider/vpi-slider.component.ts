@@ -106,7 +106,7 @@ export class VpiSliderComponent implements OnInit {
          name: this.nameModel ? this.nameModel.split(',') : null,
         extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
         objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
- channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
+        channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
         aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
         agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
         direction: this.selectedDirection?.name ? this.selectedDirection.name : null

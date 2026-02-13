@@ -27,18 +27,28 @@ export interface VPIDataItem {
       duration: number,
       tags: string | null,
       channelName: string,
+      channelNum: number,
       callId: string,
-      userName: string,
+      username: string,
       aniAliDigits: string | null,
       extensionNum: string | null,
       direction: string,
-       isChecked?: boolean;
+      agentId: string,
+      opco: string
+      isChecked?: boolean;
 }
+ 
+export interface DownloadRecordingInput {
 
-export interface AudioRecordingInput {
-  date: string,
-  opco: string,
-  username: string
+  date: string | null;
+  opco: string | null;
+  username: string | null;
+  aniAliDigits: string | null;
+  extensionNum: string | null;
+  channelNum: number | null;
+  objectId: string | null;
+  duration: number | null;
+
 }
 
 export interface VPIMetaDataOutput {
@@ -119,3 +129,19 @@ export interface ApiError {
 }
 
 export interface HeaderItem { id: string; label: string; }
+
+export const DISPLAY_HEADERS: HeaderItem[] = [
+  { id: 'objectId', label: 'Object ID' },
+  { id: 'dateAdded', label: 'Date Added (UTC)' },
+  { id: 'userId', label: 'User ID' },
+  { id: 'opco', label: 'Opco' },
+  { id: 'startTime', label: 'Start Time (UTC)' },
+  { id: 'duration', label: 'Duration' },
+  { id: 'tags', label: 'Tags' },
+  { id: 'channelName', label: 'Channel Name' },
+  { id: 'callId', label: 'Call ID' },
+  { id: 'username', label: 'User Name' },
+  { id: 'aniAliDigits', label: 'ANI/ALI Digits' },
+  { id: 'extensionNum', label: 'Extension Num' },
+  { id: 'direction', label: 'Direction' }
+];
