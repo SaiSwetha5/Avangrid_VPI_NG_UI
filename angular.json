@@ -35,7 +35,7 @@
             "production": {
               "optimization": true,
                "sourceMap": false,
-              "outputPath": "dist/demo-prod/browser",
+              "outputPath": "dist/demo-prod",
               "budgets": [
                 {
                   "type": "initial",
