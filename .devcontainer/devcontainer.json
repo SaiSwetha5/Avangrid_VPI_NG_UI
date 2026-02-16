@@ -1,0 +1,4 @@
+{
+  "name": "K8s Tools",
+  "image": "bitnami/kubectl:latest"
+}

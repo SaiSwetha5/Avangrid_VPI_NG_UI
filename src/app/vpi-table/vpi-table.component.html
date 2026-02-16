@@ -86,7 +86,7 @@
     'width': '40rem',
     'height': '40rem',
     'color': '#004d40'
-  }">
+  }"> 
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
 </div>
@@ -96,8 +96,9 @@
   <ng-template pTemplate="header">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <strong style="color: darkgreen;">Audio Recording Details </strong>
-      <button *ngIf="audioUrl" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
-        style="color: darkblue;" aria-label="Download audio"> </button>
+      
+       <p-button *ngIf="audioUrl"    [text]="true" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
+         aria-label="Download audio"> </p-button>
     </div>
   </ng-template>
 
