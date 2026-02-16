@@ -1,95 +1,47 @@
-name: Build & Deploy Angular to AKS
+name: Build & Deploy Angular UI to AKS
 
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
   workflow_dispatch:
 
-permissions:
-  id-token: write        # required for GitHub→Azure OIDC
-  contents: read
-
-concurrency:
-  group: aks-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-
-  ACR_NAME: avangridacr                       
-  ACR_LOGIN_SERVER: avangridacr.azurecr.io   
-  RESOURCE_GROUP: Avangrid-AKS-test          
-  CLUSTER_NAME: avangrid-aks                  
-  K8S_NAMESPACE: default
-  IMAGE_NAME: angular-app
-  IMAGE_TAG: ${{ github.sha }}
-  # ===============================================
-
 jobs:
-  build_and_push:
-    name: Build & Push Image to ACR
+  build-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
+      # Replace Java/Maven with Node for Angular builds
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.1'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Angular (production)
+        run: npm run build -- --configuration=production
+
+      - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}             # App (client) ID
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}             # Directory (tenant) ID
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} # Subscription ID
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: ACR Login (CLI)
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az acr login -n $ACR_NAME
+      # Kept for parity with your existing steps (safe even if unused)
+      - name: Login to ACR
+        run: az acr login --name ${{ secrets.ACR_NAME }}
 
-      - name: Build and Push image
+      - name: Get AKS credentials
         run: |
-          docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }} .
-          docker tag  $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }} $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
-          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }}
-          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+          az aks get-credentials \
+            --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} \
+            --name ${{ secrets.AKS_CLUSTER_NAME }} \
+            --overwrite-existing
 
-  deploy:
-    name: Deploy to AKS
-    runs-on: ubuntu-latest
-    needs: build_and_push
-    environment: dev   # or 'prod' if you use environment approvals
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Set AKS context
-        uses: azure/aks-set-context@v3
-        with:
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          cluster-name: ${{ env.CLUSTER_NAME }}
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'latest'  # pin to your cluster minor version if you prefer
-
-      - name: Deploy manifests (with image update)
-        uses: azure/k8s-deploy@v4
-        with:
-          namespace: ${{ env.K8S_NAMESPACE }}
-          manifests: |
-            k8s/deployment.yaml
-            k8s/service.yaml
-          images: |
-            ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          strategy: apply
-
-      - name: Wait for rollout
-        run: |
-          kubectl -n $K8S_NAMESPACE rollout status deployment/${IMAGE_NAME} --timeout=180s
+      # EXACTLY like your Java pipeline’s last step, now used for UI
+      - name: Deploy to AKS
+        run: kubectl apply -f k8s/
