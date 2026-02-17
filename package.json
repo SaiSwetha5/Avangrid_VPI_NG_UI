@@ -1,11 +1,11 @@
 {
-  "name": "demo",
+  "name": "avangrid_vpi_ng_ui",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build demo --configuration production",
+    "build": "ng build avangrid_vpi_ng_ui --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
