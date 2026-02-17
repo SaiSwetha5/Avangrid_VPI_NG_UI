@@ -6,8 +6,8 @@ export const msalInstance = new PublicClientApplication({
   auth: {
     clientId: environment.msal.clientId,
     authority: environment.msal.authority,
-     redirectUri:  `${window.location.origin}`,
-    postLogoutRedirectUri: window.location.origin
+    redirectUri:  globalThis.location.origin,
+    postLogoutRedirectUri: globalThis.location.origin
   },
   cache: {
     cacheLocation: 'localStorage',

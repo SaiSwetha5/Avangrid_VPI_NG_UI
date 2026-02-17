@@ -134,7 +134,6 @@ export const DISPLAY_HEADERS: HeaderItem[] = [
   { id: 'objectId', label: 'Object ID' },
   { id: 'dateAdded', label: 'Date Added (UTC)' },
   { id: 'userId', label: 'User ID' },
-  { id: 'opco', label: 'Opco' },
   { id: 'startTime', label: 'Start Time (UTC)' },
   { id: 'duration', label: 'Duration' },
   { id: 'tags', label: 'Tags' },

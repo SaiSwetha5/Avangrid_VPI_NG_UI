@@ -3,7 +3,7 @@
     <ng-template #start>
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
-    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> Total {{_dataService.totalRecordsSignal()}} records (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
+    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> {{_dataService.selectedOpcode()}}.{{_dataService.totalRecordsSignal()}} records. (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} -> {{currentPayload.to_date
           |date: 'dd/MM/yyyy' }} UTC) </b></span>
     </ng-template>
     <ng-template #end>
@@ -46,15 +46,6 @@
     tooltipPosition="top">
 
   <ng-container [ngSwitch]="header"> 
-    <ng-container *ngSwitchCase="'opco'">
-      <span [ngClass]="{
-        'opco-rge': rowData[header.id] === 'RGE',
-        'opco-nyseg': rowData[header.id] === 'NYSEG',
-        'opco-cmp': rowData[header.id] === 'CMP'
-      }">
-        {{ rowData[header.id] }}
-      </span>
-    </ng-container> 
     <ng-container *ngSwitchCase="'direction'">
       {{ rowData[header.id] === true ? true : false }}
     </ng-container>
@@ -97,8 +88,9 @@
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <strong style="color: darkgreen;">Audio Recording Details </strong>
       
-       <p-button *ngIf="audioUrl"    [text]="true" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
-         aria-label="Download audio"> </p-button>
+       <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
+         aria-label="Download audio" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)"> </p-button>
     </div>
   </ng-template>
 
