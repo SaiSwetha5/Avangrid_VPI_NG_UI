@@ -1,20 +1,6 @@
- 
-::ng-deep .custom-table .p-datatable-thead > tr > th {
-  background-color: #8fbc8f !important;
-  color: black !important;
-}
-
- .header-class{
+.header-class{
   text-align: center;
  }
- 
-::ng-deep .p-paginator .p-paginator-page,
-::ng-deep .p-paginator .p-paginator-next,
-::ng-deep .p-paginator .p-paginator-prev {
-  color: #007bff;
-  border: 1px solid darkblue;
-}
- 
 
 .custom-table .p-paginator .p-paginator-page,
 .custom-table .p-paginator .p-paginator-next,
@@ -32,12 +18,6 @@
   display: inline-block;
   margin: 10px 0;
 }
-
-::ng-deep .p-paginator .p-paginator-page.p-highlight {
-  background-color:darkgreen;
-  color: white;
-}
-
  
 .status-ok {
   color: green;

@@ -26,7 +26,7 @@ interface OPCODES {
 
 
 export class VpiSliderComponent implements OnInit {
- public dateRangeError = false;
+  public dateRangeError = false;
   public toDateError = false; 
   public nameError = false;
   public fromDateError = false;

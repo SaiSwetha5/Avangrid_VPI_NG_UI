@@ -31,3 +31,23 @@
   color: orangered;
   margin-top: 0.25rem;
 }
+
+
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-prev {
+  color: #007bff;
+  border: 1px solid darkblue;
+}
+
+
+.custom-table .p-datatable .p-datatable-thead > tr > th {
+  background-color: #8fbc8f !important;
+  color: black !important;
+}
+
+
+.p-paginator .p-paginator-page.p-highlight {
+  background-color: darkgreen !important;
+  color: white !important;
+}
