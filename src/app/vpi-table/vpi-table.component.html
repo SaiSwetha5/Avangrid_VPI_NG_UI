@@ -3,8 +3,8 @@
     <ng-template #start>
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
-    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> <b> {{_dataService.selectedOpcode()}} {{_dataService.totalRecordsSignal()}} records (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
-          |date: 'dd/MM/yyyy' }} UTC) </b></span>
+    <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> 
+      <b> Successfully retrieved {{_dataService.totalRecordsSignal()}} or OPCO: {{_dataService.selectedOpcode()}}</b></span>
     </ng-template>
     <ng-template #end>
 
@@ -47,7 +47,7 @@
 
   <ng-container [ngSwitch]="header"> 
     <ng-container *ngSwitchCase="'direction'">
-      {{ rowData[header.id] === true ? true : false }}
+      {{ rowData[header.id] === true ? "Inbound" : "Outbound"  }}
     </ng-container>
 
      <ng-container *ngSwitchDefault>
@@ -72,12 +72,7 @@
 
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
-  appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
-    'background-image': 'linear-gradient(to right, #d0f0c0,#e0f7fa,  #d0f0c0)',
-    'width': '40rem',
-    'height': '40rem',
-    'color': '#004d40'
-  }"> 
+  appendTo="body" [(visible)]="audioPopUpVisible" class="dialog-class"> 
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
 </div>

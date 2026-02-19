@@ -10,8 +10,6 @@ export interface SearchFilteredDataOutput {
   };
 }
  
-
-
 export interface PaginatorState {
   first: number;
   rows: number;

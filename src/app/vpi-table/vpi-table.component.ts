@@ -19,7 +19,7 @@ import WaveSurfer from 'wavesurfer.js';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { catchError, EMPTY, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { Chip } from 'primeng/chip';
@@ -77,9 +77,14 @@ export class VpiTableComponent {
   public effectData = effect(() => {
     this.currentPayload = this.payload();
     if (!this.currentPayload?.filters) {
+         setTimeout(() => {
+        this._dataService.loadingTableDataSignal.set(false);
+      }, 2000);
       return;
-    }
-    this.fetchData(this.payload()).subscribe();
+    } 
+   this.fetchData(this.payload()).subscribe();
+
+    
   });
 
   public onPageChange(event: PaginatorState): void {
@@ -97,14 +102,6 @@ export class VpiTableComponent {
 
   public fetchData(payload: SearchFilteredDataInput): Observable<SearchFilteredDataOutput> {
     this._dataService.loadingTableDataSignal.set(true);
-
-    if (!payload.filters || Object.keys(payload.filters).length === 0) {
-      setTimeout(() => {
-        this._dataService.loadingTableDataSignal.set(false);
-      }, 2000);
-      return EMPTY;
-
-    }
     return this._apiService.getFilteredData(payload).pipe(
       tap((response: SearchFilteredDataOutput) => {
         if (!response.data || response.data.length === 0) {

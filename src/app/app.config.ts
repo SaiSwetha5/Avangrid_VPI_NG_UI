@@ -1,14 +1,13 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
-
+import { InteractionType } from '@azure/msal-browser';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { msalProviders } from './msal.config';
-import { InteractionType } from '@azure/msal-browser';
+import { routes } from './app.routes';
 
 import {
   MSAL_GUARD_CONFIG,
@@ -20,17 +19,24 @@ import {
   MsalInterceptorConfiguration,
   MsalBroadcastService
 } from '@azure/msal-angular';
+import { HttpErrorInterceptor } from 'interceptors/http-error.interceptor';
+import { environment } from 'environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideHttpClient(
+      withFetch(),
+      withInterceptorsFromDi()
+    ),
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+
     ...msalProviders,
     {
       provide: MSAL_GUARD_CONFIG,
       useValue: {
         interactionType: InteractionType.Redirect,
         authRequest: {
-          scopes: ['User.Read', 'api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access']
+          scopes: ['User.Read', environment.accessScope]
         }
       } as MsalGuardConfiguration
     },
@@ -40,8 +46,8 @@ export const appConfig: ApplicationConfig = {
       useValue: {
         interactionType: InteractionType.Redirect,
         protectedResourceMap: new Map([
-          ['https://graph.microsoft.com/v1.0', ['User.Read']],
-          ['https://spring-boot-v1-final.onrender.com', ['api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access']]
+          [environment.mUrl, ['User.Read']],
+          [environment.apiBaseUrl , [environment.accessScope]]
         ])
 
       } as MsalInterceptorConfiguration

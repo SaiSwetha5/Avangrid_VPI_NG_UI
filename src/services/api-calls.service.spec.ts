@@ -7,7 +7,7 @@ import { ApiCallsService } from './api-calls.service';
 import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem } from 'interfaces/vpi-interface';
- 
+
 class AuthServiceMock {
   getAccessToken = jasmine.createSpy('getAccessToken').and.returnValue(of('mock-token-123'));
 }
@@ -15,53 +15,62 @@ class AuthServiceMock {
 
 function makeVPIDataItem(overrides: Partial<VPIDataItem> = {}): VPIDataItem {
   const base: VPIDataItem = {
-       "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
-      "dateAdded": "2015-01-01T12:11:30",
-      "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
-      "startTime": "2015-01-01T12:06:30",
-      "duration": 280,
-      "tags": null,
-      "channelName": "Channel 102",
-      "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
-      "userName": "CHRISTINE ODEA",
-      "aniAlidigts": null,
-      "extensionNum": null,
-      "direction": "0",
-      "isChecked": false,
+    "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
+    "dateAdded": "2015-01-01T12:11:30",
+    "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
+    "startTime": "2015-01-01T12:06:30",
+    "duration": 280,
+    "tags": null,
+    "channelName": "Channel 102",
+    "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
+    "username": "CHRISTINE ODEA",
+    "aniAliDigits": null,
+    "extensionNum": null,
+    "direction": "0",
+    "isChecked": false,
+    "channelNum": 122,
+    "agentId": "agent-123",
+    "opco": "RGE"
   };
   return { ...base, ...overrides };
 }
 
 const vpiDataMock: VPIDataItem[] = [
   makeVPIDataItem({
-  "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
-      "dateAdded": "2015-01-01T12:11:30",
-      "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
-      "startTime": "2015-01-01T12:06:30",
-      "duration": 280,
-      "tags": null,
-      "channelName": "Channel 102",
-      "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
-      "userName": "CHRISTINE ODEA",
-      "aniAlidigts": null,
-      "extensionNum": null,
-      "direction": "0",
-      "isChecked": false,
+    "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
+    "dateAdded": "2015-01-01T12:11:30",
+    "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
+    "startTime": "2015-01-01T12:06:30",
+    "duration": 280,
+    "tags": null,
+    "channelName": "Channel 102",
+    "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
+    "username": "CHRISTINE ODEA",
+    "aniAliDigits": null,
+    "extensionNum": null,
+    "direction": "0",
+    "isChecked": false,
+    "channelNum": 122,
+    "agentId": "agent-123",
+    "opco": "RGE"
   }),
   makeVPIDataItem({
-  "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
-      "dateAdded": "2015-01-01T12:11:30",
-      "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
-      "startTime": "2015-01-01T12:06:30",
-      "duration": 280,
-      "tags": null,
-      "channelName": "Channel 102",
-      "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
-      "userName": "CHRISTINE ODEA",
-      "aniAlidigts": null,
-      "extensionNum": null,
-      "direction": "0",
-      "isChecked": false,
+    "objectId": "a1627b23-fcf5-4894-b0a6-12c39b51cddd",
+    "dateAdded": "2015-01-01T12:11:30",
+    "userId": "9d5b0df8-3c8c-4d3e-b36c-f1d6fe77822f",
+    "startTime": "2015-01-01T12:06:30",
+    "duration": 280,
+    "tags": null,
+    "channelName": "Channel 102",
+    "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
+    "username": "CHRISTINE ODEA",
+    "aniAliDigits": null,
+    "extensionNum": null,
+    "direction": "0",
+    "isChecked": false,
+    "channelNum": 122,
+    "agentId": "agent-123",
+    "opco": "RGE"
   }),
 ];
 
@@ -69,7 +78,7 @@ const mockResponse: SearchFilteredDataOutput = {
   message: 'Success',
   status: 200,
   data: vpiDataMock,
-  pagination: { totalRecords: vpiDataMock.length, totalPages: 1 , pageNumber: 1, pageSize: 10},
+  pagination: { totalRecords: vpiDataMock.length, totalPages: 1, pageNumber: 1, pageSize: 10 },
 };
 
 describe('ApiCallsService', () => {
@@ -89,7 +98,7 @@ describe('ApiCallsService', () => {
     service = TestBed.inject(ApiCallsService);
     httpMock = TestBed.inject(HttpTestingController);
 
-   });
+  });
 
 
   afterEach(() => {
@@ -103,12 +112,11 @@ describe('ApiCallsService', () => {
       to_date: '2025-01-31',
       opco: 'RGE',
       filters: {
-        fileName: ['VPI_001.pdf'],
+        agentID: ['122'],
         extensionNum: ['123'],
-        objectID: ['OBJ-101'],
+        objectIDs: null,
         channelNum: null,
         aniAliDigits: ['9123456780'],
-        name: ['Sai'],
       },
       pagination: { pageNumber: 2, pageSize: 50 },
     };
@@ -127,11 +135,11 @@ describe('ApiCallsService', () => {
 
     expect(response).toEqual(mockResponse);
     expect(response?.data.length).toBe(2);
-    expect(response?.data[0].userName).toBe('VPI_support_001.wav');
+    expect(response?.data[0].username).toBe('VPI_support_001.wav');
     expect(response?.pagination.totalRecords).toBe(2);
     expect(authMock.getAccessToken).toHaveBeenCalledTimes(1);
   });
 
 
- 
+
 });

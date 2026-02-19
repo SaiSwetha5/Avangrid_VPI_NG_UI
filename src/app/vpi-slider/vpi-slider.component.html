@@ -15,7 +15,7 @@
 <p-card>
     <form #filterForm="ngForm">
       <div class="form-grid">
-        <label for="fromDate">From Date</label>
+        <label for="fromDate">From Date<span style="color: red;">*</span></label>
         <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate"
           name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" (onSelect)="validateToDate()"
           [showTime]="true" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="form-grid">
-        <label for="toDate">To Date</label>
+        <label for="toDate">To Date<span style="color: red;">*</span></label>
         <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate"
           [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'"
           #toDateRef="ngModel"  [showOnFocus]="false" (onSelect)="validateToDate()"> </p-datepicker>
@@ -41,30 +41,25 @@
           From Date cannot be later than To Date.
         </div>
       </div>
-    <div class="form-grid"> <label for="opcode">Select Opcode</label>
+    <div class="form-grid"> <label for="opcode">Select Opcode<span style="color: red;">*</span></label>
        <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" placeholder="Select Opcode" #opCodeRef="ngModel" required> </p-select>
        <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)"> <small class="error">Opcode is required.</small> </div> </div>
-      <div class="form-grid">
+          <div class="form-grid">
+        <label for="aniAliDigits">AniAliDigits</label>
+        <input placeholder="   AniAliDigits" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
+          name="aniId" /> 
+      </div>
+       <div class="form-grid">
         <label for="objectId">Object ID</label>
         <input placeholder="   Object ID" type="text" pInputText [(ngModel)]="objectIdModel" id="objectId"
           name="objId" />
           <div *ngIf="invalidIDs?.length > 0" class="error"> Please enter in UUID format
       </div>
       </div>
-      
-      <div class="form-grid">
-        <label for="direction">Direction</label>
-     <p-select [options]="directions" [(ngModel)]="selectedDirection" optionLabel="name" placeholder="Select a Direction"   name="direction" />
-
-      </div> 
-      <div class="form-grid">
-        <label for="aniAliDigits">AniAliDigits</label>
-        <input placeholder="   AniAliDigits" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
-          name="aniId" /> 
-      </div>
+   
       <div class="form-grid">
         <label for="name">Name</label>
-        <input placeholder="   Name" type="text" pInputText   #nameCtrl="ngModel" [(ngModel)]="nameModel" id="name" name="name" />
+        <input placeholder="   Name" type="text" pInputText  maxlength="32"  #nameCtrl="ngModel" [(ngModel)]="nameModel" id="name" name="name" />
       
       </div>
       <div class="form-grid">
@@ -82,12 +77,18 @@
         <input type="text" placeholder="   Extension Num" pInputText  maxlength="32" [(ngModel)]="extensionNumberModel"
           id="extensionNumber" name="extId" /> 
       </div>
+         
+      <div class="form-grid">
+        <label for="direction">Direction</label>
+     <p-select [options]="directions" [(ngModel)]="selectedDirection" optionLabel="name" placeholder="Select a Direction"   name="direction" />
+
+      </div> 
       <div class="form-grid">
         <div class="button-row">
           <p-button label="Apply" type="submit"   role="button" tabindex="0"  [disabled]="filterForm.invalid"
            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)" (click)="applyDateFilters(filterForm)"></p-button>
-          <p-button type="button"  label="Reset" severity="info"    (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
-          <p-button type="button"  label="Cancel" severity="warn"    (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="cancelFilters(filterForm)"></p-button>
+          <p-button type="button"  label="Reset" severity="info" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
+          <p-button type="button"  label="Cancel" severity="warn" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="cancelFilters(filterForm)"></p-button>
         </div>
       </div>
 

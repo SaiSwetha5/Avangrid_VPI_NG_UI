@@ -1,4 +1,4 @@
-<div class="error-container">
+<div class="error-container" *ngIf="error">
   <div class="error-box">
     <p><strong>Timestamp:</strong> {{ error.timestamp }}</p>
     <p><strong>Status:</strong> {{ error.status }}</p>
@@ -6,3 +6,4 @@
     <p><strong>Message:</strong> {{ error.message }}</p>
   </div>
 </div>
+

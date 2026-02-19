@@ -81,12 +81,10 @@ export class AppComponent implements OnInit {
         command: () => {
           this.router.navigate(['/vpi']);
           this._dataService.pagedDataSignal.set([]);
-
         }
       },
       {
         label: '<img src="assets/genesys.png" alt="Genesys" > GENESYS'
-
       },
       {
         label: '<img src="assets/nice.png" alt="Nice"  > NICE',
@@ -115,19 +113,8 @@ export class AppComponent implements OnInit {
 
   }
 
-
   public logout(): void {
      this.msalService.logoutRedirect();
   }
-
-
-  
-  // @HostListener('keydown.enter', ['$event'])
-  // @HostListener('keydown.space', ['$event'])
-  // onKeydown(e: KeyboardEvent) {
-  //    e.preventDefault();
-  //   this.activate?.(e);
-  // }
-
 
 }

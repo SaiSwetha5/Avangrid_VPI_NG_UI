@@ -31,7 +31,7 @@ export class VpiSliderComponent implements OnInit {
   public nameError = false;
   public fromDateError = false;
   public opCodes: OPCODES[] | undefined;
-  public directions: { name: boolean; code: boolean }[] = [];
+  public directions: { name: string; code: boolean }[] = [];
   public opCode: { name: string; code: string } | null = null;
   public selectedDirection: { name: string; code: string } | null = null;
   public pageNumber = 1;
@@ -65,7 +65,7 @@ export class VpiSliderComponent implements OnInit {
       { name: 'CMP', code: 'CMP' },
     ];
      
-    this.directions = [{ name: true, code: true }, { name: false, code: false }];
+    this.directions = [{ name: 'Inbound', code: true }, { name: 'Outbound', code: false }];
    }
 
   public resetFilters(ngForm: NgForm): void {
@@ -86,7 +86,6 @@ export class VpiSliderComponent implements OnInit {
   }
 
   public applyDateFilters(ngForm: NgForm): void {
-  
     if (this.objectIdModel) {
     const ids = this.objectIdModel.split(',').map(x => x.trim());
 

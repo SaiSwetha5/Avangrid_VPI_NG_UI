@@ -1,0 +1,23 @@
+pipeline:
+  agent: aks
+  node: node20          
+  configfile: none     
+
+build:
+  framework: angular   
+  version: 19       
+  skiptest: true       
+
+sonar:
+  project: avangrid-frontend    
+  sources: src               
+  exclusions: |
+    **/*.spec.ts
+    **/node_modules/**
+    **/dist/**
+    **/*.generated.ts
+
+deploy:
+  enabled: true
+  kubeconfig: aks-ccaas
+  service: avangrid-frontend   
