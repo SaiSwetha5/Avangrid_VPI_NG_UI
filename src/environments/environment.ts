@@ -20,7 +20,7 @@ export const environment = {
   accessScope: env["BACKENDSCOPE"] || "",
   msal: {
     clientId: env["MSALCLIENTID"] || "",
-    authorityBase: "https://login.microsoftonline.com", 
+    authority: "https://login.microsoftonline.com", 
     tenantId: env["AZURETENANTID"] || ""
   }
 };
