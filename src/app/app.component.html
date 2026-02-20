@@ -28,7 +28,9 @@
 <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
     </ng-template>
 </p-toolbar>
-<div>
+
+
+<div *ngIf="loginFinished">
   <router-outlet></router-outlet>
 </div>
 
