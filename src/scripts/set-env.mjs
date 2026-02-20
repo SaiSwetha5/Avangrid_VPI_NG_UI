@@ -1,15 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-// In ES modules, __dirname is not defined. We derive it from import.meta.url.
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Use process.cwd() to target the root consistently on Vercel
+const targetPath = path.join(process.cwd(), 'src/assets/env.js');
 
-// Target path where Angular expects the env.js file
-const targetPath = path.join(__dirname, '../src/assets/env.js');
-
-// Read from process.env (populated by Vercel) or fallback to defaults
 const envConfigFile = `
 (function (window) {
   window.__env = window.__env || {};
@@ -22,16 +16,13 @@ const envConfigFile = `
 })(this);
 `;
 
-// Ensure the directory exists before writing
-const dir = path.dirname(targetPath);
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
 try {
+  const dir = path.dirname(targetPath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  
   fs.writeFileSync(targetPath, envConfigFile);
-  console.log(`✅ Dynamically generated env.js at ${targetPath}`);
+  console.log('✅ env.js generated successfully');
 } catch (err) {
-  console.error('❌ Failed to generate env.js:', err);
+  console.error('❌ Error:', err);
   process.exit(1);
 }
