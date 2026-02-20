@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { NavigationEnd, RouterModule,RouterOutlet,Router } from '@angular/router';
+import { NavigationEnd, RouterModule, RouterOutlet, Router } from '@angular/router';
 import { SplitButton } from 'primeng/splitbutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -14,6 +14,7 @@ interface OPCODES {
   name: string;
   code: string;
 }
+
 interface UserMenuItem {
   label: string;
   command?: () => void;
@@ -32,42 +33,28 @@ export class AppComponent implements OnInit {
   public msalService = inject(MsalService);
   public router = inject(Router);
   public _dataService = inject(DataService);
+  
   public items: MenuItem[] | undefined;
   public opCodes: OPCODES[] | undefined;
   public container: OPCODES[] | undefined;
-  public pageNumber = 1;
-  public fromDate: Date | null = null;
-  public toDate: Date | null = null;
   public currentUrl = '';
   public userMenu: UserMenuItem[] = [];
-  public opCode: { name: string; code: string } | null = null;
 
-  public ngOnInit() {
-    this.msalService.instance.handleRedirectPromise().then((result) => {
-      if (result !== null && result.account !== null) {
+  ngOnInit(): void {
+    // Call the async initialization without making ngOnInit async
+    this.initMsal();
 
-        this.msalService.instance.setActiveAccount(result.account);
-      } else {
-        const currentAccounts = this.msalService.instance.getAllAccounts();
-        if (currentAccounts.length > 0) {
-          this.msalService.instance.setActiveAccount(currentAccounts[0]);
-        }
-      }
-
-      this.updateUserMenu();
-    }); 
-    
     this.opCodes = [
       { name: 'RGE', code: 'RGE' },
       { name: 'NYSEG', code: 'NYSEG' },
       { name: 'CMP', code: 'CMP' },
     ];
+
     this.container = [
       { name: 'VPI', code: 'VPI' },
       { name: 'GENESYS', code: 'GENESYS' },
       { name: 'NICE', code: 'NICE' },
     ];
-
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -77,21 +64,40 @@ export class AppComponent implements OnInit {
 
     this.items = [
       {
-        label: '<img src="assets/vpi.png" alt="VPI"  > VPI',
+        label: '<img src="assets/vpi.png" alt="VPI"> VPI',
         command: () => {
           this.router.navigate(['/vpi']);
           this._dataService.pagedDataSignal.set([]);
         }
       },
-      {
-        label: '<img src="assets/genesys.png" alt="Genesys" > GENESYS'
-      },
-      {
-        label: '<img src="assets/nice.png" alt="Nice"  > NICE',
-      },
+      { label: '<img src="assets/genesys.png" alt="Genesys"> GENESYS' },
+      { label: '<img src="assets/nice.png" alt="Nice"> NICE' },
     ];
   }
 
+private async initMsal(): Promise<void> {
+  console.log("DEBUG: MSAL Start");
+  try {
+    // If it hangs here, the clientId or tenantId is rejected by MSAL
+    await this.msalService.instance.initialize();
+    console.log("DEBUG: MSAL Initialized");
+
+    const result = await this.msalService.instance.handleRedirectPromise();
+    console.log("DEBUG: Redirect Result:", result);
+
+    const accounts = this.msalService.instance.getAllAccounts();
+    if (accounts.length > 0) {
+      this.msalService.instance.setActiveAccount(accounts[0]);
+      console.log("DEBUG: Account active:", accounts[0].username);
+    } else {
+      console.log("DEBUG: No account found, calling loginRedirect");
+      this.msalService.loginRedirect();
+    }
+    this.updateUserMenu();
+  } catch (error) {
+    console.error("DEBUG: MSAL Error", error);
+  }
+}
 
   public navigateHomePage(): void {
     this._dataService.setPayload({});
@@ -104,17 +110,15 @@ export class AppComponent implements OnInit {
   }
 
   public updateUserMenu(): void {
-  const account = this.msalService.instance.getActiveAccount(); 
+    const account = this.msalService.instance.getActiveAccount(); 
     const username = account?.name || account?.username || 'Guest';
     this.userMenu = [
       { label: username },
       { label: 'Logout', command: () => this.logout() }
     ];
-
   }
 
   public logout(): void {
      this.msalService.logoutRedirect();
   }
-
 }

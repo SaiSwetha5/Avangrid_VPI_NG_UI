@@ -1,26 +1,13 @@
-// export const environment = {
-//   production: false,
-//   apiBaseUrl: '${API_BASE_URL}',
-//   mUrl: '${GRAPH_API_URL}',
-//   accessScope: '${BACKEND_SCOPE}',
-//   msal: {
-//     clientId: '${MSAL_CLIENT_ID}',
-//     authority: 'https://login.microsoftonline.com',
-//     tenantId: '${AZURE_TENANT_ID}'
-//   }
-// };
- 
-
-const env = window.__env ?? {};
+const env = (window as any).__env ?? {};
 
 export const environment = {
   production: false,
-  apiBaseUrl: env["APIBASEURL"] || "",
-  graphApiUrl: env["GRAPHAPIURL"] || "",
-  accessScope: env["BACKENDSCOPE"] || "",
+  apiBaseUrl: env["API_BASE_URL"] || "",
+  graphApiUrl: env["GRAPH_API_URL"] || "",
+  accessScope: env["BACKEND_SCOPE"] || "",
   msal: {
-    clientId: env["MSALCLIENTID"] || "",
-    authority: "https://login.microsoftonline.com", 
-    tenantId: env["AZURETENANTID"] || ""
+    clientId: env["MSAL_CLIENT_ID"] || "",
+    authority: "https://login.microsoftonline.com",
+    tenantId: env["AZURE_TENANT_ID"] || ""
   }
 };

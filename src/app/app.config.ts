@@ -15,7 +15,6 @@ import {
   MsalGuard,
   MsalService,
   MsalInterceptor,
-  MsalGuardConfiguration,
   MsalInterceptorConfiguration,
   MsalBroadcastService
 } from '@azure/msal-angular';
@@ -47,27 +46,25 @@ export const appConfig: ApplicationConfig = {
 
     ...msalProviders, // Provides MSAL_INSTANCE
 
-    {
-      provide: MSAL_GUARD_CONFIG,
-      useValue: {
-        interactionType: InteractionType.Redirect,
-        authRequest: {
-          // Uses dynamic scopes from your Vercel env
-          scopes: ['User.Read', environment.accessScope] 
-        }
-      } as MsalGuardConfiguration
-    },
-
-    {
-      provide: MSAL_INTERCEPTOR_CONFIG,
-      useValue: {
-        interactionType: InteractionType.Redirect,
-        protectedResourceMap: new Map([
-          [environment.graphApiUrl, ['User.Read']],
-          [environment.apiBaseUrl, [environment.accessScope]]
-        ])
-      } as MsalInterceptorConfiguration
-    },
+  {
+  provide: MSAL_GUARD_CONFIG,
+  useFactory: () => ({
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: ['User.Read', environment.accessScope] 
+    }
+  })
+},
+{
+  provide: MSAL_INTERCEPTOR_CONFIG,
+  useFactory: () => ({
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap: new Map([
+      [environment.graphApiUrl, ['User.Read']],
+      [environment.apiBaseUrl, [environment.accessScope]]
+    ])
+  })
+},
 
     // Required MSAL Services
     MsalService,

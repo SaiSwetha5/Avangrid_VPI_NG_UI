@@ -1,37 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-// In ES modules, __dirname is not defined. We derive it from import.meta.url.
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Target path where Angular expects the env.js file
-const targetPath = path.join(__dirname, '../src/assets/env.js');
-
-// Read from process.env (populated by Vercel) or fallback to defaults
-const envConfigFile = `
 (function (window) {
   window.__env = window.__env || {};
-  window.__env.APIBASEURL = "${process.env.APIBASEURL || ''}";
-  window.__env.GRAPHAPIURL = "${process.env.GRAPHAPIURL || 'https://graph.microsoft.com/v1.0'}";
-  window.__env.BACKENDSCOPE = "${process.env.BACKENDSCOPE || ''}";
-  window.__env.MSALCLIENTID = "${process.env.MSALCLIENTID || ''}";
-  window.__env.AZURETENANTID = "${process.env.AZURETENANTID || ''}";
-  window.__env.PRODUCTION = ${process.env.VERCEL_ENV === 'production'};
+  window.__env.API_BASE_URL = "https://spring-boot-v1-final.onrender.com/api/v1";
+  window.__env.GRAPH_API_URL = "https://graph.microsoft.com/v1.0";
+  window.__env.BACKEND_SCOPE = "api://ab5a57ac-0579-427c-a3ef-7a4e1b2b8677/access";
+  window.__env.MSAL_CLIENT_ID = "ab5a57ac-0579-427c-a3ef-7a4e1b2b8677";
+  window.__env.AZURE_TENANT_ID = "aeea9a9c-cd86-4e5c-a3e4-db2be94c0c08";
+  window.__env.PRODUCTION = false;
 })(this);
-`;
-
-// Ensure the directory exists before writing
-const dir = path.dirname(targetPath);
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-try {
-  fs.writeFileSync(targetPath, envConfigFile);
-  console.log(`✅ Dynamically generated env.js at ${targetPath}`);
-} catch (err) {
-  console.error('❌ Failed to generate env.js:', err);
-  process.exit(1);
-}
