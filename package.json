@@ -3,10 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "node tools/generate-env.mjs",
     "ng": "ng",
     "start": "ng serve",
-    "prebuild": "node tools/generate-env.mjs",
     "build": "ng build avangrid_vpi_ng_ui --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
