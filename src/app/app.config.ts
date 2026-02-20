@@ -24,19 +24,36 @@ import { environment } from 'environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideAnimations(),
     provideHttpClient(
-      withFetch(),
+      withFetch(), // Keep withFetch for Angular 19 performance
       withInterceptorsFromDi()
     ),
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 
-    ...msalProviders,
+    // 1. REGISTER MSAL INTERCEPTOR CORRECTLY
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true
+    },
+    // 2. REGISTER YOUR ERROR INTERCEPTOR
+    { 
+      provide: HTTP_INTERCEPTORS, 
+      useClass: HttpErrorInterceptor, 
+      multi: true 
+    },
+
+    ...msalProviders, // Provides MSAL_INSTANCE
+
     {
       provide: MSAL_GUARD_CONFIG,
       useValue: {
         interactionType: InteractionType.Redirect,
         authRequest: {
-          scopes: ['User.Read', environment.accessScope]
+          // Uses dynamic scopes from your Vercel env
+          scopes: ['User.Read', environment.accessScope] 
         }
       } as MsalGuardConfiguration
     },
@@ -47,28 +64,20 @@ export const appConfig: ApplicationConfig = {
         interactionType: InteractionType.Redirect,
         protectedResourceMap: new Map([
           [environment.graphApiUrl, ['User.Read']],
-          [environment.apiBaseUrl , [environment.accessScope]]
+          [environment.apiBaseUrl, [environment.accessScope]]
         ])
-
       } as MsalInterceptorConfiguration
     },
 
-
+    // Required MSAL Services
     MsalService,
     MsalGuard,
-    MsalInterceptor,
     MsalBroadcastService,
 
-    provideAnimations(),
     providePrimeNG({
       theme: {
         preset: Aura
       }
     }),
-
-    provideZoneChangeDetection({ eventCoalescing: true }),
-
-    provideRouter(routes),
-
   ]
 };
