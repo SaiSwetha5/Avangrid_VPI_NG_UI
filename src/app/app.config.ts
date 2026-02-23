@@ -15,6 +15,7 @@ import {
   MsalGuard,
   MsalService,
   MsalInterceptor,
+  MsalGuardConfiguration,
   MsalInterceptorConfiguration,
   MsalBroadcastService
 } from '@azure/msal-angular';
@@ -27,46 +28,45 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(
-      withFetch(), // Keep withFetch for Angular 19 performance
+      withFetch(),
       withInterceptorsFromDi()
     ),
 
-    // 1. REGISTER MSAL INTERCEPTOR CORRECTLY
+   
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
       multi: true
     },
-    // 2. REGISTER YOUR ERROR INTERCEPTOR
+  
     { 
       provide: HTTP_INTERCEPTORS, 
       useClass: HttpErrorInterceptor, 
       multi: true 
     },
 
-    ...msalProviders, // Provides MSAL_INSTANCE
+    ...msalProviders,
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useValue: {
+        interactionType: InteractionType.Redirect,
+        authRequest: {
+          scopes: ['User.Read', environment.msal.backendScope] 
+        }
+      } as MsalGuardConfiguration
+    },
 
-  {
-  provide: MSAL_GUARD_CONFIG,
-  useFactory: () => ({
-    interactionType: InteractionType.Redirect,
-    authRequest: {
-      scopes: ['User.Read', environment.accessScope] 
-    }
-  })
-},
-{
-  provide: MSAL_INTERCEPTOR_CONFIG,
-  useFactory: () => ({
-    interactionType: InteractionType.Redirect,
-    protectedResourceMap: new Map([
-      [environment.graphApiUrl, ['User.Read']],
-      [environment.apiBaseUrl, [environment.accessScope]]
-    ])
-  })
-},
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useValue: {
+        interactionType: InteractionType.Redirect,
+        protectedResourceMap: new Map([
+          ['https://graph.microsoft.com/v1.0', ['User.Read']],
+          [environment.apiBaseUrl, [environment.msal.backendScope]]
+        ])
+      } as MsalInterceptorConfiguration
+    },
 
-    // Required MSAL Services
     MsalService,
     MsalGuard,
     MsalBroadcastService,

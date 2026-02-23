@@ -1,12 +1,12 @@
 import { inject, Injectable } from "@angular/core";
 import { MsalService } from "@azure/msal-angular";
+import { environment } from "environments/environment";
 import { from, map, Observable, throwError } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly scope = 'api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access';
+  private readonly scope = environment.msal.backendScope;;
   private readonly  msalService = inject(MsalService);
-
 
 getAccessToken(): Observable<string> {
   const account = this.msalService.instance.getActiveAccount();

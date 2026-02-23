@@ -74,18 +74,15 @@ export class VpiTableComponent {
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
   public successToaster = computed(() => this._dataService.successToasterSignal());
+
   public effectData = effect(() => {
     this.currentPayload = this.payload();
     if (!this.currentPayload?.filters) {
-         setTimeout(() => {
-        this._dataService.loadingTableDataSignal.set(false);
-      }, 2000);
       return;
-    } 
-   this.fetchData(this.payload()).subscribe();
-
-    
+    }
+    this.fetchData(this.currentPayload).subscribe();
   });
+
 
   public onPageChange(event: PaginatorState): void {
     const pageNumber = Math.floor(event.first / event.rows) + 1;
