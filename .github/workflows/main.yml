@@ -1,0 +1,77 @@
+name: CI + SonarCloud
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-analyze:
+    name: Build & Sonar (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ '20', '22' ]   # Set to ['20'] if you only want Node 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed for accurate blame/PR decoration in Sonar
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Print versions
+        run: |
+          node -v
+          npm -v
+          npx ng version || true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (optional)
+        if: hashFiles('eslint.config.*', '.eslintrc*') != ''
+        run: npm run lint --if-present
+
+      - name: Build (production)
+        run: npx ng build --configuration production --verbose
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-node-${{ matrix.node }}
+          path: dist/
+          if-no-files-found: warn
+          retention-days: 7
+
+      # ---------- SonarCloud Analysis ----------
+      # Make this step non-blocking or blocking:
+      # Non-blocking => continue-on-error: true
+      # Blocking     => remove continue-on-error or set to false
+      - name: SonarCloud Scan (non-blocking)
+        id: sonar
+        uses: SonarSource/sonarcloud-github-action@v2
+        continue-on-error: true             # <-- flip to false/remove to enforce Quality Gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # If you have sonar-project.properties in repo root, you can omit args.
+          # Otherwise, provide the properties here:
+          args: |
+            -Dsonar.projectKey=avangrid-frontend
+            -Dsonar.organization=<your_org_key>
+            -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**,**/dist/**,**/*.generated.ts,**/*gen*.ts
+            -Dsonar.typescript.tsconfigPath=tsconfig.json
+            # Optional New Code settings (pick ONE approach):
+            # -Dsonar.newCode.referenceBranch=main
+            # -Dsonar.newCode.period=30
