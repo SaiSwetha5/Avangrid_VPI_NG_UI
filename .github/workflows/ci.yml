@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [ '20', '22' ]   # Use ['20'] if you only want Node 20
+        node: [ '20', '22' ]  # set to ['20'] if you only want Node 20
 
     steps:
       - name: Checkout
@@ -50,36 +50,3 @@ jobs:
           path: dist/
           if-no-files-found: warn
           retention-days: 7
-
-  sonar:
-    name: SonarCloud Analysis (non-blocking)
-    needs: build
-    runs-on: ubuntu-latest
-    continue-on-error: true   # <-- prevents Sonar from failing the workflow
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Use Node.js 20 for scan
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install dependencies (no build)
-        run: npm ci
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=avangrid-frontend
-            -Dsonar.organization=<your_org_key>
-            -Dsonar.sources=src
-            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**,**/dist/**,**/*.generated.ts,**/*gen*.ts
-``
