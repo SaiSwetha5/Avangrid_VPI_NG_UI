@@ -1,4 +1,3 @@
-
 export interface MsalEnvConfig {
   clientId: string;
   tenantId: string;
@@ -27,15 +26,18 @@ type RawEnv = Partial<{
   }>;
 }>;
 
-const runtimeEnv = ((window as any)['__env'] as RawEnv) || {};
- 
+function isRawEnv(obj: unknown): obj is RawEnv {
+  return typeof obj === 'object' && obj !== null;
+}
+
+const runtimeEnv: RawEnv = isRawEnv(window.__env) ? window.__env : {};
+
 const tenantId = runtimeEnv.msal?.AZURE_TENANT_ID ?? '';
 const clientId = runtimeEnv.msal?.MSAL_CLIENT_ID ?? '';
 const backendScope = runtimeEnv.msal?.BACKEND_SCOPE ?? '';
 const apiBaseUrl = runtimeEnv.API_BASE_URL ?? '';
 const production = runtimeEnv.production ?? true;
 
- 
 export const environment: AppEnvConfig = {
   apiBaseUrl,
   production,
@@ -45,5 +47,3 @@ export const environment: AppEnvConfig = {
     backendScope,
   },
 };
-
- 
