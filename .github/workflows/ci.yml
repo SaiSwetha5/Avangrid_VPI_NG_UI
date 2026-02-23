@@ -1,0 +1,93 @@
+name: CI (Angular)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ '20', '22' ]   # Test both; Angular 19 is officially OK on Node 18/20. Node 22 may break.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Print versions
+        run: |
+          node -v
+          npm -v
+          npx ng version || true
+
+      - name: Install dependencies (clean)
+        run: npm ci
+
+      # If you rely on global @angular/cli, prefer using the local binary via npx
+      - name: Build (production)
+        run: npx ng build --configuration production --verbose
+
+      # Optionally run lint (if configured)
+      - name: Lint
+        if: hashFiles('eslint.config.*', '.eslintrc*') != ''
+        run: npm run lint --if-present
+
+      # Optionally run tests (you had skiptest: true; leave off or enable if needed)
+      - name: Test (CI)
+        if: ${{ false }}     # flip to true if you want tests
+        run: npx ng test --watch=false --browsers=ChromeHeadless
+
+      - name: Upload dist artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-node${{ matrix.node }}
+          path: dist/
+          if-no-files-found: warn
+          retention-days: 7
+
+  # ---- Optional: SonarCloud (hosted) ----
+  sonar:
+    name: Sonar Analysis
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20 for scanner (safe default)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies (no build)
+        run: npm ci
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=avangrid-frontend
+            -Dsonar.organization=<your_org_key>
+            -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.spec.ts,**/node_modules/**,**/dist_**,**/*.generated.ts
+``
