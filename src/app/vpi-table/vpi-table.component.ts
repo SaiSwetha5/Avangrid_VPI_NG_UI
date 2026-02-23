@@ -79,7 +79,7 @@ export class VpiTableComponent {
     this.currentPayload = this.payload();
     if (!this.currentPayload?.filters) {
       return;
-    }
+    } else
     this.fetchData(this.currentPayload).subscribe();
   });
 

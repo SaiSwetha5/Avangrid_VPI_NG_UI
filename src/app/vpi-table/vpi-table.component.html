@@ -4,7 +4,7 @@
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
     <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> 
-    Successfully retrieved   <b> {{_dataService.totalRecordsSignal()}}   </b> records for OPCO:   <b> {{_dataService.selectedOpcode()}}</b></span>
+    <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}}</b></span>
     </ng-template>
     <ng-template #end>
 
