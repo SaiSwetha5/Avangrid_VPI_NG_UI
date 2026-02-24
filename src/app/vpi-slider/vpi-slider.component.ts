@@ -88,7 +88,6 @@ export class VpiSliderComponent implements OnInit {
   public applyDateFilters(ngForm: NgForm): void {
     if (this.objectIdModel) {
     const ids = this.objectIdModel.split(',').map(x => x.trim());
-
       this.validIDs = ids.filter(id => this.isValidUUID(id));
       this.invalidIDs = ids.filter(id => !this.isValidUUID(id));
       if (this.invalidIDs.length > 0) {

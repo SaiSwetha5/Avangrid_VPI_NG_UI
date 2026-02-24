@@ -12,7 +12,7 @@
     </div>
   </ng-template>
 
-<p-card>
+<p-card styleClass="filters-card">
     <form #filterForm="ngForm">
       <div class="form-grid">
         <label for="fromDate">From Date<span style="color: red;">*</span></label>
@@ -45,7 +45,10 @@
        <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" placeholder="Select Opcode" #opCodeRef="ngModel" required> </p-select>
        <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)"> <small class="error">Opcode is required.</small> </div> </div>
           <div class="form-grid">
-        <label for="aniAliDigits">AniAliDigits</label>
+      <label for="aniAliDigits" class="field-label">
+          <span class="label-main">AniAliDigits</span>
+          <span class="label-sub">(Customer Number)</span>
+        </label>
         <input placeholder="   AniAliDigits" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
           name="aniId" /> 
       </div>

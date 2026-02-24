@@ -50,5 +50,27 @@ public payloadSignal = signal<SearchFilteredDataInput>({
     this.activate?.(e);
   }
 
+
+public hasAnyValue(payload: SearchFilteredDataInput | null | undefined) : boolean {
+  if (!payload) return false;
+  if (payload.from_date?.trim()) return true;
+  if (payload.to_date?.trim()) return true;
+  if (payload.opco?.trim()) return true;
+
+  const filters = payload.filters;
+  if (!filters) 
+    {
+      return false;
+    }
+    
+  return Object.values(filters).some(value => {
+    if (value == null) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) {
+      return value.some(item => (item ?? '').toString().trim().length > 0);
+    }
+    return false;
+  });
+}
 }
  

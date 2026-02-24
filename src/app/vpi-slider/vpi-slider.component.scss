@@ -2,7 +2,7 @@
   display: flex;
   gap: 1rem;
   justify-content: flex-start;
-}
+} 
 
 @media (max-width: 600px) {
   .form-grid {
@@ -27,4 +27,15 @@
   color: red;
   font-size: 0.85rem;
   margin-top: 0.25rem;
+}
+
+.field-label { display: inline-block; line-height: 1.2; }
+.field-label .label-main { display: block; }
+.field-label .label-sub { display: block; font-size: 0.85rem }
+
+
+.filters-card.p-card,
+.filters-card .p-card-body,
+.filters-card .p-card-content {
+  border-bottom: 0 !important;
 }

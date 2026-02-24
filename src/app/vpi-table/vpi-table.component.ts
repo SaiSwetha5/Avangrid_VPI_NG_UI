@@ -67,7 +67,6 @@ export class VpiTableComponent {
   public selectedRowData!: VPIMetaDataOutput;
   public audioUrl: string | null = null;
   private wavesurfer: WaveSurfer | null = null;
-  public currentPayload!: SearchFilteredDataInput;
   public isFirstRun = true;
   public trackById = (index: number, header: { id: string }) => header.id;
   public downloadDisabled = true;
@@ -76,11 +75,11 @@ export class VpiTableComponent {
   public successToaster = computed(() => this._dataService.successToasterSignal());
 
   public effectData = effect(() => {
-    this.currentPayload = this.payload();
-    if (!this.currentPayload?.filters) {
-      return;
-    } else
-    this.fetchData(this.currentPayload).subscribe();
+   const currentPayload = this.payload();
+   if (!this._dataService.hasAnyValue(currentPayload)) {
+      return;      
+    }
+    this.fetchData(currentPayload).subscribe();
   });
 
 

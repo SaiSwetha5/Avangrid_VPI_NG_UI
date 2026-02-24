@@ -4,7 +4,7 @@
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
     <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> 
-    <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}}</b></span>
+    <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}} from date {{_dataService.fromDate()}} - to date {{_dataService.toDate()}}</b></span>
     </ng-template>
     <ng-template #end>
 
@@ -111,7 +111,7 @@
               <p-tablist>
                 <p-tab value="0">Overview</p-tab>
                 <p-tab value="1">Technical</p-tab>
-                <p-tab value="2">Time</p-tab>
+                <p-tab value="2">Others</p-tab>
 
               </p-tablist>
               <p-tabpanels>
@@ -145,7 +145,7 @@
                       </tr>
                       <tr>
                         <td><b>Duration</b></td>
-                        <td>{{ interaction.duration * 1000 }}</td>
+                        <td>{{ interaction.duration}} Seconds</td>
                       </tr>
                       <tr>
                         <td><b>Class Of Service</b></td>
