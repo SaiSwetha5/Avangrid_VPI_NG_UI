@@ -76,10 +76,22 @@ export class AppComponent implements OnInit, OnDestroy {
     this.opCodes = [{ name: 'RGE', code: 'RGE' }, { name: 'NYSEG', code: 'NYSEG' }, { name: 'CMP', code: 'CMP' }];
     this.container = [{ name: 'VPI', code: 'VPI' }, { name: 'GENESYS', code: 'GENESYS' }, { name: 'NICE', code: 'NICE' }];
 
-    this.items = [
-      { label: 'VPI', command: () => this.navigateVPIPage() },
-      { label: 'GENESYS' },
-      { label: 'NICE' },
+ this.items = [
+      {
+        label: '<img src="assets/vpi.png" alt="VPI"  > VPI',
+        command: () => {
+          this.router.navigate(['/vpi']);
+          this._dataService.pagedDataSignal.set([]);
+
+        }
+      },
+      {
+        label: '<img src="assets/genesys.png" alt="Genesys" > GENESYS'
+
+      },
+      {
+        label: '<img src="assets/nice.png" alt="Nice"  > NICE',
+      },
     ];
 
     this.router.events.subscribe(event => {
@@ -91,6 +103,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public updateUserMenu(): void {
     const account = this.msalService.instance.getActiveAccount() || this.msalService.instance.getAllAccounts()[0];
+    console.log('Active Account:', account);
     if (account) {
       const username = account.name || account.username || 'User';
       this.userMenu = [
@@ -131,7 +144,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public navigateHomePage(): void {
     this.router.navigate(['/home']);
   }
-  
+
   public navigateVPIPage(): void {
     this.router.navigate(['/vpi']);
   }
