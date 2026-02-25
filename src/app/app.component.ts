@@ -75,24 +75,23 @@ export class AppComponent implements OnInit, OnDestroy {
   private initMenus() {
     this.opCodes = [{ name: 'RGE', code: 'RGE' }, { name: 'NYSEG', code: 'NYSEG' }, { name: 'CMP', code: 'CMP' }];
     this.container = [{ name: 'VPI', code: 'VPI' }, { name: 'GENESYS', code: 'GENESYS' }, { name: 'NICE', code: 'NICE' }];
+    this.items = [
+          {
+            label: '<img src="assets/vpi.png" alt="VPI"  > VPI',
+            command: () => {
+              this.router.navigate(['/vpi']);
+              this._dataService.pagedDataSignal.set([]);
 
- this.items = [
-      {
-        label: '<img src="assets/vpi.png" alt="VPI"  > VPI',
-        command: () => {
-          this.router.navigate(['/vpi']);
-          this._dataService.pagedDataSignal.set([]);
+            }
+          },
+          {
+            label: '<img src="assets/genesys.png" alt="Genesys" > GENESYS'
 
-        }
-      },
-      {
-        label: '<img src="assets/genesys.png" alt="Genesys" > GENESYS'
-
-      },
-      {
-        label: '<img src="assets/nice.png" alt="Nice"  > NICE',
-      },
-    ];
+          },
+          {
+            label: '<img src="assets/nice.png" alt="Nice"  > NICE',
+          },
+        ];
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
