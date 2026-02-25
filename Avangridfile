@@ -1,23 +1,32 @@
+app:
+  name: app-spa-vrs-vpi
+  ecr:
+    repository: spa/vrs:vpi
+  k8s:
+    namespace: spa
+
+azure:
+  region:
+    - us-east-1
+
 pipeline:
   agent: aks
-  node: node22          
-  configfile: none     
+  node: node22
+  configfile: none
 
 build:
-  framework: angular   
-  version: 19       
-  skiptest: true       
+  framework: angular
+  version: 19
+  skiptest: true
 
 sonar:
-  project: avangrid-frontend    
-  sources: src               
+  project: avangrid-frontend
+  sources: src
   exclusions: |
     **/*.spec.ts
     **/node_modules/**
-    **/dist/**
-    **/*.generated.ts
 
 deploy:
   enabled: true
   kubeconfig: aks-ccaas
-  service: avangrid-frontend   
+  service: avangrid-frontend
