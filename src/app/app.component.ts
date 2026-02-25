@@ -101,20 +101,38 @@ export class AppComponent implements OnInit, OnDestroy {
       this.userMenu = [{ label: 'Sign In', command: () => this.msalService.loginRedirect() }];
     }
   }
-
+ 
   public logout(): void {
-    const activeAccount = this.msalService.instance.getActiveAccount();
-    this.msalService.logoutRedirect({
-      account: activeAccount,
-      postLogoutRedirectUri: globalThis.location.origin // Ensure it returns to your home page
-    });
-  }
+   const activeAccount = this.msalService.instance.getActiveAccount();
 
-  ngOnDestroy(): void {
+  if (activeAccount) {
+    this.msalService.logoutRedirect({
+       account: activeAccount, 
+       postLogoutRedirectUri: globalThis.location.origin
+    });
+  } else {
+     const allAccounts = this.msalService.instance.getAllAccounts();
+    if (allAccounts.length > 0) {
+      this.msalService.logoutRedirect({
+        account: allAccounts[0],
+        postLogoutRedirectUri: globalThis.location.origin
+      });
+    } else {
+      this.msalService.logoutRedirect();
+    }
+  }
+}
+
+ public ngOnDestroy(): void {
     this._destroying$.next(undefined);
     this._destroying$.complete();
   }
 
-  public navigateHomePage(): void { this.router.navigate(['/home']); }
-  public navigateVPIPage(): void { this.router.navigate(['/vpi']); }
+  public navigateHomePage(): void {
+    this.router.navigate(['/home']);
+  }
+  
+  public navigateVPIPage(): void {
+    this.router.navigate(['/vpi']);
+  }
 }
