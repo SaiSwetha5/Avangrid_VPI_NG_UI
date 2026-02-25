@@ -45,6 +45,7 @@ export class VpiTableComponent {
     pageSize: 10,
   };
   public payload = computed(() => this._dataService.getPayload());
+  public currentPayload!: SearchFilteredDataInput;
   public _dataService = inject(DataService);
   private readonly _apiService = inject(ApiCallsService);
   private readonly _messageService = inject(MessageService);
@@ -75,11 +76,11 @@ export class VpiTableComponent {
   public successToaster = computed(() => this._dataService.successToasterSignal());
 
   public effectData = effect(() => {
-   const currentPayload = this.payload();
-   if (!this._dataService.hasAnyValue(currentPayload)) {
+  this.currentPayload = this.payload();
+   if (!this._dataService.hasAnyValue(this.currentPayload)) {
       return;      
     }
-    this.fetchData(currentPayload).subscribe();
+    this.fetchData(this.currentPayload).subscribe();
   });
 
 

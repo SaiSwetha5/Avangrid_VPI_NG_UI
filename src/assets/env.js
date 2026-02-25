@@ -1,14 +1,14 @@
 
-// (function (window) {
-//   window.__env = window.__env || {};
+(function (window) {
+  window.__env = window.__env || {};
 
-//   window.__env.msal = {
-//     MSAL_CLIENT_ID: "ab5a57ac-0579-427c-a3ef-7a4e1b2b8677",
-//     AZURE_TENANT_ID: "aeea9a9c-cd86-4e5c-a3e4-db2be94c0c08",
-//     BACKEND_SCOPE : "api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access",
+  window.__env.msal = {
+    MSAL_CLIENT_ID: "ab5a57ac-0579-427c-a3ef-7a4e1b2b8677",
+    AZURE_TENANT_ID: "aeea9a9c-cd86-4e5c-a3e4-db2be94c0c08",
+    BACKEND_SCOPE : "api://d6acffb4-c10c-41d1-9209-247df35d7e6d/access",
 
-//   };
-//   window.__env.API_BASE_URL = "https://spring-boot-v1-final.onrender.com/api/v1";
-//   window.__env.production = false;
+  };
+  window.__env.API_BASE_URL = "https://spring-boot-v1-final.onrender.com/api/v1";
+  window.__env.production = false;
  
-// })(this);
+})(this);

@@ -52,4 +52,6 @@
   color: white !important;
 }
  
-
+.p-card .p-card-body {
+  padding-bottom: 0 !important;
+}
