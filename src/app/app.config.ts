@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { InteractionType } from '@azure/msal-browser';
@@ -32,20 +32,16 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi()
     ),
 
-   
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
-  
-    { 
-      provide: HTTP_INTERCEPTORS, 
-      useClass: HttpErrorInterceptor, 
-      multi: true 
-    },
-
     ...msalProviders,
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
+
+    provideAppInitializer(() => {
+      const msalService = inject(MsalService);
+      return msalService.instance.initialize();
+    }),
+
     {
       provide: MSAL_GUARD_CONFIG,
       useValue: {
@@ -67,14 +63,11 @@ export const appConfig: ApplicationConfig = {
       } as MsalInterceptorConfiguration
     },
 
-    MsalService,
-    MsalGuard,
-    MsalBroadcastService,
+    { provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 
     providePrimeNG({
-      theme: {
-        preset: Aura
-      }
+      theme: { preset: Aura }
     }),
   ]
 };
