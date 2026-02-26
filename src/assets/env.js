@@ -12,3 +12,17 @@
   window.__env.production = false;
  
 })(this);
+
+// (function (window) {
+//   window.__env = window.__env || {};
+
+//   window.__env.msal = {
+//     MSAL_CLIENT_ID: "2c206aab-d055-420a-96af-6d2eb9c09b7c",
+//     AZURE_TENANT_ID: "031a09bc-a2bf-44df-888e-4e09355b7a24",
+//     BACKEND_SCOPE : "api://1b6e7791-4175-4964-a138-43b2c96222e7/access",
+
+//   };
+//   window.__env.API_BASE_URL = "https://vrsdev.avangrid.net";
+//   window.__env.production = false;
+ 
+// })(this);

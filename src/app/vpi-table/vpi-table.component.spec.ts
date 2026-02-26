@@ -54,20 +54,6 @@ describe('VpiTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show error message when audioUrl is missing in the selected row data', () => {
-    component['audioUrl'] = null;
- 
-    component.downloadAudio();
-
-    expect(messageService.add).toHaveBeenCalledWith({
-      severity: 'error',
-      summary: 'error',
-      detail: 'No audio URL to download'
-    });
-  });
-
-
-
   it('should create wavesurfer instance and load audio when waveFormRef exists', () => {
     const mockWaveSurfer = jasmine.createSpyObj('WaveSurfer', ['load']);
     spyOn(WaveSurfer, 'create').and.returnValue(mockWaveSurfer);

@@ -7,7 +7,7 @@ import { SplitButton } from 'primeng/splitbutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular'; // Added BroadcastService
+import { MsalService, MsalBroadcastService } from '@azure/msal-angular'; 
 import { InteractionStatus, EventMessage, EventType, AuthenticationResult } from '@azure/msal-browser';
 import { DataService } from 'services/data.service';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -27,7 +27,7 @@ interface UserMenuItem { label: string; command?: () => void; }
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   public msalService = inject(MsalService);
-  public msalBroadcastService = inject(MsalBroadcastService); // Inject this
+  public msalBroadcastService = inject(MsalBroadcastService); 
   public router = inject(Router);
   public _dataService = inject(DataService);
 

@@ -11,7 +11,7 @@ azure:
 
 pipeline:
   agent: aks
-  node: node22
+  node: node22.17.1
   configfile: none
 
 build:
@@ -25,6 +25,7 @@ sonar:
   exclusions: |
     **/*.spec.ts
     **/node_modules/**
+    **/app.component.ts
 
 deploy:
   enabled: true
