@@ -45,7 +45,7 @@ export class VpiTableComponent {
     pageSize: 10,
   };
   public payload = computed(() => this._dataService.getPayload());
-  public currentPayload!: SearchFilteredDataInput;
+  public currentPayload!: SearchFilteredDataInput | undefined;
   public _dataService = inject(DataService);
   private readonly _apiService = inject(ApiCallsService);
   private readonly _messageService = inject(MessageService);
@@ -97,7 +97,7 @@ export class VpiTableComponent {
     this._dataService.setPayload(newPayload);
   }
 
-  public fetchData(payload: SearchFilteredDataInput): Observable<SearchFilteredDataOutput> {
+  public fetchData(payload: SearchFilteredDataInput | undefined): Observable<SearchFilteredDataOutput> {
     this._dataService.loadingTableDataSignal.set(true);
     return this._apiService.getFilteredData(payload).pipe(
       tap((response: SearchFilteredDataOutput) => {

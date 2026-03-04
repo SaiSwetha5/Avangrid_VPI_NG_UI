@@ -79,8 +79,9 @@ export class AppComponent implements OnInit, OnDestroy {
           {
             label: '<img src="assets/vpi.png" alt="VPI"  > VPI',
             command: () => {
-              this.router.navigate(['/vpi']);
+              this._dataService.payload.set(undefined);
               this._dataService.pagedDataSignal.set([]);
+              this.router.navigate(['/vpi']);
 
             }
           },
@@ -145,6 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public navigateVPIPage(): void {
+    this._dataService.payload.set(undefined);
     this.router.navigate(['/vpi']);
   }
 }

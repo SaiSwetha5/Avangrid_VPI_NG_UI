@@ -18,7 +18,7 @@
         <label for="fromDate">From Date<span style="color: red;">*</span></label>
         <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate"
           name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" (onSelect)="validateToDate()"
-          [showTime]="true" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
+          [showTime]="true" (onInput)="validateToDate()" (onBlur)="validateToDate()" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
         <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="error">
           From Date is required.
         </div>
@@ -30,7 +30,7 @@
         <label for="toDate">To Date<span style="color: red;">*</span></label>
         <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate"
           [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'"
-          #toDateRef="ngModel"  [showOnFocus]="false" (onSelect)="validateToDate()"> </p-datepicker>
+          #toDateRef="ngModel"  (onInput)="validateToDate()" (onBlur)="validateToDate()" [showOnFocus]="false" (onSelect)="validateToDate()"> </p-datepicker>
         <div *ngIf="toDateRef.invalid && toDateRef.touched" class="error">
           To Date is required.
         </div>
@@ -88,7 +88,7 @@
       </div> 
       <div class="form-grid">
         <div class="button-row">
-          <p-button label="Apply" type="submit"   role="button" tabindex="0"  [disabled]="filterForm.invalid"
+          <p-button label="Apply" type="submit" role="button" tabindex="0" [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError"
            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)" (click)="applyDateFilters(filterForm)"></p-button>
           <p-button type="button"  label="Reset" severity="info" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
           <p-button type="button"  label="Cancel" severity="warn" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="cancelFilters(filterForm)"></p-button>

@@ -16,7 +16,7 @@ public readonly successToasterSignal = signal<boolean>(true);
 public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
 public selectedOpcode: WritableSignal<string | null> = signal(null);
 
-public payloadSignal = signal<SearchFilteredDataInput>({
+public payloadSignal = signal<SearchFilteredDataInput | undefined>({
   filters: {},
   pagination: {
     pageNumber: 1,
