@@ -53,6 +53,11 @@ export class VpiSliderComponent implements OnInit {
   private readonly datePipe = inject(DatePipe);
   public readonly _dataService = inject(DataService);
   private readonly router = inject(Router);
+  public dateRanges: Record<string, string> = {
+  RGE: '02 Jun, 2014 - 23 Jun, 2022',
+  NYSEG: '21 Oct, 2014 - 25 Oct, 2022',
+  CMP: '12 Aug, 2014 - 18 May, 2022'
+}; 
 
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
@@ -101,7 +106,7 @@ export class VpiSliderComponent implements OnInit {
       to_date: this.getFormattedDate(this.toDate),
       opco: this.opCode?.code ? this.opCode.code : "",
       filters: {
-         name: this.nameModel ? this.nameModel.split(',') : null,
+        name: this.nameModel ? this.nameModel.split(',') : null,
         extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
         objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
         channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
@@ -119,32 +124,85 @@ export class VpiSliderComponent implements OnInit {
     this.openDrawer = false;
     this.router.navigate(['/vpi']);
   }
-   
-  public validateToDate(): void {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    this.toDateError = false;
-    this.fromDateError = false;
-    this.dateRangeError = false;
-    if (this.toDate) {
-      const toDateOnly = new Date(this.toDate);
-      toDateOnly.setHours(0, 0, 0, 0);
-      this.toDateError = toDateOnly > today;
-    }
+ 
+public validateFromDate(): void {
+  this.fromDateError = false;
+  this.dateRangeError = false;
+
+  if (!this.opCode?.code) {
+    return;
+  }
+
+  const rangeString = this.dateRanges[this.opCode.code];
+  if (rangeString) {
+    const [startStr, endStr] = rangeString.split(' - ');
+    const minAllowed = new Date(startStr);
+    const maxAllowed = new Date(endStr);
+
+    minAllowed.setHours(0, 0, 0, 0);
+    maxAllowed.setHours(0, 0, 0, 0);
+
     if (this.fromDate) {
       const fromDateOnly = new Date(this.fromDate);
       fromDateOnly.setHours(0, 0, 0, 0);
-      this.fromDateError = fromDateOnly > today;
+
+      if (fromDateOnly < minAllowed || fromDateOnly > maxAllowed) {
+        this.fromDateError = true;
+      }
     }
 
-    if (this.fromDate && this.toDate) {
+     if (this.fromDate && this.toDate) {
       const fromDateOnly = new Date(this.fromDate);
       const toDateOnly = new Date(this.toDate);
       fromDateOnly.setHours(0, 0, 0, 0);
       toDateOnly.setHours(0, 0, 0, 0);
-      this.dateRangeError = fromDateOnly > toDateOnly;
+
+      if (fromDateOnly > toDateOnly) {
+        this.dateRangeError = true;
+      }
     }
   }
+}
+
+public validateToDate(): void {
+  this.toDateError = false;
+  this.dateRangeError = false;
+
+  if (!this.opCode?.code) {
+    return;
+  }
+
+  const rangeString = this.dateRanges[this.opCode.code];
+  if (rangeString) {
+    const [startStr, endStr] = rangeString.split(' - ');
+    const minAllowed = new Date(startStr);
+    const maxAllowed = new Date(endStr);
+
+    minAllowed.setHours(0, 0, 0, 0);
+    maxAllowed.setHours(0, 0, 0, 0);
+
+    if (this.toDate) {
+      const toDateOnly = new Date(this.toDate);
+      toDateOnly.setHours(0, 0, 0, 0);
+
+      if (toDateOnly < minAllowed || toDateOnly > maxAllowed) {
+        this.toDateError = true;
+      }
+    }
+
+     if (this.fromDate && this.toDate) {
+      const fromDateOnly = new Date(this.fromDate);
+      const toDateOnly = new Date(this.toDate);
+      fromDateOnly.setHours(0, 0, 0, 0);
+      toDateOnly.setHours(0, 0, 0, 0);
+
+      if (fromDateOnly > toDateOnly) {
+        this.dateRangeError = true;
+      }
+    }
+  }
+}
+
 
   public openDrawerFunction(ngForm: NgForm): void {
     this.openDrawer = true;

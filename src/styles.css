@@ -28,7 +28,7 @@
 
 .my-green-drawer .drawer-subtitle {
   font-size: 0.875rem;
-  color: orangered;
+  color: darkgreen;
   margin-top: 0.25rem;
 }
 
@@ -54,4 +54,5 @@
  
 .p-card .p-card-body {
   padding-bottom: 0 !important;
+    padding-top: 0 !important;
 }

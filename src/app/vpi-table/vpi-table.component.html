@@ -1,4 +1,4 @@
-<div style="background-image: linear-gradient(135deg,lightyellow, #00A443, #00A443); min-height: 88vh; overflow-y: auto;">
+<div style="background-image: linear-gradient(135deg,lightyellow, #00A443, lightyellow); min-height: 88vh; overflow-y: auto;">
   <p-toolbar class="toolbar-color">
     <ng-template #start>
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
@@ -20,11 +20,11 @@
   <div class="spinner-container" *ngIf="loading()">
     <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
   </div>
-  <div class="table-shell">
+ 
   <p-table ngSkipHydration showGridlines #dt class="custom-table" size="small" selectionMode="multiple"
     [(selection)]="selectedRow" dataKey="objectId" [paginator]="_dataService.pagedDataSignal().length > 0"
     [first]="first()" [rowsPerPageOptions]="[10, 20, 50]" [responsiveLayout]="'scroll'"
-    [tableStyle]="{ 'width': '99%', 'margin': '0px 1px 0px 1px' }" [resizableColumns]="true" columnResizeMode="fit"
+    [tableStyle]="{ 'width': '99.7%', 'margin': '0px 0px 0px 0px' }" [resizableColumns]="true" columnResizeMode="fit"
     [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
     [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true">
 
@@ -68,7 +68,7 @@
       </p-panel>
     </ng-template>
   </p-table>
- </div>
+ 
 </div>
 
 

@@ -33,3 +33,12 @@
 .field-label .label-main { display: block; }
 .field-label .label-sub { display: block; font-size: 0.85rem }
 
+.info-box { 
+  border-radius: 2px;           
+  font-size: 13px;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  display: inline-block;
+  color: red;
+  margin-bottom: 10px;
+}

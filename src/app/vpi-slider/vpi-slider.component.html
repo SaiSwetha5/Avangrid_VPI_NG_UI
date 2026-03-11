@@ -14,36 +14,44 @@
 
 <p-card>
     <form #filterForm="ngForm">
-      <div class="form-grid">
+          <div class="form-grid"> <label for="opcode">Select Opcode<span style="color: red;">*</span></label>
+       <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"  placeholder="Select Opcode" #opCodeRef="ngModel" required> 
+
+       </p-select>
+       <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)"> <small class="error">Opcode is required.</small> </div> 
+      </div>
+
+     <div class="form-grid">
         <label for="fromDate">From Date<span style="color: red;">*</span></label>
-        <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate"
-          name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" (onSelect)="validateToDate()"
-          [showTime]="true" (onInput)="validateToDate()" (onBlur)="validateToDate()" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
+        <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate" 
+          name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" 
+          [showTime]="true"   [disabled]="!opCode?.name"  (onInput)="validateFromDate()" (onBlur)="validateFromDate()"  (onSelect)="validateFromDate()" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
         <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="error">
           From Date is required.
         </div>
-        <div *ngIf="fromDateError" class="error">
-          From Date cannot be in the future.
-        </div>
+     
       </div>
+        <div *ngIf="fromDateError" class="info-box">
+          Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
+        </div>
       <div class="form-grid">
         <label for="toDate">To Date<span style="color: red;">*</span></label>
-        <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate"
+        <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate" 
           [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'"
-          #toDateRef="ngModel"  (onInput)="validateToDate()" (onBlur)="validateToDate()" [showOnFocus]="false" (onSelect)="validateToDate()"> </p-datepicker>
+          #toDateRef="ngModel" [disabled]="!opCode?.name"   (onSelect)="validateToDate()" (onInput)="validateToDate()" (onBlur)="validateToDate()"  [showOnFocus]="false" 
+        > </p-datepicker>
         <div *ngIf="toDateRef.invalid && toDateRef.touched" class="error">
           To Date is required.
         </div>
-        <div *ngIf="toDateError" class="error">
-          To Date cannot be in the future.
+    
+      </div>
+      
+        <div *ngIf="toDateError" class="info-box">
+       Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
         </div>
-        <div *ngIf="dateRangeError" class="error">
+    <div *ngIf="dateRangeError && !fromDateError && !toDateError" class="error">
           From Date cannot be later than To Date.
         </div>
-      </div>
-    <div class="form-grid"> <label for="opcode">Select Opcode<span style="color: red;">*</span></label>
-       <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" placeholder="Select Opcode" #opCodeRef="ngModel" required> </p-select>
-       <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)"> <small class="error">Opcode is required.</small> </div> </div>
           <div class="form-grid">
       <label for="aniAliDigits" class="field-label">
           <span class="label-main">AniAliDigits</span>
