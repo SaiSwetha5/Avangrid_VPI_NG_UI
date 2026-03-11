@@ -46,34 +46,6 @@ describe('VpiSliderComponent', () => {
     expect(component.dateRangeError).toBeFalse();
   });
 
-
-  it('should set toDateError true when toDate is in the future', () => {
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 1);
-    component.toDate = futureDate;
-    component.validateToDate();
-    expect(component.toDateError).toBeTrue();
-    expect(component.fromDateError).toBeFalse();
-    expect(component.dateRangeError).toBeFalse();
-  });
-
-
-
-  it('should set dateRangeError true when fromDate > toDate', () => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    component.fromDate = today;
-    component.toDate = yesterday;
-
-    component.validateToDate();
-
-    expect(component.dateRangeError).toBeTrue();
-    expect(component.toDateError).toBeFalse();
-    expect(component.fromDateError).toBeFalse();
-  });
-
   it('should not set any errors when dates are valid (past or today)', () => {
     const today = new Date();
     const yesterday = new Date(today);

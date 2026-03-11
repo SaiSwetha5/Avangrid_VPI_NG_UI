@@ -51,24 +51,47 @@ public payloadSignal = signal<SearchFilteredDataInput | undefined>({
   }
 
 
-public hasAnyValue(payload: SearchFilteredDataInput | null | undefined) : boolean {
-  if (!payload) return false;
-  if (payload.from_date?.trim()) return true;
-  if (payload.to_date?.trim()) return true;
-  if (payload.opco?.trim()) return true;
+public hasAnyValue(payload: SearchFilteredDataInput | null | undefined): boolean {
+  if (!payload) {
+    return false;
+  }
+
+  const hasNonEmptyString = (s?: string | null): boolean => {
+    return typeof s === 'string' && s.trim().length > 0;
+  };
+
+  if (hasNonEmptyString(payload.from_date)) {
+    return true;
+  }
+
+  if (hasNonEmptyString(payload.to_date)) {
+    return true;
+  }
+
+  if (hasNonEmptyString(payload.opco)) {
+    return true;
+  }
 
   const filters = payload.filters;
-  if (!filters) 
-    {
+  if (!filters || typeof filters !== 'object') {
+    return false;
+  }
+
+  return Object.values(filters).some((value) => {
+    if (value == null) {
       return false;
     }
-    
-  return Object.values(filters).some(value => {
-    if (value == null) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) {
-      return value.some(item => (item ?? '').toString().trim().length > 0);
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
     }
+
+    if (Array.isArray(value)) {
+      return value.some((item) => {
+        return (item ?? '').toString().trim().length > 0;
+      });
+    }
+
     return false;
   });
 }
