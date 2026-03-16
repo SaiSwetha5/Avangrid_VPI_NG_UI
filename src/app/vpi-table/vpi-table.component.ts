@@ -77,10 +77,13 @@ export class VpiTableComponent {
 
   public effectData = effect(() => {
   this.currentPayload = this.payload();
-   if (!this._dataService.hasAnyValue(this.currentPayload)) {
+
+   if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
+     this._dataService.loadingTableDataSignal.set(false);
       return;      
-    }
-    this.fetchData(this.currentPayload).subscribe();
+    } else {
+        this.fetchData(this.currentPayload).subscribe();
+   }
   });
 
 
@@ -125,14 +128,7 @@ export class VpiTableComponent {
         this._dataService.loadingTableDataSignal.set(false);
       }),
       catchError((err: HttpErrorResponse) => {
-        console.error('Metadata API error:', err);
-        this._dataService.loadingTableDataSignal.set(false);
-
-        this._router.navigate(['/error'], {
-          state: { error: err.error }
-        });
-
-        return throwError(() => err);
+         return throwError(() => err);
       })
     );
   }

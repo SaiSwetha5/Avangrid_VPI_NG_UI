@@ -14,7 +14,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
+    catchError((error: HttpErrorResponse) => {
         const apiError = {
           timestamp: new Date().toISOString(),
           status: error.status ?? 0,
@@ -24,25 +24,27 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
         this.errorService.set(apiError);
 
-        if (error.status >= 400 && error.status < 500) {
-          return throwError(() => error);
-        } if (!this.router.url.startsWith('/error')) {
-          this.router.navigate(['/error'], { replaceUrl: true });
-        }
-        return throwError(() => error);
+         if (!this.router.url.startsWith('/error')) {
+          this.router.navigate(['/error'], { state: { error: apiError } }); 
+               }
+
+         return throwError(() => error);
       })
     );
   }
-
-  private normalizeErrorMessage(error: HttpErrorResponse): string {
-    if (error.status === 0) {
-      const msg = error.message || '';
-      if (/ERR_CERT_|SSL|certificate/i.test(msg)) return 'Secure connection failed (SSL certificate mismatch).';
-      if (/CORS|cors/i.test(msg)) return 'Request blocked by CORS policy.';
-      return 'Network error: No response from server.';
-    }
-    if (typeof error.error === 'string') return error.error;
-    if (error.error?.message) return error.error.message;
-    return error.message || `HTTP ${error.status}`;
+ private normalizeErrorMessage(error: HttpErrorResponse): string {
+   if (typeof error.error === 'string' && error.error.trim().length > 0) {
+    return error.error;
   }
+
+   if (error.error?.message) {
+    return error.error.message;
+  }
+
+   if (error.message) {
+    return error.message;
+  }
+
+   return `Unexpected error (HTTP ${error.status || 'unknown'})`;
+}
 }

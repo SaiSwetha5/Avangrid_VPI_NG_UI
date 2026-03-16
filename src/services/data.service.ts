@@ -30,7 +30,10 @@ public payloadSignal = signal<SearchFilteredDataInput | undefined>({
     return this.payloadSignal();
   }
 
-  public setPayload(payload: SearchFilteredDataInput) { 
+  public setPayload(payload: SearchFilteredDataInput | undefined) { 
+     if (!payload?.filters) {
+    return;
+  }
      this.payloadSignal.set(payload);
   }
 

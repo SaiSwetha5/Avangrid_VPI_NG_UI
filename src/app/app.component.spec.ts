@@ -8,7 +8,7 @@ class MockMsalService {
     handleRedirectPromise: () => Promise.resolve(null),
     getActiveAccount: () => ({ username: 'mockUser' }),
     getAllAccounts: () => [],
-    addEventCallback: () => {}
+    addEventCallback: jasmine.createSpy('addEventCallback').and.returnValue(null)
   };
   loginRedirect = () => of(null);
   loginPopup = () => of(null);

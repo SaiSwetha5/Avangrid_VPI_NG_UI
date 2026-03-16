@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiError } from 'interfaces/vpi-interface';
 import { ErrorService } from 'services/error.service';
 
@@ -10,12 +11,17 @@ import { ErrorService } from 'services/error.service';
   styleUrl: './error.component.scss'
 })
 
-export class ErrorComponent implements OnInit{
-  private readonly errorService = inject(ErrorService);
-  public error? : ApiError;
+ export class ErrorComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly errorService = inject(ErrorService);  
+  public error?: ApiError;
 
- public ngOnInit(): void {
-    this.error = this.errorService.get();
+  ngOnInit() {
+     const nav = this.router.getCurrentNavigation();
+    this.error = nav?.extras?.state?.['error'];
+
+     if (!this.error) {
+      this.error = this.errorService.get();
+    }
   }
-
 }

@@ -90,7 +90,35 @@ export class VpiSliderComponent implements OnInit {
     this.dateRangeError = false;
   }
 
+private isToday(date?: Date | string | null): boolean {
+  if (!date) return false;
+  const d = typeof date === 'string' ? new Date(date) : date;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const cmp = new Date(d);
+  cmp.setHours(0, 0, 0, 0);
+
+  return cmp.getTime() === today.getTime();
+}
+
   public applyDateFilters(ngForm: NgForm): void {
+  
+  const isFromToday = this.isToday(this.fromDate);
+  const isToToday = this.isToday(this.toDate);
+  if (isFromToday || isToToday) {
+     this.fromDateError = isFromToday || this.fromDateError;
+    this.toDateError = isToToday || this.toDateError;
+     this.dateRangeError = true;
+    return;
+  }
+  
+const isRangeValid = this.validateRange();
+  if (!isRangeValid) {
+    return;
+  }
+
     if (this.objectIdModel) {
     const ids = this.objectIdModel.split(',').map(x => x.trim());
       this.validIDs = ids.filter(id => this.isValidUUID(id));
@@ -123,86 +151,54 @@ export class VpiSliderComponent implements OnInit {
     ngForm.resetForm();
     this.openDrawer = false;
     this.router.navigate(['/vpi']);
-  }
+      
+  } 
+
+private normalizeDate(date: Date | string | null): number | null {
+  if (!date) return null;
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
  
-public validateFromDate(): void {
+public validateFromDate(): boolean {
   this.fromDateError = false;
-  this.dateRangeError = false;
-
-  if (!this.opCode?.code) {
-    return;
-  }
-
-  const rangeString = this.dateRanges[this.opCode.code];
-  if (rangeString) {
-    const [startStr, endStr] = rangeString.split(' - ');
-    const minAllowed = new Date(startStr);
-    const maxAllowed = new Date(endStr);
-
-    minAllowed.setHours(0, 0, 0, 0);
-    maxAllowed.setHours(0, 0, 0, 0);
-
-    if (this.fromDate) {
-      const fromDateOnly = new Date(this.fromDate);
-      fromDateOnly.setHours(0, 0, 0, 0);
-
-      if (fromDateOnly < minAllowed || fromDateOnly > maxAllowed) {
-        this.fromDateError = true;
-      }
-    }
-
-     if (this.fromDate && this.toDate) {
-      const fromDateOnly = new Date(this.fromDate);
-      const toDateOnly = new Date(this.toDate);
-      fromDateOnly.setHours(0, 0, 0, 0);
-      toDateOnly.setHours(0, 0, 0, 0);
-
-      if (fromDateOnly > toDateOnly) {
-        this.dateRangeError = true;
-      }
-    }
-  }
+  return this.validateRange();
 }
-
-public validateToDate(): void {
+ 
+public validateToDate(): boolean {
   this.toDateError = false;
-  this.dateRangeError = false;
-
-  if (!this.opCode?.code) {
-    return;
-  }
-
-  const rangeString = this.dateRanges[this.opCode.code];
-  if (rangeString) {
-    const [startStr, endStr] = rangeString.split(' - ');
-    const minAllowed = new Date(startStr);
-    const maxAllowed = new Date(endStr);
-
-    minAllowed.setHours(0, 0, 0, 0);
-    maxAllowed.setHours(0, 0, 0, 0);
-
-    if (this.toDate) {
-      const toDateOnly = new Date(this.toDate);
-      toDateOnly.setHours(0, 0, 0, 0);
-
-      if (toDateOnly < minAllowed || toDateOnly > maxAllowed) {
-        this.toDateError = true;
-      }
-    }
-
-     if (this.fromDate && this.toDate) {
-      const fromDateOnly = new Date(this.fromDate);
-      const toDateOnly = new Date(this.toDate);
-      fromDateOnly.setHours(0, 0, 0, 0);
-      toDateOnly.setHours(0, 0, 0, 0);
-
-      if (fromDateOnly > toDateOnly) {
-        this.dateRangeError = true;
-      }
-    }
-  }
+   return this.validateRange();
 }
+ 
+public validateRange(): boolean{
+  this.dateRangeError = false;
+  const opCode = this.opCode?.code;
+  
+  if (!opCode || !this.dateRanges[opCode]) {
+    return false;
+  }
+  const [startStr, endStr] = this.dateRanges[opCode].split(' - ');
+  const minAllowed = this.normalizeDate(startStr)!;
+  const maxAllowed = this.normalizeDate(endStr)!;
 
+  const fromTime = this.normalizeDate(this.fromDate);
+  const toTime = this.normalizeDate(this.toDate);
+
+  if (fromTime && (fromTime < minAllowed || fromTime > maxAllowed)) {
+    this.fromDateError = true;
+  }
+
+  if (toTime && (toTime < minAllowed || toTime > maxAllowed)) {
+    this.toDateError = true;
+  }
+
+  if (fromTime && toTime && fromTime > toTime) {
+    this.dateRangeError = true;
+  }
+
+  return !(this.fromDateError || this.toDateError || this.dateRangeError);
+}
 
   public openDrawerFunction(ngForm: NgForm): void {
     this.openDrawer = true;
@@ -212,10 +208,8 @@ public validateToDate(): void {
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
-
   }
-
-
+  
   public isValidUUID(uuid: string): boolean {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

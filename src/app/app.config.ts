@@ -1,4 +1,4 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { InteractionType } from '@azure/msal-browser';
@@ -21,6 +21,7 @@ import {
 } from '@azure/msal-angular';
 import { HttpErrorInterceptor } from 'interceptors/http-error.interceptor';
 import { environment } from 'environments/environment';
+import { GlobalErrorHandler } from 'interceptors/global-error';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -60,11 +61,13 @@ export const appConfig: ApplicationConfig = {
           ['https://graph.microsoft.com/v1.0', ['User.Read']],
           [environment.apiBaseUrl, [environment.msal.backendScope]]
         ])
-      } as MsalInterceptorConfiguration
+      } as MsalInterceptorConfiguration,
+      
     },
 
     { provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
 
     providePrimeNG({
       theme: { preset: Aura }
