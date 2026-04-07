@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, Input, signal, ViewChild } from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import {  DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
@@ -8,19 +8,20 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { AccordionModule } from 'primeng/accordion';
-import { Dialog, DialogModule } from 'primeng/dialog';
+import { DialogModule } from 'primeng/dialog';
 import { PanelModule } from 'primeng/panel';
 import { TabsModule } from 'primeng/tabs';
 import { DataService } from 'services/data.service';
 import { Toolbar } from 'primeng/toolbar';
 import { VpiSliderComponent } from '../vpi-slider/vpi-slider.component';
 import WaveSurfer from 'wavesurfer.js';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { catchError, Observable, of, tap, throwError } from 'rxjs';
-import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { Chip } from 'primeng/chip';
 import { ApiCallsService } from 'services/api-calls.service';
@@ -29,7 +30,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-vpi-table',
-  imports: [HttpClientModule, ProgressBar, Chip, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, Toolbar, Dialog, CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
+  imports: [ ProgressBar, Chip, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, Toolbar,CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
   standalone: true,
   providers: [DatePipe, MessageService],
   templateUrl: './vpi-table.component.html',
@@ -39,53 +40,48 @@ import { Router } from '@angular/router';
 
 export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
-   @Input() activate?: (e: KeyboardEvent) => void;
   public pagination = {
     pageNumber: 1,
     pageSize: 10,
   };
   public payload = computed(() => this._dataService.getPayload());
-  public currentPayload!: SearchFilteredDataInput | undefined;
+  public currentPayload: SearchFilteredDataInput | undefined;
   public _dataService = inject(DataService);
   private readonly _apiService = inject(ApiCallsService);
   private readonly _messageService = inject(MessageService);
+  private readonly _destroyRef    = inject(DestroyRef);
   private readonly _router = inject(Router);
   public getSelectedOpcode = this._dataService.selectedOpcode;
   public first = signal<number>(0);
-  public rows = signal<number>(10);
   public hasErrorForAudioFile = false;
   public audioErrorMessage = ''
   public totalPages = signal(0);
-  public checked = true;
-  public fromDate: string | null = null;
-  public toDate: string | null = null;
-  public opCode: { name: string; code: string } | null = null;
   public audioPopUpVisible = false;
-  public filterDialog = false;
   public selectedRow: VPIDataItem[] = [];
   public rowSelected = false;
   public displayHeaders = DISPLAY_HEADERS;
   public selectedRowData!: VPIMetaDataOutput;
   public audioUrl: string | null = null;
   private wavesurfer: WaveSurfer | null = null;
-  public isFirstRun = true;
   public trackById = (index: number, header: { id: string }) => header.id;
   public downloadDisabled = true;
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
-  public successToaster = computed(() => this._dataService.successToasterSignal());
 
-  public effectData = effect(() => {
+  private effectData = effect(() => {
   this.currentPayload = this.payload();
 
    if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
      this._dataService.loadingTableDataSignal.set(false);
       return;      
-    } else {
-        this.fetchData(this.currentPayload).subscribe();
-   }
-  });
-
+    }  
+    this.first.set(0);
+    this.selectedRow = [];
+    this.fetchData(this.currentPayload)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe();
+  }
+);
 
   public onPageChange(event: PaginatorState): void {
     const pageNumber = Math.floor(event.first / event.rows) + 1;
@@ -148,7 +144,11 @@ export class VpiTableComponent {
         return of(null);
       })
     ).subscribe((metadata) => {
-      if (metadata) {
+       if (!metadata) 
+       {
+        this._dataService.loadingAudioFile.set(false); 
+        return; 
+       }
         this.selectedRowData = metadata;
         if (this.selectedRowData) {
           this.rowSelected = true;
@@ -167,7 +167,7 @@ export class VpiTableComponent {
         this.audioUrl = null;
         const audioRecordingInput = {
           date: rowData.startTime ? rowData.startTime : '',
-          opco: this._dataService.selectedOpcode() || '',
+          opco: this._dataService.selectedOpcode() ?? '',
           username: rowData.username ? rowData.username : '',
           aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
           extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
@@ -177,16 +177,13 @@ export class VpiTableComponent {
         };
 
         this._apiService.getAudioRecordings(audioRecordingInput).pipe(
-
           catchError((error: HttpErrorResponse) => {
-
             this._dataService.loadingAudioFile.set(false);
             this.hasErrorForAudioFile = false;
             this.audioErrorMessage = "";
             if (error.error instanceof Blob && error.error.type === 'application/json') {
               error.error.text().then((jsonText: string) => {
                 const errObj = JSON.parse(jsonText);
-
                 this.hasErrorForAudioFile = true;
                 this.audioErrorMessage = errObj.message || 'Failed to load waveform data.';
               });
@@ -194,17 +191,18 @@ export class VpiTableComponent {
             return of(null);
           })
         ).subscribe((audioFile) => {
-
           this.hasErrorForAudioFile = false;
           this.audioErrorMessage = "";
           if (audioFile) {
             this._dataService.loadingAudioFile.set(false);
             this.clearWaveform();
             this.audioUrl = URL.createObjectURL(audioFile);
-            setTimeout(() => this.Waveform(), 0);
-          }
+            setTimeout(() => this.waveform(), 0);
+          } else {
+          this._dataService.loadingAudioFile.set(false); 
+        }
         });
-      }
+      
     });
   }
 
@@ -233,7 +231,6 @@ export class VpiTableComponent {
       });
     }, 3000);
   }
-
 
   public downloadAudioFiles(): void {
     if (this.selectedRow.length === 0) return;
@@ -272,7 +269,6 @@ export class VpiTableComponent {
 
       }
     });
-
   }
 
   public onMaximize(): void {
@@ -283,14 +279,7 @@ export class VpiTableComponent {
     }
   }
 
-  public formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  }
-
   private clearWaveform(): void {
-
     if (this.wavesurfer) {
       this.wavesurfer.destroy();
 
@@ -300,7 +289,7 @@ export class VpiTableComponent {
     this.audioErrorMessage = "";
   }
 
-  public Waveform(): void {
+  public waveform(): void {
     if (!this.waveFormRef) {
       return;
     }
@@ -317,9 +306,4 @@ export class VpiTableComponent {
 
     this.wavesurfer?.load(this.audioUrl ?? '');
   }
-
-
-
-
 }
-

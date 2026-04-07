@@ -1,11 +1,10 @@
-<div style="background-image: linear-gradient(135deg,lightyellow, #00A443, lightyellow); min-height: 88vh; overflow-y: auto;">
+<div class="vpi-container">
   <p-toolbar class="toolbar-color">
     <ng-template #start>
       <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
     <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> 
-    <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}} (From Date - To Date : {{currentPayload.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload.to_date
-          |date: 'dd/MM/yyyy' }} UTC)</b></span>
+    <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}} (From Date - To Date : {{currentPayload?.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload?.to_date |date: 'dd/MM/yyyy' }} UTC)</b></span>
     </ng-template>
     <ng-template #end>
 
@@ -196,19 +195,7 @@
                         <td><b>Tags</b></td>
                         <td>{{ interaction.tags }}</td>
                       </tr>
-                         <tr>
-                        <td><b>Transcript Status</b></td>
-                        <td>{{ interaction.transcriptStatus }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Transcript Result</b></td>
-                        <td>{{ interaction.transcriptResult }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Tags</b></td>
-                        <td>{{ interaction.tags }}</td>
-                      </tr>
-                         <tr>
+                       <tr>
                         <td><b>Flag Id</b></td>
                         <td>{{ interaction.flagId }}</td>
                       </tr>

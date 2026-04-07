@@ -1,4 +1,4 @@
-import { Component, inject, OnInit} from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
@@ -15,37 +15,48 @@ interface OPCODES {
   code: string;
 }
 
+const OPCODES: OPCODES[] = [
+  { name: 'RGE',   code: 'RGE'   },
+  { name: 'NYSEG', code: 'NYSEG' },
+  { name: 'CMP',   code: 'CMP'   },
+];
+
+const DIRECTIONS: { name: string; code: boolean }[] = [
+  { name: 'Inbound',  code: true  },
+  { name: 'Outbound', code: false },
+];
+
+ const DATERANGES: Record<string, string> = {
+  RGE: '02 Jun, 2014 - 23 Jun, 2022',
+  NYSEG: '21 Oct, 2014 - 25 Oct, 2022',
+  CMP: '12 Aug, 2014 - 18 May, 2022'
+}; 
 @Component({
   selector: 'app-vpi-slider',
-  imports: [ToastModule, RouterModule, FormsModule, DatePickerModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
+  imports: [ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
   templateUrl: './vpi-slider.component.html',
   styleUrl: './vpi-slider.component.scss',
   standalone: true,
   providers: [DatePipe]
 })
 
-
-export class VpiSliderComponent implements OnInit {
+export class VpiSliderComponent  {
   public dateRangeError = false;
   public toDateError = false; 
-  public nameError = false;
   public fromDateError = false;
-  public opCodes: OPCODES[] | undefined;
-  public directions: { name: string; code: boolean }[] = [];
+  public readonly opCodes    = OPCODES;
+  public readonly directions = DIRECTIONS;
   public opCode: { name: string; code: string } | null = null;
   public selectedDirection: { name: string; code: string } | null = null;
   public pageNumber = 1;
-  public fromDate: Date = new Date();
-  public toDate: Date = new Date();
+  public fromDate: Date | null = null;
+  public toDate:   Date | null = null;
   public hourFormat = "24";
   public aniAliDigitsModel = '';
   public extensionNumberModel = '';
   public channelNumberModel : number | null = null;
   public agentIdModel = '';
   public objectIdModel = '';
-  public activeTab = 'VPI';
-  public visible = false;
-  public currentUrl = '';
   public openDrawer = false;
   public nameModel = '';
   public validIDs : string[] = [];
@@ -53,25 +64,10 @@ export class VpiSliderComponent implements OnInit {
   private readonly datePipe = inject(DatePipe);
   public readonly _dataService = inject(DataService);
   private readonly router = inject(Router);
-  public dateRanges: Record<string, string> = {
-  RGE: '02 Jun, 2014 - 23 Jun, 2022',
-  NYSEG: '21 Oct, 2014 - 25 Oct, 2022',
-  CMP: '12 Aug, 2014 - 18 May, 2022'
-}; 
-
+  public dateRanges = DATERANGES
   public getFormattedDate(date: Date | null): string {
-    return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
-  }
-
-  public ngOnInit(): void {
-    this.opCodes = [
-      { name: 'RGE', code: 'RGE' },
-      { name: 'NYSEG', code: 'NYSEG' },
-      { name: 'CMP', code: 'CMP' },
-    ];
-     
-    this.directions = [{ name: 'Inbound', code: true }, { name: 'Outbound', code: false }];
-   }
+    return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
+  } 
 
   public resetFilters(ngForm: NgForm): void {
     ngForm.resetForm();
@@ -91,7 +87,9 @@ export class VpiSliderComponent implements OnInit {
   }
 
 private isToday(date?: Date | string | null): boolean {
-  if (!date) return false;
+  if (!date) {
+    return false;
+  }
   const d = typeof date === 'string' ? new Date(date) : date;
 
   const today = new Date();
@@ -155,7 +153,9 @@ const isRangeValid = this.validateRange();
   } 
 
 private normalizeDate(date: Date | string | null): number | null {
-  if (!date) return null;
+  if (!date) {
+    return null;
+  }
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   return d.getTime();
@@ -170,27 +170,32 @@ public validateToDate(): boolean {
   this.toDateError = false;
    return this.validateRange();
 }
- 
-public validateRange(): boolean{
+
+public validateRange(): boolean {
+   this.fromDateError = false;
+  this.toDateError = false;
   this.dateRangeError = false;
+
   const opCode = this.opCode?.code;
-  
-  if (!opCode || !this.dateRanges[opCode]) {
+  const range = opCode ? this.dateRanges[opCode] : null;
+
+  if (!range) {
     return false;
   }
-  const [startStr, endStr] = this.dateRanges[opCode].split(' - ');
-  const minAllowed = this.normalizeDate(startStr)!;
-  const maxAllowed = this.normalizeDate(endStr)!;
+
+  const [startStr, endStr] = range.split(' - ');
+  const minAllowed = this.normalizeDate(startStr);
+  const maxAllowed = this.normalizeDate(endStr);
 
   const fromTime = this.normalizeDate(this.fromDate);
   const toTime = this.normalizeDate(this.toDate);
 
-  if (fromTime && (fromTime < minAllowed || fromTime > maxAllowed)) {
-    this.fromDateError = true;
+  if (fromTime && minAllowed && maxAllowed) {
+    this.fromDateError = fromTime < minAllowed || fromTime > maxAllowed;
   }
 
-  if (toTime && (toTime < minAllowed || toTime > maxAllowed)) {
-    this.toDateError = true;
+  if (toTime && minAllowed && maxAllowed) {
+    this.toDateError = toTime < minAllowed || toTime > maxAllowed;
   }
 
   if (fromTime && toTime && fromTime > toTime) {

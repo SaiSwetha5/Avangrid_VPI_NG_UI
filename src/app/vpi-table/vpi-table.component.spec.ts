@@ -61,7 +61,7 @@ describe('VpiTableComponent', () => {
     component.waveFormRef = { nativeElement: document.createElement('div') };
     component.audioUrl = 'http://localhost/audio/test.wav';
 
-    component.Waveform();
+    component.waveform();
 
     expect(WaveSurfer.create).toHaveBeenCalledWith(jasmine.objectContaining({
       container: component.waveFormRef.nativeElement

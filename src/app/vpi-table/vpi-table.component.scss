@@ -2,6 +2,12 @@
   text-align: center;
  }
 
+ .vpi-container {
+  background-image: linear-gradient(135deg, lightyellow, #00A443, lightyellow);
+  min-height: 88vh;
+  overflow-y: auto;
+}
+
 .custom-table .p-paginator .p-paginator-page,
 .custom-table .p-paginator .p-paginator-next,
 .custom-table .p-paginator .p-paginator-prev {

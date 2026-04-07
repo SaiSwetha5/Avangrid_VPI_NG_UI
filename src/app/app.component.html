@@ -11,14 +11,14 @@
     </ng-template>
     <ng-template #end>
       <p-button type="button"  label="VPI Dashboard" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataServiceonKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
+  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
  <p-button type="button"   icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
   (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"
         class="split-button"
         label="Recordings are just a click away!!" 
-         raised="true"
+         [raised]="true"
         [model]="items" 
         severity="warn">
       </p-splitButton>

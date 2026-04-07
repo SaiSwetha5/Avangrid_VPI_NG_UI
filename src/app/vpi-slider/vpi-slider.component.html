@@ -81,7 +81,7 @@
       </div>
       <div class="form-grid">
         <label for="channelNumber">Channel Num</label>
-        <input type="text" placeholder="   Channel Num" pInputText  maxlength="32" [(ngModel)]="channelNumberModel" id="channelNumber"
+        <input type="number" placeholder="   Channel Num" pInputText  maxlength="32" [(ngModel)]="channelNumberModel" id="channelNumber"
           name="channelId" /> 
       </div>
       <div class="form-grid">
@@ -97,7 +97,7 @@
       </div> 
       <div class="form-grid">
         <div class="button-row">
-          <p-button label="Apply" type="submit" role="button" tabindex="0" [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError && (validateFromDate() && validateToDate())"
+          <p-button label="Apply" type="submit" [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError && (validateFromDate() && validateToDate())"
            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)" (click)="applyDateFilters(filterForm)"></p-button>
           <p-button type="button"  label="Reset" severity="info" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
           <p-button type="button"  label="Cancel" severity="warn" (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"  (click)="cancelFilters(filterForm)"></p-button>

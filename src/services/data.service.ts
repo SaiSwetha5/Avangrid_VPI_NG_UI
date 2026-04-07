@@ -12,7 +12,6 @@ public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
 public readonly totalRecordsSignal = signal(0);
 public readonly loadingTableDataSignal = signal<boolean>(false);
 public readonly loadingAudioFile = signal<boolean>(false);
-public readonly successToasterSignal = signal<boolean>(true);
 public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
 public selectedOpcode: WritableSignal<string | null> = signal(null);
 
