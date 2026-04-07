@@ -68,7 +68,7 @@ export class VpiTableComponent {
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
 
-  private effectData = effect(() => {
+  private readonly effectData = effect(() => {
   this.currentPayload = this.payload();
 
    if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {

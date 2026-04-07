@@ -11,7 +11,7 @@ interface AppError {
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  private injector = inject(Injector);
+  private readonly injector = inject(Injector);
 
   handleError(error: unknown): void {
     const router = this.injector.get(Router);
