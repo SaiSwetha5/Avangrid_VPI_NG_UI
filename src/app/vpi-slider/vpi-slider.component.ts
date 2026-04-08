@@ -94,7 +94,9 @@ export class VpiSliderComponent  {
   }
 
  private isToday(date?: Date | string | null): boolean {
-    if (!date) return false;
+    if (!date){
+      return false;
+    } 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cmp = new Date(date);
@@ -173,7 +175,9 @@ public validateRange(): boolean {
     this.dateRangeError = false;
 
     const range = this.getAllowedRange();
-    if (!range) return false;
+    if (!range){
+      return false;
+    } 
 
     const fromTime = this.normalizeDate(this.fromDate);
     const toTime   = this.normalizeDate(this.toDate);
@@ -209,7 +213,9 @@ public validateRange(): boolean {
    private getAllowedRange(): [number, number] | null {
     const opCode = this.opCode?.code;
     const range  = opCode ? this.dateRanges[opCode] : null;
-    if (!range) return null;
+    if (!range){
+      return null;
+    }
 
     const [startStr, endStr] = range.split(' - ');
     const min = this.normalizeDate(startStr);
