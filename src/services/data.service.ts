@@ -74,12 +74,13 @@ public hasAnyValue(payload: SearchFilteredDataInput | null | undefined): boolean
     return true;
   }
 
-  const filters = payload.filters;
+ const filters = payload.filters as Record<string, string | string[] | null | undefined>;
+
   if (!filters || typeof filters !== 'object') {
     return false;
   }
 
-  return Object.values(filters).some((value) => {
+  return Object.values(filters).some((value: unknown) => {
     if (value == null) {
       return false;
     }

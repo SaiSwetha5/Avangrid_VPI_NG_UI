@@ -22,7 +22,7 @@
 //     BACKEND_SCOPE : "api://1b6e7791-4175-4964-a138-43b2c96222e7/access",
 
 //   };
-//   window.__env.API_BASE_URL = "https://vrsdev.avangrid.net";
+//   window.__env.API_BASE_URL = "https://vrsdev.avangrid.net/biz/avangrid-backend";
 //   window.__env.production = false;
  
 // })(this);

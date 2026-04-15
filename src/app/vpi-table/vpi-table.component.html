@@ -1,7 +1,7 @@
 <div class="vpi-container">
   <p-toolbar class="toolbar-color">
     <ng-template #start>
-      <p-chip label="VPI Dashboard" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
+      <p-chip label="VPI Call Recordings" image="assets/vpi.png" alt="VPI Dashboard Icon" class="dashboard-chip" />
     </ng-template>
     <ng-template #center> <span *ngIf="_dataService.pagedDataSignal().length > 0" class="active-filters-box"> 
     <b>Successfully retrieved {{_dataService.totalRecordsSignal()}} records for OPCO: {{_dataService.selectedOpcode()}} (From Date - To Date : {{currentPayload?.from_date |date: 'dd/MM/yyyy' }} - {{currentPayload?.to_date |date: 'dd/MM/yyyy' }} UTC)</b></span>
@@ -62,7 +62,7 @@
       <p-panel class="empty-panel">
         <div class="empty-message-container">
           <i class="pi pi-search"></i>
-          <p>No call recordings found. Please select filters to get VPI data</p>
+          <p class="text-color">No call recordings found. Please select filters to get VPI data</p>
         </div>
       </p-panel>
     </ng-template>
@@ -73,10 +73,10 @@
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
   appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
-    'background-image': 'linear-gradient(to right, #d0f0c0,#e0f7fa,  #d0f0c0)',
+    'background-color': '#008737',
     'width': '40rem',
     'height': '40rem',
-    'color': '#004d40'
+    'color': '#FFFFFF'
   }"> 
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
@@ -86,11 +86,11 @@
   </div>
   <ng-template pTemplate="header">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <strong style="color: darkgreen;">Audio Recording Details </strong>
-      
-       <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" class="p-button-text" (click)="downloadAudio()"
-         aria-label="Download audio" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataService.onKeydown($event)"> </p-button>
+      <strong style="color: #FFFFFF;">Audio Recording Details </strong>
+                <p-button *ngIf="audioUrl"  icon="pi pi-download"  (click)="searchAudio()"
+                    aria-label="Search audio" (keydown.enter)="_dataService.onKeydown($event)"
+                    (keydown.space)="_dataService.onKeydown($event)"> </p-button>
+
     </div>
   </ng-template>
 
@@ -101,7 +101,7 @@
   <div class="cardPadding">
     <p-tabs value="0">
       <p-tablist class="tab-header d-flex justify-content-between align-items-center">
-        <p-tab value="0">VPI META DATA</p-tab>
+        <p-tab value="0" class="text-color">VPI META DATA</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
@@ -109,9 +109,9 @@
           <div class="card">
             <p-tabs value="0">
               <p-tablist>
-                <p-tab value="0">Overview</p-tab>
-                <p-tab value="1">Technical</p-tab>
-                <p-tab value="2">Others</p-tab>
+                <p-tab value="0" class="text-color">Overview</p-tab>
+                <p-tab value="1" class="text-color">Technical</p-tab>
+                <p-tab value="2" class="text-color">Others</p-tab>
 
               </p-tablist>
               <p-tabpanels>

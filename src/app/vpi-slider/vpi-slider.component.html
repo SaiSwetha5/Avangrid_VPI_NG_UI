@@ -14,7 +14,7 @@
 
 <p-card>
     <form #filterForm="ngForm">
-          <div class="form-grid"> <label for="opcode">Select Opcode<span style="color: red;">*</span></label>
+          <div class="form-grid"> <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
        <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"  placeholder="Select Opcode" #opCodeRef="ngModel" required> 
 
        </p-select>
@@ -22,7 +22,7 @@
       </div>
 
      <div class="form-grid">
-        <label for="fromDate">From Date<span style="color: red;">*</span></label>
+        <label for="fromDate">From Date<span class="asterick-color">*</span></label>
         <p-datepicker placeholder="Select from date" [inputStyle]="{'width': '228px'}" inputId="fromDate" 
           name="fromDate"  [showOnFocus]="false" [(ngModel)]="fromDate" required [showIcon]="true"  [appendTo]="'body'" 
           [showTime]="true" (onInput)="validateFromDate()" (onBlur)="validateFromDate()"  (onSelect)="validateFromDate()" [hourFormat]="hourFormat" #fromDateRef="ngModel"></p-datepicker>
@@ -36,7 +36,7 @@
         </div>
         
       <div class="form-grid">
-        <label for="toDate">To Date<span style="color: red;">*</span></label>
+        <label for="toDate">To Date<span class="asterick-color">*</span></label>
         <p-datepicker placeholder="Select to date" [inputStyle]="{'width': '228px'}" inputId="toDate" name="toDate" 
           [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'"
           #toDateRef="ngModel" (onSelect)="validateToDate()" (onInput)="validateToDate()" (onBlur)="validateToDate()"  [showOnFocus]="false" 
@@ -55,10 +55,10 @@
         </div>
           <div class="form-grid">
       <label for="aniAliDigits" class="field-label">
-          <span class="label-main">AniAliDigits</span>
+          <span class="label-main">ANI</span>
           <span class="label-sub">(Customer Number)</span>
         </label>
-        <input placeholder="   AniAliDigits" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
+        <input placeholder="   ANI" type="text"    #aniCtrl="ngModel" pInputText [(ngModel)]="aniAliDigitsModel" id="aniAliDigits"
           name="aniId" /> 
       </div>
        <div class="form-grid">
@@ -97,10 +97,10 @@
       </div> 
       <div class="form-grid">
         <div class="button-row">
-          <p-button label="Apply" type="submit" [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError && (validateFromDate() && validateToDate())"
+          <p-button label="Apply" type="submit" severity="success"  [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError && (validateFromDate() && validateToDate())"
            (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)" (click)="applyDateFilters(filterForm)"></p-button>
-          <p-button type="button"  label="Reset" severity="info" (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
           <p-button type="button"  label="Cancel" severity="warn" (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)"  (click)="cancelFilters(filterForm)"></p-button>
+        <p-button type="button"  label="Reset" severity="info" (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)"  (click)="resetFilters(filterForm)"></p-button>
         </div>
       </div>
 

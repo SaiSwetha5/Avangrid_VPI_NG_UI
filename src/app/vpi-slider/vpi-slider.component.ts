@@ -26,7 +26,7 @@ const OPCODES: OpCode[] = [
 ];
 
 const DIRECTIONS: { name: string; code: boolean }[] = [
-  { name: 'Inbound',  code: true  },
+  { name: 'Inbound',  code:  true },
   { name: 'Outbound', code: false },
 ];
 
@@ -46,7 +46,7 @@ const DIRECTIONS: { name: string; code: boolean }[] = [
 })
 
 export class VpiSliderComponent  {
-
+ public fromDate: Date = new Date();  
   public readonly opCodes    = OPCODES;
   public readonly directions = DIRECTIONS;
   public readonly dateRanges = DATERANGES;
@@ -57,7 +57,6 @@ export class VpiSliderComponent  {
   public toDateError     = false;
   public fromDateError   = false;
   public pageNumber      = 1;
-  public fromDate: Date | null = null;
   public toDate:   Date | null = null;
   public hourFormat           = '24';
   public aniAliDigitsModel    = '';
@@ -71,7 +70,6 @@ export class VpiSliderComponent  {
   public invalidIDs: string[] = [];
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
-  
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
   } 
@@ -136,7 +134,7 @@ const isRangeValid = this.validateRange();
         channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
         aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
         agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
-        direction: this.selectedDirection?.name ?? null,
+        direction: this.selectedDirection?.code ?? null,
       },
       pagination: {
         pageNumber: this.pageNumber,

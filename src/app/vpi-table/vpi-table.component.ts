@@ -42,7 +42,7 @@ export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
   public pagination = {
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 50,
   };
   public payload = computed(() => this._dataService.getPayload());
   public currentPayload: SearchFilteredDataInput | undefined;
@@ -296,8 +296,8 @@ export class VpiTableComponent {
 
     this.wavesurfer = WaveSurfer.create({
       container: this.waveFormRef.nativeElement,
-      waveColor: ["green", "blue", "rgba(255,165,0,0.7)"],
-      progressColor: ["#FFA500", "#1E90FF", "#32CD32"],
+      waveColor: ["#FFA500", "#FFFFFF", "rgba(0,99,190,0.7)"],
+      progressColor: ["#FFFFFF", "#0063BE", "#FFA500"],
       backend: 'MediaElement',
       mediaControls: true,
       height: 100,

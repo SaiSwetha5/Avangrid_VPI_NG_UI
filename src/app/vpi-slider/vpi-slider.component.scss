@@ -21,12 +21,14 @@
   gap: 10px;
   align-items: center;
   margin-bottom: 1rem;
+  color: #FFFFFF;
 }
 
 .error {
-  color: red;
   font-size: 0.85rem;
   margin-top: 0.25rem;
+  color:#FFFF00;
+
 }
 
 .field-label { display: inline-block; line-height: 1.2; }
@@ -36,9 +38,12 @@
 .info-box { 
   border-radius: 2px;           
   font-size: 13px;
-  font-family: 'Segoe UI', sans-serif;
   text-align: center;
   display: inline-block;
-  color: red;
+  color: #FFFF00;
   margin-bottom: 10px;
+}
+
+.asterick-color {
+  color: #FFFFFF;
 }

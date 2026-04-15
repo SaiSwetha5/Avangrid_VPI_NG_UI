@@ -1,11 +1,9 @@
 @import "primeicons/primeicons.css";
 
 .my-green-drawer {
-  --p-drawer-background: linear-gradient(135deg, #00A443,#DCEBE1,#00A443); 
-  --p-drawer-color: Black;         
+  --p-drawer-background: #008737;
   --p-drawer-border-color: transparent;
   --p-drawer-border-radius: 0.5rem;   
-  --p-drawer-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
 }
  
 .split-button {
@@ -16,22 +14,17 @@
   --p-card-background : none
 }
 
-
 .my-green-drawer .drawer-title {
-  font-size: 1.5rem;
-   color:  Black;  
+  font-size: 1.rem;
+   color:  #FFFFFF;
   line-height: 1;
-  font-family: sans-serif;
-  font-weight: bold;
-
 }
 
 .my-green-drawer .drawer-subtitle {
   font-size: 0.875rem;
-  color: darkgreen;
+  color: #FFFFFF;
   margin-top: 0.25rem;
 }
-
 
 .p-paginator .p-paginator-page,
 .p-paginator .p-paginator-next,
@@ -42,17 +35,35 @@
 
 
 .custom-table .p-datatable .p-datatable-thead > tr > th {
-  background-color: #8fbc8f !important;
-  color: black !important;
+  background-color:  #008737 !important;
+  color: rgb(255,255,255) !important;
+  font-family: 'IberPangea SmBold', sans-serif; 
+  font-weight: 400;
 }
 
 
 .p-paginator .p-paginator-page.p-highlight {
-  background-color: darkgreen !important;
-  color: white !important;
+  background-color: #008737 !important;
+  color: #FFFFFF !important;
 }
  
 .p-card .p-card-body {
   padding-bottom: 0 !important;
-    padding-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+@font-face {
+  font-family: 'IberPangeaText';
+  src: url('assets/fonts/IberPangeaText-Medium.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+html, body {
+  font-family: 'IberPangeaText', sans-serif; 
+  font-weight: 300;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon.p-dialog-maximize {
+  color: #FFFFFF !important; 
 }
