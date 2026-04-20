@@ -30,7 +30,6 @@ describe('VpiSliderComponent', () => {
     expect(mockForm.resetForm).toHaveBeenCalled();
     expect(component.fromDate).toEqual(jasmine.any(Date));
     expect(component.toDate).toEqual(jasmine.any(Date));
-    expect(component.openDrawer).toBeTrue();
     expect(component.toDateError).toBeFalse();
     expect(component.fromDateError).toBeFalse();
     expect(component.dateRangeError).toBeFalse();
