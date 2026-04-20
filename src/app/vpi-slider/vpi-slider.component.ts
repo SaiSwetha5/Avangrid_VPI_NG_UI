@@ -1,4 +1,4 @@
-import { Component, inject} from '@angular/core';
+import { Component, effect, inject} from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
@@ -10,11 +10,13 @@ import { CardModule } from 'primeng/card';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+
 interface OpCode {
   name: string;
   code: string;
 }
-
 
 const UUIDREGEX =
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -38,15 +40,15 @@ const DIRECTIONS: { name: string; code: boolean }[] = [
 
 @Component({
   selector: 'app-vpi-slider',
-  imports: [ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
+  imports: [FloatLabel,InputTextModule, ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
   templateUrl: './vpi-slider.component.html',
   styleUrl: './vpi-slider.component.scss',
   standalone: true,
   providers: [DatePipe]
 })
 
-export class VpiSliderComponent  {
- public fromDate: Date = new Date();  
+export class VpiSliderComponent {
+  public fromDate: Date = new Date();  
   public readonly opCodes    = OPCODES;
   public readonly directions = DIRECTIONS;
   public readonly dateRanges = DATERANGES;
@@ -64,18 +66,25 @@ export class VpiSliderComponent  {
   public channelNumberModel: string | null = null;
   public agentIdModel  = '';
   public objectIdModel = '';
-  public openDrawer    = false;
   public nameModel     = '';
   public validIDs:   string[] = [];
   public invalidIDs: string[] = [];
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
+
+  private readonly effectData =   effect(() => {
+      if (this.dataService.openDrawer()) {
+         this.openDrawerFunction();
+      }
+    });
+  
+
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
   } 
 
-  public resetFilters(ngForm: NgForm): void {
-    ngForm.resetForm();
+  public resetFilters(ngForm?: NgForm): void {
+    ngForm?.resetForm();
     this.fromDate = new Date();
     this.toDate = new Date();
     this.toDateError = false;
@@ -85,7 +94,7 @@ export class VpiSliderComponent  {
 
   public cancelFilters(ngForm: NgForm): void {
     ngForm.resetForm();
-    this.openDrawer = false;
+    this.dataService.openDrawer.set(false);
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
@@ -103,7 +112,6 @@ export class VpiSliderComponent  {
   }
 
   public applyDateFilters(ngForm: NgForm): void {
-  
   const isFromToday = this.isToday(this.fromDate);
   const isToToday = this.isToday(this.toDate);
   if (isFromToday || isToToday) {
@@ -143,7 +151,7 @@ const isRangeValid = this.validateRange();
     });
 
     ngForm.resetForm();
-    this.openDrawer = false;
+    this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
       
   } 
@@ -187,9 +195,9 @@ public validateRange(): boolean {
     return !(this.fromDateError || this.toDateError || this.dateRangeError);
   }
 
-  public openDrawerFunction(ngForm: NgForm): void {
-    this.openDrawer = true;
-    ngForm.resetForm();
+  public openDrawerFunction(ngForm?: NgForm): void {
+    this.dataService.openDrawer.set(true);
+    ngForm?.resetForm();
     this.fromDate = new Date();
     this.toDate = new Date();
     this.toDateError = false;

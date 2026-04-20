@@ -1,57 +1,9 @@
 @import "primeicons/primeicons.css";
 
-.my-green-drawer {
-  --p-drawer-background: #008737;
-  --p-drawer-border-color: transparent;
-  --p-drawer-border-radius: 0.5rem;   
+ body {
+  background-color: white;
 }
  
-.split-button {
-   --splitbutton-border-radius: 12px;
-}
-
-.p-card {
-  --p-card-background : none
-}
-
-.my-green-drawer .drawer-title {
-  font-size: 1.rem;
-   color:  #FFFFFF;
-  line-height: 1;
-}
-
-.my-green-drawer .drawer-subtitle {
-  font-size: 0.875rem;
-  color: #FFFFFF;
-  margin-top: 0.25rem;
-}
-
-.p-paginator .p-paginator-page,
-.p-paginator .p-paginator-next,
-.p-paginator .p-paginator-prev {
-  color: #007bff;
-  border: 1px solid darkblue;
-}
-
-
-.custom-table .p-datatable .p-datatable-thead > tr > th {
-  background-color:  #008737 !important;
-  color: rgb(255,255,255) !important;
-  font-family: 'IberPangea SmBold', sans-serif; 
-  font-weight: 400;
-}
-
-
-.p-paginator .p-paginator-page.p-highlight {
-  background-color: #008737 !important;
-  color: #FFFFFF !important;
-}
- 
-.p-card .p-card-body {
-  padding-bottom: 0 !important;
-  padding-top: 0 !important;
-}
-
 @font-face {
   font-family: 'IberPangeaText';
   src: url('assets/fonts/IberPangeaText-Medium.woff2') format('woff2');
@@ -59,11 +11,171 @@
   font-style: normal;
 }
 
+.p-card {
+  --p-card-background : none
+} 
+
 html, body {
   font-family: 'IberPangeaText', sans-serif; 
   font-weight: 300;
 }
 
-.p-dialog .p-dialog-header .p-dialog-header-icon.p-dialog-maximize {
-  color: #FFFFFF !important; 
+
+.my-green-drawer {
+  --p-drawer-background: #008737;
+   --p-drawer-border-radius: 0.5rem;
+  width: 400px !important;
+   max-height: 100vh ;  
+  padding-bottom: 1rem;
 }
+
+.my-green-drawer .p-drawer-header {
+  background-color: #008737;  
+  padding: 8px 16px;         
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.drawer-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;         
+  font-weight: 300;
+  color: #ffffff;
+}
+
+.drawer-title i.iconClass {
+  margin-right: 6px;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.title-text {
+  line-height: 1.2;
+}
+
+.drawer-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.85);
+  margin-top: 2px;
+}
+
+.my-green-drawer .p-drawer-header .closeButton,
+.my-green-drawer .p-drawer-header .p-drawer-close {
+  display: none !important;
+}
+
+.form-grid .p-select,
+.form-grid .p-datepicker {
+  width: 100% !important;
+}
+
+.form-grid .p-datepicker .p-datepicker-input-icon-container {
+  width: 100%;
+  display: flex;
+}
+
+.form-grid .p-datepicker .p-datepicker-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.split-button {
+   --splitbutton-border-radius: 12px;
+}
+
+  
+.p-card .p-card-body {
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+ 
+.custom-table .p-datatable-thead > tr > th {
+  background-color:  #008737 !important; 
+  color: #ffffff !important;
+  font-family: 'IberPangeaText', sans-serif;
+   font-weight: 600;
+  text-align: center;
+  padding: 12px;
+  border: none;   
+    white-space: normal;    
+  word-wrap: break-word;  
+    font-size: 0.95rem;   
+ }
+
+.custom-table .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 10px;
+  border: none;               
+  font-size: 0.9rem;
+  color:  #008737;
+  white-space: normal;   
+  word-wrap: break-word; 
+}
+ 
+.custom-table .p-datatable-tbody > tr.p-highlight {
+  background-color: orange !important; 
+}
+
+ 
+.custom-table .p-datatable-tbody > tr:hover {
+  background-color: #b3deb6 ;
+  transition: background-color 0.3s ease;
+}
+
+.custom-table th.select-column,
+.custom-table td.select-column {
+  text-align: center;
+  width: 4rem;
+  border: none;
+}
+
+.custom-table .p-paginator {
+  background-color: #ffffff;
+  padding: 0.75rem;
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-table .p-paginator .p-paginator-page,
+.custom-table .p-paginator .p-paginator-next,
+.custom-table .p-paginator .p-paginator-prev {
+  color: #008737;
+  border: 1px solid  #008737;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+ .custom-table .p-paginator .p-paginator-page.p-highlight {
+  background-color:  #008737 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.custom-table .p-paginator .p-dropdown {
+  min-width: 70px;
+  max-width: 90px;
+  font-size: 0.85rem;
+}
+
+
+.detail-table .p-datatable-tbody > tr > td {
+  color: #008737 !important;
+}
+
+
+.p-dialog-maximize-button {
+  color: #ffffff !important;
+}
+
+.p-dialog-maximize-button:hover {
+  color: #008737 !important;
+}
+

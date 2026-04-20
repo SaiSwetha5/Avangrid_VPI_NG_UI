@@ -12,7 +12,7 @@
     <ng-template #end>
       <p-button type="button"  label="Back" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
   (keydown.space)="_dataService.onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
- <p-button type="button"   icon="pi pi-home" severity="success" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
+<p-button    icon="pi pi-home" class="button-apply" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
   (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"

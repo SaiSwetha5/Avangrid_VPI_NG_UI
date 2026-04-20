@@ -12,7 +12,6 @@ import { DialogModule } from 'primeng/dialog';
 import { PanelModule } from 'primeng/panel';
 import { TabsModule } from 'primeng/tabs';
 import { DataService } from 'services/data.service';
-import { Toolbar } from 'primeng/toolbar';
 import { VpiSliderComponent } from '../vpi-slider/vpi-slider.component';
 import WaveSurfer from 'wavesurfer.js';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -23,14 +22,13 @@ import { MessageService } from 'primeng/api';
 import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
-import { Chip } from 'primeng/chip';
 import { ApiCallsService } from 'services/api-calls.service';
 import { ProgressBar } from 'primeng/progressbar';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-vpi-table',
-  imports: [ ProgressBar, Chip, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, Toolbar,CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
+  imports: [ ProgressBar, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent,CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
   standalone: true,
   providers: [DatePipe, MessageService],
   templateUrl: './vpi-table.component.html',
@@ -42,7 +40,7 @@ export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
   public pagination = {
     pageNumber: 1,
-    pageSize: 50,
+    pageSize: 10,
   };
   public payload = computed(() => this._dataService.getPayload());
   public currentPayload: SearchFilteredDataInput | undefined;
@@ -296,8 +294,8 @@ export class VpiTableComponent {
 
     this.wavesurfer = WaveSurfer.create({
       container: this.waveFormRef.nativeElement,
-      waveColor: ["#FFA500", "#FFFFFF", "rgba(0,99,190,0.7)"],
-      progressColor: ["#FFFFFF", "#0063BE", "#FFA500"],
+      waveColor: ["#A5D6A7", "#81C784", "#66BB6A"],
+      progressColor: ["#FFFFFF", "#FFF176", "#FFEB3B"],
       backend: 'MediaElement',
       mediaControls: true,
       height: 100,

@@ -14,7 +14,7 @@ public readonly loadingTableDataSignal = signal<boolean>(false);
 public readonly loadingAudioFile = signal<boolean>(false);
 public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
 public selectedOpcode: WritableSignal<string | null> = signal(null);
-
+public openDrawer = signal(false);
 public payloadSignal = signal<SearchFilteredDataInput | undefined>({
   filters: {},
   pagination: {
