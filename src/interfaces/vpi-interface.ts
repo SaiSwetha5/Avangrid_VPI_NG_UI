@@ -111,7 +111,7 @@ export interface SearchFilteredDataInput {
     channelNum?: string[] | null;
     aniAliDigits?: string[] | null;
     name?: string[] | null;
-    direction?: boolean | null;
+    direction?: string | null;
   };
   pagination?: {
     pageNumber?: number;

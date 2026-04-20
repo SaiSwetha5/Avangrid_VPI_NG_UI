@@ -27,9 +27,9 @@ const OPCODES: OpCode[] = [
   { name: 'CMP',   code: 'CMP'   },
 ];
 
-const DIRECTIONS: { name: string; code: boolean }[] = [
-  { name: 'Inbound',  code:  true },
-  { name: 'Outbound', code: false },
+const DIRECTIONS: { name: string; code: string }[] = [
+  { name: 'Inbound',  code: 'true' },
+  { name: 'Outbound', code: 'false' },
 ];
 
  const DATERANGES: Record<string, string> = {
@@ -70,7 +70,7 @@ export class VpiSliderComponent {
   public validIDs:   string[] = [];
   public invalidIDs: string[] = [];
   public opCode: OpCode | null = null;
-  public selectedDirection: { name: string; code: boolean } | null = null;
+  public selectedDirection: { name: string; code: string } | null = null;
 
   private readonly effectData =   effect(() => {
       if (this.dataService.openDrawer()) {
