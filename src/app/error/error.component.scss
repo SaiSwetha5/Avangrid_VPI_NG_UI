@@ -55,7 +55,20 @@
 }
 
 .pi-exclamation-triangle {
-  font-size: 2rem;
-  color: orange;  
+  font-size: 6rem;
+  color: red;  
   margin-bottom: 1rem;
+}
+ 
+
+.info-box {
+  background: #FFF8E1;
+  border: 1px solid #FFE082;
+  padding: 8px;
+  text-align: left;
+  font-size: 1.5rem;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border-radius: 0.40rem;
+  color: red;
 }

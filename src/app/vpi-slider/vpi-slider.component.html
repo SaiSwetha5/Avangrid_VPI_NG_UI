@@ -88,7 +88,7 @@
             [(ngModel)]="objectIdModel" autocomplete="off" />
           <label for="objectId">Object ID</label>
         </p-floatlabel>
-        <div *ngIf="invalidIDs?.length > 0" class="error">
+        <div *ngIf="invalidIDs?.length > 0" class="info-box">
           Please enter in UUID format
         </div>
       </div>

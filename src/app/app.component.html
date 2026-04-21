@@ -10,8 +10,8 @@
  
     </ng-template>
     <ng-template #end>
-      <p-button type="button"  label="Back" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" severity="success" />
+         <p-button type="button" class="button-apply" label="Back" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
+  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" />
 <p-button    icon="pi pi-home" class="button-apply" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
   (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
