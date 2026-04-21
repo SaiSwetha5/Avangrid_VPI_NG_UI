@@ -3,7 +3,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
 import { DataService } from 'services/data.service';
-import { NgForm, ReactiveFormsModule,FormsModule } from '@angular/forms';
+import { NgForm, ReactiveFormsModule,FormsModule, NgModel } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
@@ -237,5 +237,12 @@ public validateRange(): boolean {
   private isFromAfterTo(from: number | null, to: number | null): boolean {
     return from !== null && to !== null && from > to;
   }
+
+  public checkOpcode(opCodeRef: NgModel): void {
+  if (!this.opCode) {
+    opCodeRef.control.markAsTouched();
+    opCodeRef.control.setErrors({ required: true });
+  }
+}
 
 }

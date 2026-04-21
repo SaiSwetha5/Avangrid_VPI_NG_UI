@@ -1,9 +1,31 @@
-<div class="error-container" *ngIf="error">
-  <div class="error-box">
-    <p><strong>Timestamp:</strong> {{ error.timestamp }}</p>
-    <p><strong>Status:</strong> {{ error.status }}</p>
-    <p><strong>Error:</strong> {{ error.error }}</p>
-    <p><strong>Message:</strong> {{ error.message }}</p>
+ 
+<div class="highlight-bar">
+<div class="left-content">
+  <img src="assets/vpi.png" alt="VPI Dashboard Icon" class="vpi-icon" />
+  <span class="header-class">VPI ERROR PAGE</span>
+</div>
+
+  <div class="center-content">
+ 
+  </div>
+
+  <div class="end-content"> 
   </div>
 </div>
 
+
+ 
+
+<div class="table-wrapper"> 
+  <p-panel class="empty-panel">
+    <div class="empty-message-container" >
+      <i class="pi pi-exclamation-triangle"></i>
+      <p class="text-color" *ngIf="error">
+        <strong>Timestamp:</strong> {{ error.timestamp }} <br />
+        <strong>Status:</strong> {{ error.status }} <br />
+        <strong>Error:</strong> {{ error.error }} <br />
+        <strong>Message:</strong> {{ error.message }}
+      </p>
+    </div>
+  </p-panel>
+</div>

@@ -14,10 +14,9 @@
       <div class="drawer-subtitle">Input values can be comma separated</div>
     </div>
   </ng-template>
-
-  <form #filterForm="ngForm" class="drawer-content">
+   <form #filterForm="ngForm" class="drawer-content">
     
-   <p-card class="filter-card mandatory-card">
+   <p-card class="filter-card">
  
   <div class="form-grid">
     <p-floatlabel variant="in">
@@ -26,7 +25,7 @@
         #opCodeRef="ngModel" required></p-select>
       <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
     </p-floatlabel>
-    <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)" class="error">
+    <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)" class="info-box">
       Opcode is required.
     </div>
   </div>
@@ -37,10 +36,10 @@
         [(ngModel)]="fromDate" required [showIcon]="true" [showTime]="true"
         [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false"
         (onInput)="validateFromDate()" (onBlur)="validateFromDate()" (onSelect)="validateFromDate()"
-        #fromDateRef="ngModel"></p-datepicker>
+        #fromDateRef="ngModel"  (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
       <label for="fromDate">From Date<span class="asterick-color">*</span></label>
     </p-floatlabel>
-    <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="error">
+    <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="info-box">
       From Date is required.
     </div>
   </div>
@@ -52,10 +51,10 @@
         [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true"
         [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false"
         (onInput)="validateToDate()" (onBlur)="validateToDate()" (onSelect)="validateToDate()"
-        #toDateRef="ngModel"></p-datepicker>
+        #toDateRef="ngModel"  (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
       <label for="toDate">To Date<span class="asterick-color">*</span></label>
     </p-floatlabel>
-    <div *ngIf="toDateRef.invalid && toDateRef.touched" class="error">
+    <div *ngIf="toDateRef.invalid && toDateRef.touched" class="info-box">
       To Date is required.
     </div>
   </div>
@@ -64,7 +63,7 @@
   <div *ngIf="fromDateError || toDateError" class="info-box">
     Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
   </div>
-  <div *ngIf="dateRangeError && !fromDateError && !toDateError" class="error">
+  <div *ngIf="dateRangeError && !fromDateError && !toDateError" class="info-box">
     From Date cannot be later than To Date.
   </div>
 </p-card>
@@ -137,7 +136,7 @@
     </p-card>
 
      <div class="button-row">
-      <p-button label="Apply" type="submit"  class="button-apply" (keydown.enter)="dataService.onKeydown($event)"
+      <p-button label="Apply" type="submit"  severity="success" (keydown.enter)="dataService.onKeydown($event)"
             (keydown.space)="dataService.onKeydown($event)"
         [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError"
         (click)="applyDateFilters(filterForm)"></p-button>

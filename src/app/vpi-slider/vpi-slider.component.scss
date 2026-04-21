@@ -1,30 +1,11 @@
- .filter-card {
-   padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.card-title {
-  font-weight: 600;
-  color: #008737;
-  margin-bottom: 0.75rem;
-}
-
+ 
+ 
 .form-grid {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 }
-
-.form-row {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-field {
-  flex: 1;
-}
-
+ 
 .button-row {
   display: flex;
   justify-content: flex-end;
@@ -57,7 +38,7 @@ body, html {
 .error {
   font-size: 0.85rem;
   margin-top: 0.25rem;
-  color: orange;  
+  color: #FFA500;
 }
 
 .info-box {
@@ -69,6 +50,7 @@ body, html {
   margin-top: 8px;
   margin-bottom: 12px;
   border-radius: 0.25rem;
+  color: red;
 }
 
 .p-button {
@@ -99,3 +81,6 @@ body, html {
 }
 
 
+.asterick-color{
+  color:red;
+}

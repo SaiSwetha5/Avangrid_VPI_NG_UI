@@ -94,17 +94,6 @@
   left: 0;
   z-index: 9999;  
 }
-
-.empty-panel {
-  margin: 10px;
-  max-width: 600px;
-  text-align: center;
-  border: 1px solid rgb(0, 64, 42);
-  --p-panel-background: #008737; 
-  --p-panel-border-color:rgb(0, 64, 42);
-  color: white;
-}
- 
  
  .table-wrapper {
   margin: 5px auto;       
@@ -131,6 +120,15 @@
 .tab-text-color{
   color:#008737;
 }
+
+.empty-panel {
+  margin: 10px;
+  max-width: 600px;
+  text-align: center;
+  --p-panel-background: #008737; 
+  color: white;
+}
+ 
 
 .empty-message-container {
   display: flex;

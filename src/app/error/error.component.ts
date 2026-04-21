@@ -3,10 +3,11 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiError } from 'interfaces/vpi-interface';
 import { ErrorService } from 'services/error.service';
+import { PanelModule } from 'primeng/panel';
 
  @Component({
   selector: 'app-error',
-  imports: [CommonModule ],
+  imports: [CommonModule,PanelModule ],
   templateUrl: './error.component.html',
   styleUrl: './error.component.scss'
 })

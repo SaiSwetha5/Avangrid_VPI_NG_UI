@@ -179,3 +179,12 @@ html, body {
   color: #008737 !important;
 }
 
+.p-button .pi-download {
+  color: #ffffff;  
+}
+
+.p-dialog .p-dialog-close-button {
+  color: #ffffff !important; 
+}
+
+ 
