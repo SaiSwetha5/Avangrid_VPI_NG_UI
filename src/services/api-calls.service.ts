@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
-import {  DownloadRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
+import { DownloadRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
 import { AuthService } from './auth.service';
 import { environment } from 'environments/environment';
 
@@ -9,7 +9,7 @@ import { environment } from 'environments/environment';
   providedIn: 'root'
 })
 export class ApiCallsService {
-  public apiResponse = ''; 
+  public apiResponse = '';
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
 
@@ -26,25 +26,25 @@ export class ApiCallsService {
     );
   }
 
-public getMetaData(id: string, opco: string | null): Observable<VPIMetaDataOutput> {
-  const params = new HttpParams()
-    .set('id', id ?? '')
-    .set('opco', opco ?? '');
+  public getMetaData(id: string, opco: string | null): Observable<VPIMetaDataOutput> {
+    const params = new HttpParams()
+      .set('id', id ?? '')
+      .set('opco', opco ?? '');
 
-  return this.auth.getAccessToken().pipe(
-    switchMap(token => {
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      });
+    return this.auth.getAccessToken().pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        });
 
-       return this.http.get<VPIMetaDataOutput>(
-        `${environment.apiBaseUrl}/metadata`,
-        { params, headers }
-      );
-    })
-  );
-}
+        return this.http.get<VPIMetaDataOutput>(
+          `${environment.apiBaseUrl}/metadata`,
+          { params, headers }
+        );
+      })
+    );
+  }
 
 
   public getAudioRecordings(payload: DownloadRecordingInput): Observable<Blob> {

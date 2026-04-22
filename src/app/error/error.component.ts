@@ -5,24 +5,21 @@ import { ApiError } from 'interfaces/vpi-interface';
 import { ErrorService } from 'services/error.service';
 import { PanelModule } from 'primeng/panel';
 
- @Component({
+@Component({
   selector: 'app-error',
-  imports: [CommonModule,PanelModule ],
+  imports: [CommonModule, PanelModule],
   templateUrl: './error.component.html',
   styleUrl: './error.component.scss'
 })
 
- export class ErrorComponent implements OnInit {
+export class ErrorComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly errorService = inject(ErrorService);  
+  private readonly errorService = inject(ErrorService);
   public error?: ApiError;
 
   ngOnInit() {
-     const nav = this.router.getCurrentNavigation();
+    const nav = this.router.getCurrentNavigation();
     this.error = nav?.extras?.state?.['error'];
-
-     if (!this.error) {
-      this.error = this.errorService.get();
-    }
+    this.error ??= this.errorService.get();
   }
 }

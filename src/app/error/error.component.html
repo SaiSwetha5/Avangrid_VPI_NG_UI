@@ -1,31 +1,28 @@
- 
 <div class="highlight-bar">
-<div class="left-content">
-  <img src="assets/vpi.png" alt="VPI Dashboard Icon" class="vpi-icon" />
-  <span class="header-class">VPI ERROR PAGE</span>
-</div>
-
-  <div class="center-content">
- 
-  </div>
-
-  <div class="end-content"> 
+  <div class="left-content">
+    <img src="assets/vpi.png" alt="VPI Dashboard Icon" class="vpi-icon" />
+    <span class="header-class">VPI CALL RECORDINGS</span>
   </div>
 </div>
 
-
- 
-
-<div class="table-wrapper"> 
+<div class="table-wrapper">
   <p-panel class="empty-panel">
-    <div class="empty-message-container" >
+    <div class="empty-message-container">
       <i class="pi pi-exclamation-triangle"></i>
-      <p class="info-box" *ngIf="error">
-        <strong>Timestamp:</strong> {{ error.timestamp }} <br />
-        <strong>Status:</strong> {{ error.status }} <br />
-        <strong>Error:</strong> {{ error.error }} <br />
-        <strong>Message:</strong> {{ error.message }}
-      </p>
+      <div class="info-box" *ngIf="error">
+        <div class="error-row">
+          <strong>Timestamp</strong><span>:</span><span>{{ error.timestamp }}</span>
+        </div>
+        <div class="error-row">
+          <strong>Status</strong><span>:</span><span>{{ error.status }}</span>
+        </div>
+        <div class="error-row">
+          <strong>Error</strong><span>:</span><span>{{ error.error }}</span>
+        </div>
+        <div class="error-row">
+          <strong>Message</strong><span>:</span><span>{{ error.message }}</span>
+        </div>
+      </div>
     </div>
   </p-panel>
 </div>

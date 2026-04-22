@@ -1,9 +1,9 @@
-import { Component, effect, inject} from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
 import { DataService } from 'services/data.service';
-import { NgForm, ReactiveFormsModule,FormsModule, NgModel } from '@angular/forms';
+import { NgForm, ReactiveFormsModule, FormsModule, NgModel } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
@@ -19,28 +19,28 @@ interface OpCode {
 }
 
 const UUIDREGEX =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const OPCODES: OpCode[] = [
-  { name: 'RGE',   code: 'RGE'   },
+  { name: 'RGE', code: 'RGE' },
   { name: 'NYSEG', code: 'NYSEG' },
-  { name: 'CMP',   code: 'CMP'   },
+  { name: 'CMP', code: 'CMP' },
 ];
 
-const DIRECTIONS: { name: string; code: string }[] = [
-  { name: 'Inbound',  code: 'true' },
-  { name: 'Outbound', code: 'false' },
+const DIRECTIONS: { name: string; code: boolean }[] = [
+  { name: 'Inbound', code: true },
+  { name: 'Outbound', code: false },
 ];
 
- const DATERANGES: Record<string, string> = {
+const DATERANGES: Record<string, string> = {
   RGE: '02 Jun, 2014 - 23 Jun, 2022',
   NYSEG: '21 Oct, 2014 - 25 Oct, 2022',
   CMP: '12 Aug, 2014 - 18 May, 2022'
-}; 
+};
 
 @Component({
   selector: 'app-vpi-slider',
-  imports: [FloatLabel,InputTextModule, ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
+  imports: [FloatLabel, InputTextModule, ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
   templateUrl: './vpi-slider.component.html',
   styleUrl: './vpi-slider.component.scss',
   standalone: true,
@@ -48,40 +48,40 @@ const DIRECTIONS: { name: string; code: string }[] = [
 })
 
 export class VpiSliderComponent {
-  public fromDate: Date = new Date();  
-  public readonly opCodes    = OPCODES;
+  public fromDate: Date = new Date();
+  public readonly opCodes = OPCODES;
   public readonly directions = DIRECTIONS;
   public readonly dateRanges = DATERANGES;
-  private readonly datePipe    = inject(DatePipe);
-  private readonly router      = inject(Router);
-  public  dataService = inject(DataService);
-  public dateRangeError  = false;
-  public toDateError     = false;
-  public fromDateError   = false;
-  public pageNumber      = 1;
-  public toDate:   Date | null = null;
-  public hourFormat           = '24';
-  public aniAliDigitsModel    = '';
+  private readonly datePipe = inject(DatePipe);
+  private readonly router = inject(Router);
+  public dataService = inject(DataService);
+  public dateRangeError = false;
+  public toDateError = false;
+  public fromDateError = false;
+  public pageNumber = 1;
+  public toDate: Date | null = null;
+  public hourFormat = '24';
+  public aniAliDigitsModel = '';
   public extensionNumberModel = '';
   public channelNumberModel: string | null = null;
-  public agentIdModel  = '';
+  public agentIdModel = '';
   public objectIdModel = '';
-  public nameModel     = '';
-  public validIDs:   string[] = [];
+  public nameModel = '';
+  public validIDs: string[] = [];
   public invalidIDs: string[] = [];
   public opCode: OpCode | null = null;
-  public selectedDirection: { name: string; code: string } | null = null;
+  public selectedDirection: { name: string; code: boolean } | null = null;
 
-  private readonly effectData =   effect(() => {
-      if (this.dataService.openDrawer()) {
-         this.openDrawerFunction();
-      }
-    });
-  
+  private readonly effectData = effect(() => {
+    if (this.dataService.openDrawer()) {
+      this.openDrawerFunction();
+    }
+  });
+
 
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
-  } 
+  }
 
   public resetFilters(ngForm?: NgForm): void {
     ngForm?.resetForm();
@@ -100,10 +100,10 @@ export class VpiSliderComponent {
     this.dateRangeError = false;
   }
 
- private isToday(date?: Date | string | null): boolean {
-    if (!date){
+  private isToday(date?: Date | string | null): boolean {
+    if (!date) {
       return false;
-    } 
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cmp = new Date(date);
@@ -112,23 +112,23 @@ export class VpiSliderComponent {
   }
 
   public applyDateFilters(ngForm: NgForm): void {
-  const isFromToday = this.isToday(this.fromDate);
-  const isToToday = this.isToday(this.toDate);
-  if (isFromToday || isToToday) {
-     this.fromDateError = isFromToday || this.fromDateError;
-    this.toDateError = isToToday || this.toDateError;
-     this.dateRangeError = true;
-    return;
-  }
-  
-const isRangeValid = this.validateRange();
-  if (!isRangeValid) {
-    return;
-  }
-  if (this.objectIdModel && !this.processObjectIds()) {
-    return;
-  } 
-   
+    const isFromToday = this.isToday(this.fromDate);
+    const isToToday = this.isToday(this.toDate);
+    if (isFromToday || isToToday) {
+      this.fromDateError = isFromToday || this.fromDateError;
+      this.toDateError = isToToday || this.toDateError;
+      this.dateRangeError = true;
+      return;
+    }
+
+    const isRangeValid = this.validateRange();
+    if (!isRangeValid) {
+      return;
+    }
+    if (this.objectIdModel && !this.processObjectIds()) {
+      return;
+    }
+
     const opcoCode = this.opCode?.code ?? '';
     this.dataService.selectedOpcode.set(opcoCode);
     this.dataService.setPayload({
@@ -143,6 +143,7 @@ const isRangeValid = this.validateRange();
         aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
         agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
         direction: this.selectedDirection?.code ?? null,
+
       },
       pagination: {
         pageNumber: this.pageNumber,
@@ -153,43 +154,43 @@ const isRangeValid = this.validateRange();
     ngForm.resetForm();
     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
-      
-  } 
 
-private normalizeDate(date: Date | string | null): number | null {
-  if (!date) {
-    return null;
   }
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-}
- 
-public validateFromDate(): boolean {
-  this.fromDateError = false;
-  return this.validateRange();
-}
- 
-public validateToDate(): boolean {
-  this.toDateError = false;
-   return this.validateRange();
-}
 
-public validateRange(): boolean {
-    this.fromDateError  = false;
-    this.toDateError    = false;
+  private normalizeDate(date: Date | string | null): number | null {
+    if (!date) {
+      return null;
+    }
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }
+
+  public validateFromDate(): boolean {
+    this.fromDateError = false;
+    return this.validateRange();
+  }
+
+  public validateToDate(): boolean {
+    this.toDateError = false;
+    return this.validateRange();
+  }
+
+  public validateRange(): boolean {
+    this.fromDateError = false;
+    this.toDateError = false;
     this.dateRangeError = false;
 
     const range = this.getAllowedRange();
-    if (!range){
+    if (!range) {
       return false;
-    } 
+    }
 
     const fromTime = this.normalizeDate(this.fromDate);
-    const toTime   = this.normalizeDate(this.toDate);
+    const toTime = this.normalizeDate(this.toDate);
 
-    this.fromDateError  = this.isOutOfRange(fromTime, range);
-    this.toDateError    = this.isOutOfRange(toTime, range);
+    this.fromDateError = this.isOutOfRange(fromTime, range);
+    this.toDateError = this.isOutOfRange(toTime, range);
     this.dateRangeError = this.isFromAfterTo(fromTime, toTime);
 
     return !(this.fromDateError || this.toDateError || this.dateRangeError);
@@ -204,22 +205,22 @@ public validateRange(): boolean {
     this.fromDateError = false;
     this.dateRangeError = false;
   }
-  
-  public isValidUUID(uuid: string): boolean {
-  return UUIDREGEX.test(uuid);
-}
 
- private processObjectIds(): boolean {
-    const ids       = this.objectIdModel.split(',').map(x => x.trim());
-    this.validIDs   = ids.filter(id =>  this.isValidUUID(id));
+  public isValidUUID(uuid: string): boolean {
+    return UUIDREGEX.test(uuid);
+  }
+
+  private processObjectIds(): boolean {
+    const ids = this.objectIdModel.split(',').map(x => x.trim());
+    this.validIDs = ids.filter(id => this.isValidUUID(id));
     this.invalidIDs = ids.filter(id => !this.isValidUUID(id));
     return this.invalidIDs.length === 0;
   }
 
-   private getAllowedRange(): [number, number] | null {
+  private getAllowedRange(): [number, number] | null {
     const opCode = this.opCode?.code;
-    const range  = opCode ? this.dateRanges[opCode] : null;
-    if (!range){
+    const range = opCode ? this.dateRanges[opCode] : null;
+    if (!range) {
       return null;
     }
 
@@ -239,10 +240,10 @@ public validateRange(): boolean {
   }
 
   public checkOpcode(opCodeRef: NgModel): void {
-  if (!this.opCode) {
-    opCodeRef.control.markAsTouched();
-    opCodeRef.control.setErrors({ required: true });
+    if (!this.opCode) {
+      opCodeRef.control.markAsTouched();
+      opCodeRef.control.setErrors({ required: true });
+    }
   }
-}
 
 }

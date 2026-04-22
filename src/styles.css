@@ -1,9 +1,9 @@
 @import "primeicons/primeicons.css";
 
- body {
-  background-color: white;
+body {
+  background-color: #FFFFFF;
 }
- 
+
 @font-face {
   font-family: 'IberPangeaText';
   src: url('assets/fonts/IberPangeaText-Medium.woff2') format('woff2');
@@ -12,26 +12,27 @@
 }
 
 .p-card {
-  --p-card-background : none
-} 
+  --p-card-background: none
+}
 
-html, body {
-  font-family: 'IberPangeaText', sans-serif; 
+html,
+body {
+  font-family: 'IberPangeaText', sans-serif;
   font-weight: 300;
 }
 
 
 .my-green-drawer {
   --p-drawer-background: #008737;
-   --p-drawer-border-radius: 0.5rem;
+  --p-drawer-border-radius: 0.5rem;
   width: 400px !important;
-   max-height: 100vh ;  
+  max-height: 100vh;
   padding-bottom: 1rem;
 }
 
 .my-green-drawer .p-drawer-header {
-  background-color: #008737;  
-  padding: 8px 16px;         
+  background-color: #008737;
+  padding: 8px 16px;
   border-bottom: none;
   display: flex;
   flex-direction: column;
@@ -41,7 +42,7 @@ html, body {
 .drawer-title {
   display: flex;
   align-items: center;
-  font-size: 1.2rem;         
+  font-size: 1.2rem;
   font-weight: 300;
   color: #ffffff;
 }
@@ -58,7 +59,7 @@ html, body {
 
 .drawer-subtitle {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   margin-top: 2px;
 }
 
@@ -83,45 +84,45 @@ html, body {
 }
 
 .split-button {
-   --splitbutton-border-radius: 12px;
+  --splitbutton-border-radius: 12px;
 }
 
-  
+
 .p-card .p-card-body {
   padding-bottom: 0 !important;
   padding-top: 0 !important;
 }
- 
-.custom-table .p-datatable-thead > tr > th {
-  background-color:  #008737 !important; 
+
+.custom-table .p-datatable-thead>tr>th {
+  background-color: #008737 !important;
   color: #ffffff !important;
   font-family: 'IberPangeaText', sans-serif;
-   font-weight: 600;
+  font-weight: 600;
   text-align: center;
   padding: 12px;
-  border: none;   
-    white-space: normal;    
-  word-wrap: break-word;  
-    font-size: 0.95rem;   
- }
+  border: none;
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 0.95rem;
+}
 
-.custom-table .p-datatable-tbody > tr > td {
+.custom-table .p-datatable-tbody>tr>td {
   text-align: center;
   padding: 10px;
-  border: none;               
+  border: none;
   font-size: 0.9rem;
-  color:  #008737;
-  white-space: normal;   
-  word-wrap: break-word; 
-}
- 
-.custom-table .p-datatable-tbody > tr.p-highlight {
-  background-color: orange !important; 
+  color: #008737;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
- 
-.custom-table .p-datatable-tbody > tr:hover {
-  background-color: #b3deb6 ;
+.custom-table .p-datatable-tbody>tr.p-highlight {
+  background-color: rgb(249, 115, 22) !important;
+}
+
+
+.custom-table .p-datatable-tbody>tr:hover {
+  background-color: #b3deb6;
   transition: background-color 0.3s ease;
 }
 
@@ -146,15 +147,15 @@ html, body {
 .custom-table .p-paginator .p-paginator-next,
 .custom-table .p-paginator .p-paginator-prev {
   color: #008737;
-  border: 1px solid  #008737;
+  border: 1px solid #008737;
   border-radius: 4px;
   padding: 0.4rem 0.6rem;
   margin: 0 4px;
   cursor: pointer;
 }
 
- .custom-table .p-paginator .p-paginator-page.p-highlight {
-  background-color:  #008737 !important;
+.custom-table .p-paginator .p-paginator-page.p-highlight {
+  background-color: #008737 !important;
   color: #ffffff !important;
   font-weight: 600;
 }
@@ -166,7 +167,7 @@ html, body {
 }
 
 
-.detail-table .p-datatable-tbody > tr > td {
+.detail-table .p-datatable-tbody>tr>td {
   color: #008737 !important;
 }
 
@@ -180,11 +181,13 @@ html, body {
 }
 
 .p-button .pi-download {
-  color: #ffffff;  
+  color: #ffffff;
 }
 
 .p-dialog .p-dialog-close-button {
-  color: #ffffff !important; 
+  color: #ffffff !important;
 }
 
- 
+.p-checkbox .p-checkbox-box {
+  border: 2px solid #008737 !important;
+}

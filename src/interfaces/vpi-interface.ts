@@ -9,7 +9,7 @@ export interface SearchFilteredDataOutput {
     pageSize: number;
   };
 }
- 
+
 export interface PaginatorState {
   first: number;
   rows: number;
@@ -17,25 +17,25 @@ export interface PaginatorState {
   pageCount: number;
 }
 
-export interface VPIDataItem { 
-      objectId: string,
-      dateAdded: string,
-      userId: string,
-      startTime: string,
-      duration: number,
-      tags: string | null,
-      channelName: string,
-      channelNum: number,
-      callId: string,
-      username: string,
-      aniAliDigits: string | null,
-      extensionNum: string | null,
-      direction: string,
-      agentId: string,
-      opco: string
-      isChecked?: boolean;
+export interface VPIDataItem {
+  objectId: string,
+  dateAdded: string,
+  userId: string,
+  startTime: string,
+  duration: number,
+  tags: string | null,
+  channelName: string,
+  channelNum: number,
+  callId: string,
+  username: string,
+  aniAliDigits: string | null,
+  extensionNum: string | null,
+  direction: string,
+  agentId: string,
+  opco: string
+  isChecked?: boolean;
 }
- 
+
 export interface DownloadRecordingInput {
 
   date: string | null;
@@ -51,21 +51,21 @@ export interface DownloadRecordingInput {
 
 export interface VPIMetaDataOutput {
   isChecked?: boolean;
-  objectId: string;             
-  dateAdded: string;         
+  objectId: string;
+  dateAdded: string;
   resourceId: string;
   workstationId: string;
-  userId: string;               
-  startTime: string;            
+  userId: string;
+  startTime: string;
   gmtOffset: number;
-  gmtStartTime: string;         
-  duration: number; 
+  gmtStartTime: string;
+  duration: number;
   triggeredByResourceTypeId: string;
   triggeredByObjectId: string;
   flagId: string;
   tags: string;
   sensitivityLevel: string;
-  clientId: string; 
+  clientId: string;
   channelNum: number;
   channelName: string;
   extensionNum: string;
@@ -75,13 +75,13 @@ export interface VPIMetaDataOutput {
   direction: string;
   mediaFileId: string;
   mediaManagerId: string;
-  mediaRetention: string; 
+  mediaRetention: string;
   callId: string;
   previousCallId: string;
-  globalCallId: string; 
+  globalCallId: string;
   classOfService: string;
-  classOfServiceDate: string;   
-  xPlatformRef: string; 
+  classOfServiceDate: string;
+  xPlatformRef: string;
   transcriptResult: string;
   warehouseObjectKey: string;
   transcriptStatus: string;
@@ -96,8 +96,8 @@ export interface Pagination {
 }
 
 export interface MetaDataPayload {
- objectIDs: string; 
- dateAdded: string;
+  objectIDs: string;
+  dateAdded: string;
 }
 
 export interface SearchFilteredDataInput {
@@ -111,7 +111,7 @@ export interface SearchFilteredDataInput {
     channelNum?: string[] | null;
     aniAliDigits?: string[] | null;
     name?: string[] | null;
-    direction?: string | null;
+    direction?: boolean | null;
   };
   pagination?: {
     pageNumber?: number;
@@ -120,25 +120,24 @@ export interface SearchFilteredDataInput {
 }
 
 export interface ApiError {
-   timestamp: string; 
-   status: number;
-   error: string;
-   message: string;
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
 }
- 
+
 export interface HeaderItem { id: string; label: string; }
 
 export const DISPLAY_HEADERS: HeaderItem[] = [
-  { id: 'objectId', label: 'Object ID' },
-  { id: 'dateAdded', label: 'Date Added (UTC)' },
-  { id: 'userId', label: 'User ID' },
+  { id: 'username', label: 'User Name' },
   { id: 'startTime', label: 'Start Time (UTC)' },
   { id: 'duration', label: 'Duration' },
-  { id: 'tags', label: 'Tags' },
   { id: 'channelName', label: 'Channel Name' },
-  { id: 'callId', label: 'Call ID' },
-  { id: 'username', label: 'User Name' },
+  { id: 'agentId', label: 'Agent ID' },
+  { id: 'direction', label: 'Direction' },
   { id: 'aniAliDigits', label: 'ANI/ALI Digits' },
   { id: 'extensionNum', label: 'Extension Num' },
-  { id: 'direction', label: 'Direction' }
+  { id: 'dateAdded', label: 'Date (UTC)' },
+  { id: 'objectId', label: 'Object ID' }
+
 ];

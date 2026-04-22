@@ -1,25 +1,28 @@
-
-.logo {
-  height: 60px;  
-} 
- 
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   flex-wrap: wrap;
-} 
-
- .settings-icon{
-  margin-left: 5px;
- }
- 
-.split-button {
-  margin-left: 10px;
+  background-color: #ffffff;
 }
 
- @media (max-width: 768px) {
+.logo {
+  height: 80px;
+}
+
+.settings-icon {
+  margin-left: 5px;
+  --p-button-primary-background: #008737;
+  --p-button-primary-color: #ffffff;
+}
+
+ .button-apply {
+  --p-button-primary-background: #008737;
+  --p-button-primary-color: #ffffff;
+}
+
+@media (max-width: 768px) {
   .toolbar {
     flex-direction: column;
     align-items: center;
@@ -35,16 +38,7 @@
     margin-top: 10px;
     width: 100%;
     justify-content: center;
+  }
+}
+
  
-  }
-
-  .main-class {
-    height: auto;
-    padding: 10px;
-  }
-}
-
-  .button-apply {
-  --p-button-primary-background: #008737;
-  --p-button-primary-color: #ffffff;
-}

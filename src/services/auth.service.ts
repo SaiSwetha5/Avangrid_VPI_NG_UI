@@ -20,17 +20,17 @@ export class AuthService {
         scopes: [this.scope],
         account
       })
-      .catch(() => {
-        this.msalService.instance.acquireTokenRedirect({
-          scopes: [this.scope],
-          account
-        });
+        .catch(() => {
+          this.msalService.instance.acquireTokenRedirect({
+            scopes: [this.scope],
+            account
+          });
 
-        return null;  
-      })
+          return null;
+        })
     ).pipe(
       map(result => {
-        if (!result) { 
+        if (!result) {
           return '';
         }
         return result.accessToken;

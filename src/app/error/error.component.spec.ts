@@ -11,10 +11,10 @@ describe('ErrorComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ErrorComponent],
       providers: [
-        provideAnimations(), 
+        provideAnimations(),
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ErrorComponent);
     component = fixture.componentInstance;

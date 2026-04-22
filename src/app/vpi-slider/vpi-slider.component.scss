@@ -1,5 +1,3 @@
- 
- 
 .form-grid {
   display: flex;
   flex-direction: column;
@@ -50,7 +48,7 @@ body, html {
   margin-top: 8px;
   margin-bottom: 12px;
   border-radius: 0.25rem;
-  color: red;
+  color: rgb(249, 115, 22);
 }
 
 .p-button {
@@ -60,7 +58,7 @@ body, html {
 }
 
 .iconClass{
-  color:orange
+  color:rgb(249, 115, 22);
 }
 
 .mandatory-card {
@@ -79,7 +77,6 @@ body, html {
   --p-button-primary-background: #008737;
   --p-button-primary-color: #ffffff;
 }
-
 
 .asterick-color{
   color:red;

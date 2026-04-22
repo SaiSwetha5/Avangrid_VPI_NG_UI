@@ -21,7 +21,7 @@ function makeVPIDataItem(overrides: Partial<VPIDataItem> = {}): VPIDataItem {
     "tags": null,
     "channelName": "Channel 102",
     "callId": "0f2b8f05-c361-408c-9067-3e1629a8b723",
-    "username": "VPI_support_001.wav", 
+    "username": "VPI_support_001.wav",
     "aniAliDigits": null,
     "extensionNum": null,
     "direction": "0",
@@ -55,7 +55,7 @@ describe('ApiCallsService', () => {
     TestBed.configureTestingModule({
       providers: [
         ApiCallsService,
-        provideHttpClient(), 
+        provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authMock }
       ],
@@ -86,8 +86,8 @@ describe('ApiCallsService', () => {
     let response: SearchFilteredDataOutput | undefined;
 
     service.getFilteredData(payload).subscribe(res => (response = res));
-    const req = httpMock.expectOne('/search'); 
-    
+    const req = httpMock.expectOne('/search');
+
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(payload);
     expect(req.request.headers.get('Authorization')).toBe('Bearer mock-token-123');

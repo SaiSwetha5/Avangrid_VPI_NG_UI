@@ -1,8 +1,8 @@
 <div class="highlight-bar">
-<div class="left-content">
-  <img src="assets/vpi.png" alt="VPI Dashboard Icon" class="vpi-icon" />
-  <span class="header-class">VPI CALL RECORDINGS</span>
-</div>
+  <div class="left-content">
+    <img src="assets/vpi.png" alt="VPI Dashboard Icon" class="vpi-icon" />
+    <span class="header-class">VPI CALL RECORDINGS</span>
+  </div>
 
   <div class="center-content">
     <span *ngIf="_dataService.pagedDataSignal().length > 0">
@@ -17,12 +17,9 @@
   </div>
 
   <div class="end-content">
-    <p-button severity="info"
-              (click)="downloadAudioFiles()"
-              (keydown.enter)="_dataService.onKeydown($event)"
-              (keydown.space)="_dataService.onKeydown($event)"
-              [disabled]="!selectedRow || selectedRow.length === 0"
-              label="Export">
+    <p-button severity="info" (click)="downloadAudioFiles()" (keydown.enter)="_dataService.onKeydown($event)"
+      (keydown.space)="_dataService.onKeydown($event)" [disabled]="!selectedRow || selectedRow.length === 0"
+      label="Export">
     </p-button>
     <app-vpi-slider></app-vpi-slider>
   </div>
@@ -32,41 +29,35 @@
 <div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
-<div class="table-wrapper"> 
-<p-table ngSkipHydration #dt class="custom-table" size="small" selectionMode="multiple"
-    [(selection)]="selectedRow" dataKey="objectId"
-    [paginator]="_dataService.pagedDataSignal().length > 0"
-    [first]="first()" [rowsPerPageOptions]="[5,10, 15]"
-    [responsiveLayout]="'scroll'"
-    [resizableColumns]="true" columnResizeMode="fit"
+<div class="table-wrapper">
+  <p-table ngSkipHydration #dt class="custom-table" size="small" selectionMode="multiple" [(selection)]="selectedRow"
+    dataKey="objectId" [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()"
+    [rowsPerPageOptions]="[5,10, 15]" [responsiveLayout]="'scroll'" [resizableColumns]="true" columnResizeMode="fit"
     [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
     [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
-      [showCurrentPageReport]="true"    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
 
 
-      <ng-template pTemplate="header">
+    <ng-template pTemplate="header">
       <tr *ngIf="_dataService.pagedDataSignal().length > 0">
 
         <th scope="col" class="select-column">
           <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         </th>
-        <th scope="col" *ngFor="let header of displayHeaders; trackBy: trackById" 
-            pResizableColumn class="header-class">
+        <th scope="col" *ngFor="let header of displayHeaders; trackBy: trackById" pResizableColumn class="header-class">
           {{ header.label | uppercase }}
         </th>
       </tr>
     </ng-template>
 
-     <ng-template pTemplate="body" let-rowData>
+    <ng-template pTemplate="body" let-rowData>
       <tr [pSelectableRow]="rowData">
         <td class="select-column">
           <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
         </td>
-        <td *ngFor="let header of displayHeaders; trackBy: trackById" class="body-cell"
-            (click)="onRowClick(rowData)"
-            (keydown.enter)="_dataService.onKeydown($event)"
-            (keydown.space)="_dataService.onKeydown($event)"
-            [pTooltip]="rowData[header.id]" tooltipPosition="top">
+        <td *ngFor="let header of displayHeaders; trackBy: trackById" class="body-cell" (click)="onRowClick(rowData)"
+          (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"
+          [pTooltip]="rowData[header.id]" tooltipPosition="top">
           <ng-container [ngSwitch]="header.id">
             <ng-container *ngSwitchCase="'direction'">
               {{ (rowData[header.id] === true || rowData[header.id] === 'true') ? 'Inbound' : 'Outbound' }}
@@ -79,23 +70,21 @@
       </tr>
     </ng-template>
 
-  <ng-template pTemplate="emptymessage">
+    <ng-template pTemplate="emptymessage">
       <p-panel class="empty-panel">
         <div class="empty-message-container">
           <i class="pi pi-database"></i>
           <p class="text-color">
             Please choose an Opco from
-            <a href="javascript:void(0)"
-               class="filters-link"
-               (click)="_dataService.openDrawer.set(true)">
-               Filters
+            <a href="javascript:void(0)" class="filters-link" (click)="_dataService.openDrawer.set(true)">
+              FILTERS
             </a>
             to get call records
           </p>
         </div>
       </p-panel>
     </ng-template>
-</p-table>
+  </p-table>
 </div>
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
@@ -104,27 +93,27 @@
     'width': '40rem',
     'height': '40rem',
     'color': '#FFFFFF'
-  }"> 
+  }">
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
-</div>
+  </div>
   <div class="audio-error" *ngIf="hasErrorForAudioFile">
-    Recording not found!! {{audioErrorMessage}} 
+    Recording not found!! {{audioErrorMessage}}
   </div>
   <ng-template pTemplate="header">
-    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      
-      <h4 style="color: #FFFFFF;">AUDIO RECORDING DETAILS </h4>
-                <p-button *ngIf="audioUrl" [text]="true"  icon="pi pi-download"  (click)="downloadAudio()"
-                    aria-label="Search audio" (keydown.enter)="_dataService.onKeydown($event)"
-                    (keydown.space)="_dataService.onKeydown($event)"> </p-button>
-
+    <div class="header-container">
+      <div class="header-left">
+        <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
+        <h4 class="header-title">AUDIO RECORDING DETAILS</h4>
+      </div>
+      <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" (click)="downloadAudio()" aria-label="Search audio"
+        (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"></p-button>
     </div>
   </ng-template>
 
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
 
-  
+
 
   <div class="cardPadding">
     <p-tabs value="0">
@@ -148,10 +137,10 @@
                     <ng-template pTemplate="body" let-interaction>
                       <tr>
 
-                        <td><b >Call Id</b></td>
+                        <td><b>Call Id</b></td>
                         <td>{{ interaction.callId }}</td>
                       </tr>
-                         <tr>
+                      <tr>
                         <td><b>Object Id</b></td>
                         <td>{{ interaction.objectId }}</td>
                       </tr>
@@ -179,7 +168,7 @@
                         <td><b>Class Of Service</b></td>
                         <td>{{ interaction.classOfService }}</td>
                       </tr>
-                       <tr>
+                      <tr>
                         <td><b>Class Of Service Date</b></td>
                         <td>{{ interaction.classOfServiceDate }}</td>
                       </tr>
@@ -187,20 +176,28 @@
                         <td><b>Client Id</b></td>
                         <td>{{ interaction.clientId }}</td>
                       </tr>
-                    
+                      <tr>
+                        <td><b>xPlatformRef</b></td>
+                        <td>{{ interaction.xPlatformRef }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Transcript Status</b></td>
+                        <td>{{ interaction.transcriptStatus }}</td>
+                      </tr>
                     </ng-template>
                   </p-table>
 
                 </p-tabpanel>
                 <p-tabpanel value="1">
-                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}" styleClass="detail-table">
+                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}"
+                    styleClass="detail-table">
                     <ng-template pTemplate="body" let-interaction>
                       <tr>
                         <td><b>Start Time</b></td>
                         <td>{{ interaction.startTime }}</td>
                       </tr>
                       <tr>
-                        <td><b>Date Added</b></td>
+                        <td><b>Date</b></td>
                         <td>{{ interaction.dateAdded }}</td>
                       </tr>
                       <tr>
@@ -223,7 +220,7 @@
                         <td><b>Tags</b></td>
                         <td>{{ interaction.tags }}</td>
                       </tr>
-                       <tr>
+                      <tr>
                         <td><b>Flag Id</b></td>
                         <td>{{ interaction.flagId }}</td>
                       </tr>
@@ -235,6 +232,10 @@
                         <td><b>hasTalkover</b></td>
                         <td>{{ interaction.hasTalkover }}</td>
                       </tr>
+                      <tr>
+                        <td><b>User Id</b></td>
+                        <td>{{ interaction.userId }}</td>
+                      </tr>
                     </ng-template>
                   </p-table>
 
@@ -242,20 +243,21 @@
                 </p-tabpanel>
                 <p-tabpanel value="2">
 
-                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}" styleClass="detail-table">
+                  <p-table [value]="[selectedRowData]" class="compact-table" [style]="{width: '100%'}"
+                    styleClass="detail-table">
                     <ng-template pTemplate="body" let-interaction>
 
-                 
+
                       <tr>
                         <td><b>Agent ID</b></td>
                         <td>{{ interaction.agentId }}</td>
                       </tr>
                       <tr>
-                        <td><b>User Id</b></td>
-                        <td>{{ interaction.userId }}</td>
+                        <td><b>ANI</b></td>
+                        <td>{{ interaction.anialidigits }}</td>
                       </tr>
                       <tr>
-                        <td><b>extensionNum</b></td>
+                        <td><b>Extension Number</b></td>
                         <td>{{ interaction.extensionNum }}</td>
                       </tr>
                       <tr>
@@ -263,7 +265,7 @@
                         <td>{{ interaction.pbxDnis }}</td>
                       </tr>
                       <tr>
-                        <td><b>channel Name</b></td>
+                        <td><b>Channel Name</b></td>
                         <td>{{ interaction.channelName }}</td>
                       </tr>
                       <tr>
@@ -286,7 +288,23 @@
                         <td><b>Media Retention</b></td>
                         <td>{{ interaction.mediaRetention }}</td>
                       </tr>
-                     </ng-template>
+                      <tr>
+                        <td><b>Workstation Id</b></td>
+                        <td>{{ interaction.workstationId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Triggered By Resource Type Id</b></td>
+                        <td>{{ interaction.triggeredByResourceTypeId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Triggered By Object Id</b></td>
+                        <td>{{ interaction.triggeredByObjectId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Warehouse Object Key</b></td>
+                        <td>{{ interaction.warehouseObjectKey }}</td>
+                      </tr>
+                    </ng-template>
                   </p-table>
                 </p-tabpanel>
               </p-tabpanels>

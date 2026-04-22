@@ -1,82 +1,76 @@
-<p-button label="Filters"  
-   severity="warn" 
-  (click)="openDrawerFunction(filterForm)"
-  (keydown.enter)="dataService.onKeydown($event)"
-  (keydown.space)="dataService.onKeydown($event)" />
+<p-button label="Filters" severity="warn" (click)="openDrawerFunction(filterForm)"
+  (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)" />
 
-<p-drawer [(visible)]="dataService.openDrawer"  (onShow)="resetFilters(filterForm)" position="left" styleClass="my-green-drawer">
+<p-drawer [(visible)]="dataService.openDrawer" (onShow)="resetFilters(filterForm)" position="left"
+  styleClass="my-green-drawer">
   <ng-template pTemplate="header">
     <div class="drawer-header">
       <div class="drawer-title">
-          <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
+        <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
         <span class="title-text">VRS Filters</span>
       </div>
       <div class="drawer-subtitle">Input values can be comma separated</div>
     </div>
   </ng-template>
-   <form #filterForm="ngForm" class="drawer-content">
-    
-   <p-card class="filter-card">
- 
-  <div class="form-grid">
-    <p-floatlabel variant="in">
-      <p-select id="opcode" name="opCode" [options]="opCodes"
-        [(ngModel)]="opCode" optionLabel="name"
-        #opCodeRef="ngModel" required></p-select>
-      <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
-    </p-floatlabel>
-    <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)" class="info-box">
-      Opcode is required.
-    </div>
-  </div>
+  <form #filterForm="ngForm" class="drawer-content">
 
-  <div class="form-grid">
-    <p-floatlabel variant="in">
-      <p-datepicker inputId="fromDate" name="fromDate"
-        [(ngModel)]="fromDate" required [showIcon]="true" [showTime]="true"
-        [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false"
-        (onInput)="validateFromDate()" (onBlur)="validateFromDate()" (onSelect)="validateFromDate()"
-        #fromDateRef="ngModel"  (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
-      <label for="fromDate">From Date<span class="asterick-color">*</span></label>
-    </p-floatlabel>
-    <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="info-box">
-      From Date is required.
-    </div>
-  </div>
+    <p-card class="filter-card">
 
-
-  <div class="form-grid">
-    <p-floatlabel variant="in">
-      <p-datepicker inputId="toDate" name="toDate"
-        [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true"
-        [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false"
-        (onInput)="validateToDate()" (onBlur)="validateToDate()" (onSelect)="validateToDate()"
-        #toDateRef="ngModel"  (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
-      <label for="toDate">To Date<span class="asterick-color">*</span></label>
-    </p-floatlabel>
-    <div *ngIf="toDateRef.invalid && toDateRef.touched" class="info-box">
-      To Date is required.
-    </div>
-  </div>
-
-
-  <div *ngIf="fromDateError || toDateError" class="info-box">
-    Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
-  </div>
-  <div *ngIf="dateRangeError && !fromDateError && !toDateError" class="info-box">
-    From Date cannot be later than To Date.
-  </div>
-</p-card>
-
-
-
-<p-card class="filter-card optional-card">
- 
-
-  <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="aniAliDigits" name="aniId"
-            [(ngModel)]="aniAliDigitsModel" autocomplete="off" />
+          <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"
+            #opCodeRef="ngModel" required></p-select>
+          <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
+        </p-floatlabel>
+        <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)" class="info-box">
+          Opcode is required.
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <p-floatlabel variant="in">
+          <p-datepicker inputId="fromDate" name="fromDate" [(ngModel)]="fromDate" required [showIcon]="true"
+            [showTime]="true" [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false"
+            (onInput)="validateFromDate()" (onBlur)="validateFromDate()" (onSelect)="validateFromDate()"
+            #fromDateRef="ngModel" (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
+          <label for="fromDate">From Date<span class="asterick-color">*</span></label>
+        </p-floatlabel>
+        <div *ngIf="fromDateRef.invalid && fromDateRef.touched" class="info-box">
+          From Date is required.
+        </div>
+      </div>
+
+
+      <div class="form-grid">
+        <p-floatlabel variant="in">
+          <p-datepicker inputId="toDate" name="toDate" [(ngModel)]="toDate" required [showIcon]="true" [showTime]="true"
+            [hourFormat]="hourFormat" [appendTo]="'body'" [showOnFocus]="false" (onInput)="validateToDate()"
+            (onBlur)="validateToDate()" (onSelect)="validateToDate()" #toDateRef="ngModel"
+            (onFocus)="checkOpcode(opCodeRef)"></p-datepicker>
+          <label for="toDate">To Date<span class="asterick-color">*</span></label>
+        </p-floatlabel>
+        <div *ngIf="toDateRef.invalid && toDateRef.touched" class="info-box">
+          To Date is required.
+        </div>
+      </div>
+
+
+      <div *ngIf="fromDateError || toDateError" class="info-box">
+        Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
+      </div>
+      <div *ngIf="dateRangeError && !fromDateError && !toDateError" class="info-box">
+        From Date cannot be later than To Date.
+      </div>
+    </p-card>
+
+
+
+    <p-card class="filter-card optional-card">
+
+
+      <div class="form-grid">
+        <p-floatlabel variant="in">
+          <input pInputText id="aniAliDigits" name="aniId" [(ngModel)]="aniAliDigitsModel" autocomplete="off" />
           <label for="aniAliDigits">ANI (Customer Number)</label>
         </p-floatlabel>
       </div>
@@ -84,8 +78,7 @@
 
       <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="objectId" name="objId"
-            [(ngModel)]="objectIdModel" autocomplete="off" />
+          <input pInputText id="objectId" name="objId" [(ngModel)]="objectIdModel" autocomplete="off" />
           <label for="objectId">Object ID</label>
         </p-floatlabel>
         <div *ngIf="invalidIDs?.length > 0" class="info-box">
@@ -93,59 +86,54 @@
         </div>
       </div>
 
-       <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="name" name="name"
-            [(ngModel)]="nameModel" maxlength="32" autocomplete="off" />
+          <input pInputText id="name" name="name" [(ngModel)]="nameModel" maxlength="32" autocomplete="off" />
           <label for="name">Name</label>
         </p-floatlabel>
       </div>
 
-       <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="agentId" name="agentId"
-            [(ngModel)]="agentIdModel" maxlength="32" autocomplete="off" />
+          <input pInputText id="agentId" name="agentId" [(ngModel)]="agentIdModel" maxlength="32" autocomplete="off" />
           <label for="agentId">Agent ID</label>
         </p-floatlabel>
       </div>
 
-       <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="channelNumber" name="channelId"
-            [(ngModel)]="channelNumberModel" maxlength="32" autocomplete="off" />
+          <input pInputText id="channelNumber" name="channelId" [(ngModel)]="channelNumberModel" maxlength="32"
+            autocomplete="off" />
           <label for="channelNumber">Channel Num</label>
         </p-floatlabel>
       </div>
 
-       <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <input pInputText id="extensionNumber" name="extId"
-            [(ngModel)]="extensionNumberModel" maxlength="32" autocomplete="off" />
+          <input pInputText id="extensionNumber" name="extId" [(ngModel)]="extensionNumberModel" maxlength="32"
+            autocomplete="off" />
           <label for="extensionNumber">Extension Num</label>
         </p-floatlabel>
       </div>
 
-       <div class="form-grid">
+      <div class="form-grid">
         <p-floatlabel variant="in">
-          <p-select id="direction" name="direction"
-            [options]="directions" [(ngModel)]="selectedDirection"
+          <p-select id="direction" name="direction" [options]="directions" [(ngModel)]="selectedDirection"
             optionLabel="name"></p-select>
           <label for="direction">Direction</label>
         </p-floatlabel>
       </div>
     </p-card>
 
-     <div class="button-row">
-      <p-button label="Apply" type="submit"  severity="success" (keydown.enter)="dataService.onKeydown($event)"
-            (keydown.space)="dataService.onKeydown($event)"
+    <div class="button-row">
+      <p-button label="Apply" type="submit" severity="success" (keydown.enter)="dataService.onKeydown($event)"
+        (keydown.space)="dataService.onKeydown($event)"
         [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError"
         (click)="applyDateFilters(filterForm)"></p-button>
       <p-button type="button" label="Cancel" severity="warn" (keydown.enter)="dataService.onKeydown($event)"
-            (keydown.space)="dataService.onKeydown($event)"
-        (click)="cancelFilters(filterForm)"></p-button>
+        (keydown.space)="dataService.onKeydown($event)" (click)="cancelFilters(filterForm)"></p-button>
       <p-button type="button" label="Reset" severity="info" (keydown.enter)="dataService.onKeydown($event)"
-            (keydown.space)="dataService.onKeydown($event)"
-        (click)="resetFilters(filterForm)"></p-button>
+        (keydown.space)="dataService.onKeydown($event)" (click)="resetFilters(filterForm)"></p-button>
     </div>
   </form>
 </p-drawer>

@@ -16,22 +16,20 @@
   (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
          <p-splitButton 
          *ngIf="currentUrl === '/home'"
-        class="split-button"
-        label="Recordings are just a click away!!" 
+        class="button-apply"
+        label="Explore Call Recordings" 
          [raised]="true"
         [model]="items" 
-        severity="warn">
+        >
       </p-splitButton>
       <p-button type="button" *ngIf="currentUrl === '/home'" class="settings-icon" (keydown.enter)="_dataService.onKeydown($event)"
   (keydown.space)="_dataService.onKeydown($event)"
- severity="warn" icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
+   icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
 <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
     </ng-template>
 </p-toolbar>
 
-
-<div>
+ 
+ 
   <router-outlet></router-outlet>
-</div>
-
  
