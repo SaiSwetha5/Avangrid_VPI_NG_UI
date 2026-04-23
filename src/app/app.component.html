@@ -1,35 +1,31 @@
 <p-toolbar class="justify-between items-center">
-     <ng-template #start>
- 
-  <div class="flex items-center">
-    <img src="https://frontend-old-green.vercel.app/AvangridLogo2.png" alt="Company Logo" class="logo" />
-  </div>
+  <ng-template #start>
 
-    </ng-template>
-    <ng-template #center>
- 
-    </ng-template>
-    <ng-template #end>
-         <p-button type="button" class="button-apply" label="Back" *ngIf="currentUrl === '/error'" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateVPIPage()" [rounded]="true" />
-<p-button    icon="pi pi-home" class="button-apply" *ngIf="currentUrl === '/vpi'" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataService.onKeydown($event)" (click)="navigateHomePage()"> </p-button>
-         <p-splitButton 
-         *ngIf="currentUrl === '/home'"
-        class="button-apply"
-        label="Explore Call Recordings" 
-         [raised]="true"
-        [model]="items" 
-        >
-      </p-splitButton>
-      <p-button type="button" *ngIf="currentUrl === '/home'" class="settings-icon" (keydown.enter)="_dataService.onKeydown($event)"
-  (keydown.space)="_dataService.onKeydown($event)"
-   icon="pi pi-cog" (click)="menu.toggle($event)" aria-label="Settings" />
-<p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
-    </ng-template>
+    <div class="flex items-center">
+      <img src="https://frontend-old-green.vercel.app/AvangridLogo2.png" alt="Company Logo" class="logo" />
+    </div>
+
+  </ng-template>
+  <ng-template #center>
+
+  </ng-template>
+  <ng-template #end>
+    <p-button type="button" class="button-apply" label="Back" *ngIf="currentUrl === '/error'"
+      (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"
+      (click)="navigateVPIPage()" [rounded]="true" />
+    <p-button icon="pi pi-home" class="button-apply" *ngIf="currentUrl === '/vpi'"
+      (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"
+      (click)="navigateHomePage()"> </p-button>
+    <p-splitButton *ngIf="currentUrl === '/home'" class="button-apply" label="Explore Call Recordings" [raised]="true"
+      [model]="items">
+    </p-splitButton>
+    <p-button type="button" *ngIf="currentUrl === '/home'" class="settings-icon"
+      (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)" icon="pi pi-cog"
+      (click)="menu.toggle($event)" aria-label="Settings" />
+    <p-menu #menu [popup]="true" [model]="userMenu"></p-menu>
+  </ng-template>
 </p-toolbar>
 
- 
- 
-  <router-outlet></router-outlet>
- 
+
+
+<router-outlet></router-outlet>

@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import {  Component, effect, inject ,ChangeDetectorRef} from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterModule } from '@angular/router';
@@ -38,6 +38,7 @@ const DATERANGES: Record<string, string> = {
   CMP: '12 Aug, 2014 - 18 May, 2022'
 };
 
+
 @Component({
   selector: 'app-vpi-slider',
   imports: [FloatLabel, InputTextModule, ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
@@ -55,11 +56,12 @@ export class VpiSliderComponent {
   private readonly datePipe = inject(DatePipe);
   private readonly router = inject(Router);
   public dataService = inject(DataService);
+  private readonly cdr = inject(ChangeDetectorRef);
   public dateRangeError = false;
   public toDateError = false;
   public fromDateError = false;
   public pageNumber = 1;
-  public toDate: Date | null = null;
+  public toDate: Date = new Date();
   public hourFormat = '24';
   public aniAliDigitsModel = '';
   public extensionNumberModel = '';
@@ -72,11 +74,11 @@ export class VpiSliderComponent {
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
 
-  private readonly effectData = effect(() => {
-    if (this.dataService.openDrawer()) {
-      this.openDrawerFunction();
-    }
-  });
+ private readonly effectData = effect(() => {
+  if (this.dataService.openDrawer()) {
+    this.restoreFormState();  
+  }
+});
 
 
   public getFormattedDate(date: Date | null): string {
@@ -152,6 +154,7 @@ export class VpiSliderComponent {
     });
 
     ngForm.resetForm();
+    this.dataService.drawerFormState.set(undefined);
     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
 
@@ -196,15 +199,78 @@ export class VpiSliderComponent {
     return !(this.fromDateError || this.toDateError || this.dateRangeError);
   }
 
-  public openDrawerFunction(ngForm?: NgForm): void {
-    this.dataService.openDrawer.set(true);
+public openDrawerFunction(ngForm?: NgForm): void {
     ngForm?.resetForm();
-    this.fromDate = new Date();
-    this.toDate = new Date();
-    this.toDateError = false;
-    this.fromDateError = false;
-    this.dateRangeError = false;
+     this.resetAllFields();
+    this.dataService.openDrawer.set(false);
+    this.dataService.openDrawer.set(true);
+}
+
+private restoreFormState(): void {
+  const currentRoute = this.router.url.split('?')[0];
+  const isVpiRoute = currentRoute.startsWith('/vpi');
+
+
+  if (isVpiRoute) {
+     const saved = this.dataService.drawerFormState() ?? this.dataService.getPayload();
+    if (!saved?.opco) return;
+
+    Promise.resolve().then(() => {
+      this.fromDate = saved.from_date ? new Date(saved.from_date) : new Date();
+      this.toDate = saved.to_date ? new Date(saved.to_date) : new Date();
+      this.opCode = this.opCodes.find(o => o.code === saved.opco) ?? null;
+      this.selectedDirection = saved.filters?.direction == null
+        ? null
+        : this.directions.find(d => d.code === saved.filters!.direction) ?? null;
+      this.nameModel = saved.filters?.name?.join(',') ?? '';
+      this.extensionNumberModel = saved.filters?.extensionNum?.join(',') ?? '';
+      this.channelNumberModel = saved.filters?.channelNum?.join(',') ?? null;
+      this.aniAliDigitsModel = saved.filters?.aniAliDigits?.join(',') ?? '';
+      this.agentIdModel = saved.filters?.agentID?.join(',') ?? '';
+      this.objectIdModel = saved.filters?.objectIDs?.join(',') ?? '';
+      this.cdr.detectChanges();
+    });
+  } else {
+     this.dataService.drawerFormState.set(undefined);
+    this.resetAllFields();
   }
+}
+
+ private resetAllFields(): void {
+  this.fromDate = new Date();
+  this.toDate =  new Date();
+  this.toDateError = false;
+  this.fromDateError = false;
+  this.dateRangeError = false;
+  this.opCode = null;
+  this.selectedDirection = null;
+  this.aniAliDigitsModel = '';
+  this.extensionNumberModel = '';
+  this.channelNumberModel = null;
+  this.agentIdModel = '';
+  this.objectIdModel = '';
+  this.nameModel = '';
+}
+
+public onDrawerHide(): void {
+  this.dataService.drawerFormState.set({
+    from_date: this.getFormattedDate(this.fromDate),
+    to_date: this.getFormattedDate(this.toDate),
+    opco: this.opCode?.code ?? '',
+    filters: {
+      name: this.nameModel ? this.nameModel.split(',') : null,
+      extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
+      objectIDs: this.objectIdModel ? this.objectIdModel.split(',') : null,
+      channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
+      aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
+      agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
+      direction: this.selectedDirection?.code ?? null,
+    },
+    pagination: { pageNumber: this.pageNumber, pageSize: 10 },
+  });
+
+  this.dataService.openDrawer.set(false);
+}
 
   public isValidUUID(uuid: string): boolean {
     return UUIDREGEX.test(uuid);

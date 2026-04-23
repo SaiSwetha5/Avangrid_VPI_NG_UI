@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public router = inject(Router);
   public _dataService = inject(DataService);
 
-  public title = "Avangrid VPI GUI";
+  public title = "VPI Record System";
   public items: MenuItem[] | undefined;
   public opCodes: OPCODES[] | undefined;
   public currentUrl = '';
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.updateUserMenu();
       });
-
+     
     this.initMenus();
   }
 

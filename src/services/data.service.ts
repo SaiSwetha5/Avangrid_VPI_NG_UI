@@ -8,6 +8,7 @@ import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interfa
 export class DataService {
  @Input() activate?: (e: KeyboardEvent) => void;
 
+public readonly previousRoute = signal<string>('');
 public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
 public readonly totalRecordsSignal = signal(0);
 public readonly loadingTableDataSignal = signal<boolean>(false);
@@ -22,7 +23,7 @@ public payloadSignal = signal<SearchFilteredDataInput | undefined>({
     pageSize: 10
   }
 });
-
+public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(undefined);
   public payload = this.payloadSignal;
 
   public getPayload() {

@@ -1,7 +1,7 @@
 <p-button label="Filters" severity="warn" (click)="openDrawerFunction(filterForm)"
   (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)" />
 
-<p-drawer [(visible)]="dataService.openDrawer" (onShow)="resetFilters(filterForm)" position="left"
+<p-drawer [(visible)]="dataService.openDrawer" (onHide)="onDrawerHide()" position="left"
   styleClass="my-green-drawer">
   <ng-template pTemplate="header">
     <div class="drawer-header">
@@ -18,7 +18,7 @@
 
       <div class="form-grid">
         <p-floatlabel variant="in">
-          <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name"
+          <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" dataKey="code"  
             #opCodeRef="ngModel" required></p-select>
           <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
         </p-floatlabel>

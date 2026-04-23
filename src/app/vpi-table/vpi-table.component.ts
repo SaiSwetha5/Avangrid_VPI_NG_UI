@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
-import {  DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
+import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -28,7 +28,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-vpi-table',
-  imports: [ ProgressBar, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent,CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
+  imports: [ProgressBar, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
   standalone: true,
   providers: [DatePipe, MessageService],
   templateUrl: './vpi-table.component.html',
@@ -47,7 +47,7 @@ export class VpiTableComponent {
   public _dataService = inject(DataService);
   private readonly _apiService = inject(ApiCallsService);
   private readonly _messageService = inject(MessageService);
-  private readonly _destroyRef    = inject(DestroyRef);
+  private readonly _destroyRef = inject(DestroyRef);
   private readonly _router = inject(Router);
   public getSelectedOpcode = this._dataService.selectedOpcode;
   public first = signal<number>(0);
@@ -67,19 +67,19 @@ export class VpiTableComponent {
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
 
   private readonly effectData = effect(() => {
-  this.currentPayload = this.payload();
+    this.currentPayload = this.payload();
 
-   if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
-     this._dataService.loadingTableDataSignal.set(false);
-      return;      
-    }  
+    if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
+      this._dataService.loadingTableDataSignal.set(false);
+      return;
+    }
     this.first.set(0);
     this.selectedRow = [];
     this.fetchData(this.currentPayload)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe();
   }
-);
+  );
 
   public onPageChange(event: PaginatorState): void {
     const pageNumber = Math.floor(event.first / event.rows) + 1;
@@ -122,7 +122,7 @@ export class VpiTableComponent {
         this._dataService.loadingTableDataSignal.set(false);
       }),
       catchError((err: HttpErrorResponse) => {
-         return throwError(() => err);
+        return throwError(() => err);
       })
     );
   }
@@ -142,65 +142,64 @@ export class VpiTableComponent {
         return of(null);
       })
     ).subscribe((metadata) => {
-       if (!metadata) 
-       {
-        this._dataService.loadingAudioFile.set(false); 
-        return; 
-       }
-        this.selectedRowData = metadata;
-        if (this.selectedRowData) {
-          this.rowSelected = true;
-        }
-        this.audioPopUpVisible = true;
-        const isAlreadySelected = this.selectedRow.some(
-          (row: VPIDataItem) => row.objectId === metadata.objectId
+      if (!metadata) {
+        this._dataService.loadingAudioFile.set(false);
+        return;
+      }
+      this.selectedRowData = metadata;
+      if (this.selectedRowData) {
+        this.rowSelected = true;
+      }
+      this.audioPopUpVisible = true;
+      const isAlreadySelected = this.selectedRow.some(
+        (row: VPIDataItem) => row.objectId === metadata.objectId
+      );
+      if (isAlreadySelected) {
+        this.selectedRowData.isChecked = false;
+        this.selectedRow = this.selectedRow.filter(
+          (row: VPIDataItem) =>
+            row.objectId !== metadata.objectId
         );
-        if (isAlreadySelected) {
-          this.selectedRowData.isChecked = false;
-          this.selectedRow = this.selectedRow.filter(
-            (row: VPIDataItem) =>
-              row.objectId !== metadata.objectId
-          );
-        }
-        this.audioUrl = null;
-        const audioRecordingInput = {
-          date: rowData.startTime ? rowData.startTime : '',
-          opco: this._dataService.selectedOpcode() ?? '',
-          username: rowData.username ? rowData.username : '',
-          aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
-          extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
-          channelNum: rowData.channelNum ? rowData.channelNum : 0,
-          objectId: rowData.objectId ? rowData.objectId : '',
-          duration: rowData.duration ? rowData.duration : 0
-        };
+      }
+      this.audioUrl = null;
+      const audioRecordingInput = {
+        date: rowData.startTime ? rowData.startTime : '',
+        opco: this._dataService.selectedOpcode() ?? '',
+        username: rowData.username ? rowData.username : '',
+        aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
+        extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
+        channelNum: rowData.channelNum ? rowData.channelNum : 0,
+        objectId: rowData.objectId ? rowData.objectId : '',
+        duration: rowData.duration ? rowData.duration : 0
+      };
 
-        this._apiService.getAudioRecordings(audioRecordingInput).pipe(
-          catchError((error: HttpErrorResponse) => {
-            this._dataService.loadingAudioFile.set(false);
-            this.hasErrorForAudioFile = false;
-            this.audioErrorMessage = "";
-            if (error.error instanceof Blob && error.error.type === 'application/json') {
-              error.error.text().then((jsonText: string) => {
-                const errObj = JSON.parse(jsonText);
-                this.hasErrorForAudioFile = true;
-                this.audioErrorMessage = errObj.message || 'Failed to load waveform data.';
-              });
-            }
-            return of(null);
-          })
-        ).subscribe((audioFile) => {
+      this._apiService.getAudioRecordings(audioRecordingInput).pipe(
+        catchError((error: HttpErrorResponse) => {
+          this._dataService.loadingAudioFile.set(false);
           this.hasErrorForAudioFile = false;
           this.audioErrorMessage = "";
-          if (audioFile) {
-            this._dataService.loadingAudioFile.set(false);
-            this.clearWaveform();
-            this.audioUrl = URL.createObjectURL(audioFile);
-            setTimeout(() => this.waveform(), 0);
-          } else {
-          this._dataService.loadingAudioFile.set(false); 
+          if (error.error instanceof Blob && error.error.type === 'application/json') {
+            error.error.text().then((jsonText: string) => {
+              const errObj = JSON.parse(jsonText);
+              this.hasErrorForAudioFile = true;
+              this.audioErrorMessage = errObj.message || 'Failed to load waveform data.';
+            });
+          }
+          return of(null);
+        })
+      ).subscribe((audioFile) => {
+        this.hasErrorForAudioFile = false;
+        this.audioErrorMessage = "";
+        if (audioFile) {
+          this._dataService.loadingAudioFile.set(false);
+          this.clearWaveform();
+          this.audioUrl = URL.createObjectURL(audioFile);
+          setTimeout(() => this.waveform(), 0);
+        } else {
+          this._dataService.loadingAudioFile.set(false);
         }
-        });
-      
+      });
+
     });
   }
 
@@ -218,7 +217,7 @@ export class VpiTableComponent {
     a.download = 'avangridRecording.mp3';
     document.body.appendChild(a);
     a.click();
-    if(a) {
+    if (a) {
       document.body.removeChild(a);
     }
     setTimeout(() => {
@@ -234,10 +233,10 @@ export class VpiTableComponent {
     if (this.selectedRow.length === 0) return;
     const payload: DownloadRecordingInput[] = this.selectedRow.map(row => ({
       date: row.startTime ? row.startTime : null,
-      opco: row.opco ?  row.opco :null,
+      opco: row.opco ? row.opco : null,
       username: row.username ? row.username : null,
       aniAliDigits: row.aniAliDigits ? row.aniAliDigits : null,
-      extensionNum: row.extensionNum ? row.extensionNum  : null,
+      extensionNum: row.extensionNum ? row.extensionNum : null,
       channelNum: row.channelNum ? row.channelNum : null,
       objectId: row.objectId ? row.objectId : null,
       duration: row.duration ? row.duration : null

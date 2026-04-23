@@ -9,9 +9,9 @@
       <b class="header-class">
         Successfully retrieved {{ _dataService.totalRecordsSignal() }}
         records for OPCO: {{ _dataService.selectedOpcode() }}
-        (From Date - To Date :
-        {{ currentPayload?.from_date | date: 'dd/MM/yyyy' }} -
-        {{ currentPayload?.to_date | date: 'dd/MM/yyyy' }} UTC)
+        (From Date - To Date EST:
+        {{ currentPayload?.from_date }} -
+        {{ currentPayload?.to_date }} )
       </b>
     </span>
   </div>
@@ -73,16 +73,19 @@
     <ng-template pTemplate="emptymessage">
       <p-panel class="empty-panel">
         <div class="empty-message-container">
-          <i class="pi pi-database"></i>
-          <p class="text-color">
+          <p class="overlay-text">
             Please choose an Opco from
-            <a href="javascript:void(0)" class="filters-link" (click)="_dataService.openDrawer.set(true)">
+            <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
+              (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
               FILTERS
             </a>
             to get call records
           </p>
         </div>
       </p-panel>
+
+
+
     </ng-template>
   </p-table>
 </div>
@@ -101,13 +104,12 @@
     Recording not found!! {{audioErrorMessage}}
   </div>
   <ng-template pTemplate="header">
-    <div class="header-container">
-      <div class="header-left">
-        <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
-        <h4 class="header-title">AUDIO RECORDING DETAILS</h4>
-      </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+
+      <h4 style="color: #FFFFFF;">AUDIO RECORDING DETAILS </h4>
       <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" (click)="downloadAudio()" aria-label="Search audio"
-        (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"></p-button>
+        (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"> </p-button>
+
     </div>
   </ng-template>
 
@@ -179,10 +181,6 @@
                       <tr>
                         <td><b>xPlatformRef</b></td>
                         <td>{{ interaction.xPlatformRef }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Transcript Status</b></td>
-                        <td>{{ interaction.transcriptStatus }}</td>
                       </tr>
                     </ng-template>
                   </p-table>

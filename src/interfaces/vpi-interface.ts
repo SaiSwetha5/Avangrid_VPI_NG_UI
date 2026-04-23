@@ -130,14 +130,16 @@ export interface HeaderItem { id: string; label: string; }
 
 export const DISPLAY_HEADERS: HeaderItem[] = [
   { id: 'username', label: 'User Name' },
-  { id: 'startTime', label: 'Start Time (UTC)' },
+  { id: 'startTime', label: 'Start Time' },
   { id: 'duration', label: 'Duration' },
   { id: 'channelName', label: 'Channel Name' },
   { id: 'agentId', label: 'Agent ID' },
   { id: 'direction', label: 'Direction' },
-  { id: 'aniAliDigits', label: 'ANI/ALI Digits' },
+  { id: 'aniAliDigits', label: 'ANI/ALI' },
   { id: 'extensionNum', label: 'Extension Num' },
-  { id: 'dateAdded', label: 'Date (UTC)' },
+  { id: 'dateAdded', label: 'Date' },
   { id: 'objectId', label: 'Object ID' }
 
 ];
+
+ 
