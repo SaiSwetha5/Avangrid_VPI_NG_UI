@@ -77,6 +77,20 @@ export class ApiCallsService {
       })
     );
   }
+
+public getOPCODES(): Observable<string[]> {
+  return this.auth.getAccessToken().pipe(
+    switchMap(token => {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      return this.http.get<string[]>(`${environment.apiBaseUrl}/opcos`, { headers });
+    })
+  );
+}
+
+
 }
 
 

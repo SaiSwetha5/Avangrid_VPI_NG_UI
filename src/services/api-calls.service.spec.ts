@@ -42,7 +42,7 @@ const mockResponse: SearchFilteredDataOutput = {
   message: 'Success',
   status: 200,
   data: vpiDataMock,
-  pagination: { totalRecords: vpiDataMock.length, totalPages: 1, pageNumber: 1, pageSize: 10 },
+  pagination: { totalRecords: vpiDataMock.length, totalPages: 1, pageNumber: 1, pageSize: 15 },
 };
 
 describe('ApiCallsService', () => {

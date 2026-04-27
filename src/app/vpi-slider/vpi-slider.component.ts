@@ -1,7 +1,7 @@
-import {  Component, effect, inject ,ChangeDetectorRef} from '@angular/core';
+import { Component, effect, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DataService } from 'services/data.service';
 import { NgForm, ReactiveFormsModule, FormsModule, NgModel } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -9,7 +9,6 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
-
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 
@@ -21,12 +20,7 @@ interface OpCode {
 const UUIDREGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-const OPCODES: OpCode[] = [
-  { name: 'RGE', code: 'RGE' },
-  { name: 'NYSEG', code: 'NYSEG' },
-  { name: 'CMP', code: 'CMP' },
-];
-
+ 
 const DIRECTIONS: { name: string; code: boolean }[] = [
   { name: 'Inbound', code: true },
   { name: 'Outbound', code: false },
@@ -38,7 +32,6 @@ const DATERANGES: Record<string, string> = {
   CMP: '12 Aug, 2014 - 18 May, 2022'
 };
 
-
 @Component({
   selector: 'app-vpi-slider',
   imports: [FloatLabel, InputTextModule, ToastModule, RouterModule, FormsModule, ReactiveFormsModule, CardModule, SelectModule, DatePickerModule, CommonModule, ButtonModule, DrawerModule],
@@ -47,10 +40,8 @@ const DATERANGES: Record<string, string> = {
   standalone: true,
   providers: [DatePipe]
 })
-
-export class VpiSliderComponent {
+export class VpiSliderComponent implements OnInit {
   public fromDate: Date = new Date();
-  public readonly opCodes = OPCODES;
   public readonly directions = DIRECTIONS;
   public readonly dateRanges = DATERANGES;
   private readonly datePipe = inject(DatePipe);
@@ -74,12 +65,35 @@ export class VpiSliderComponent {
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
 
- private readonly effectData = effect(() => {
-  if (this.dataService.openDrawer()) {
-    this.restoreFormState();  
-  }
-});
+   public ngOnInit(): void {
+        this.router.events.subscribe((event) => {
+    if (event instanceof NavigationEnd) {
+      if (event.url.includes('/vpi')) {
+        if (!this.dataService.drawerFormState()) {
+          this.resetFormForNewSession();
+        }
+      }
+    }
+  });
+   }
+   
+  public resetFormForNewSession(): void {
+  this.resetAllFields();
+  this.dataService.drawerFormState.set(undefined);
+} 
 
+  private readonly opcodeReadyEffect = effect(() => {
+    const options = this.dataService.opcodesSignal();
+    if (options.length > 0) {
+      this.cdr.detectChanges();
+    }
+  });
+
+  private readonly drawerOpenEffect = effect(() => {
+    if (this.dataService.openDrawer()) {
+      this.restoreFormState();
+    }
+  });
 
   public getFormattedDate(date: Date | null): string {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
@@ -88,7 +102,7 @@ export class VpiSliderComponent {
   public resetFilters(ngForm?: NgForm): void {
     ngForm?.resetForm();
     this.fromDate = new Date();
-    this.toDate = new Date();
+    this.toDate = new Date(); 
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
@@ -113,7 +127,7 @@ export class VpiSliderComponent {
     return cmp.getTime() === today.getTime();
   }
 
-  public applyDateFilters(ngForm: NgForm): void {
+  public applyDateFilters(): void {
     const isFromToday = this.isToday(this.fromDate);
     const isToToday = this.isToday(this.toDate);
     if (isFromToday || isToToday) {
@@ -127,12 +141,14 @@ export class VpiSliderComponent {
     if (!isRangeValid) {
       return;
     }
+
     if (this.objectIdModel && !this.processObjectIds()) {
       return;
     }
 
     const opcoCode = this.opCode?.code ?? '';
     this.dataService.selectedOpcode.set(opcoCode);
+    
     this.dataService.setPayload({
       from_date: this.getFormattedDate(this.fromDate),
       to_date: this.getFormattedDate(this.toDate),
@@ -145,19 +161,15 @@ export class VpiSliderComponent {
         aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
         agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
         direction: this.selectedDirection?.code ?? null,
-
       },
       pagination: {
         pageNumber: this.pageNumber,
-        pageSize: 10,
+        pageSize: 15,
       },
     });
-
-    ngForm.resetForm();
-    this.dataService.drawerFormState.set(undefined);
+ 
     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
-
   }
 
   private normalizeDate(date: Date | string | null): number | null {
@@ -199,78 +211,97 @@ export class VpiSliderComponent {
     return !(this.fromDateError || this.toDateError || this.dateRangeError);
   }
 
-public openDrawerFunction(ngForm?: NgForm): void {
-    ngForm?.resetForm();
-     this.resetAllFields();
-    this.dataService.openDrawer.set(false);
+  public openDrawerFunction(): void {
     this.dataService.openDrawer.set(true);
-}
-
-private restoreFormState(): void {
-  const currentRoute = this.router.url.split('?')[0];
-  const isVpiRoute = currentRoute.startsWith('/vpi');
-
-
-  if (isVpiRoute) {
-     const saved = this.dataService.drawerFormState() ?? this.dataService.getPayload();
-    if (!saved?.opco) return;
-
-    Promise.resolve().then(() => {
-      this.fromDate = saved.from_date ? new Date(saved.from_date) : new Date();
-      this.toDate = saved.to_date ? new Date(saved.to_date) : new Date();
-      this.opCode = this.opCodes.find(o => o.code === saved.opco) ?? null;
-      this.selectedDirection = saved.filters?.direction == null
-        ? null
-        : this.directions.find(d => d.code === saved.filters!.direction) ?? null;
-      this.nameModel = saved.filters?.name?.join(',') ?? '';
-      this.extensionNumberModel = saved.filters?.extensionNum?.join(',') ?? '';
-      this.channelNumberModel = saved.filters?.channelNum?.join(',') ?? null;
-      this.aniAliDigitsModel = saved.filters?.aniAliDigits?.join(',') ?? '';
-      this.agentIdModel = saved.filters?.agentID?.join(',') ?? '';
-      this.objectIdModel = saved.filters?.objectIDs?.join(',') ?? '';
-      this.cdr.detectChanges();
-    });
-  } else {
-     this.dataService.drawerFormState.set(undefined);
-    this.resetAllFields();
   }
-}
 
- private resetAllFields(): void {
-  this.fromDate = new Date();
-  this.toDate =  new Date();
-  this.toDateError = false;
-  this.fromDateError = false;
-  this.dateRangeError = false;
-  this.opCode = null;
-  this.selectedDirection = null;
-  this.aniAliDigitsModel = '';
-  this.extensionNumberModel = '';
-  this.channelNumberModel = null;
-  this.agentIdModel = '';
-  this.objectIdModel = '';
-  this.nameModel = '';
-}
+  private restoreFormState(): void {
+    const currentRoute = this.router.url.split('?')[0];
+    const isVpiRoute = currentRoute.startsWith('/vpi');
 
-public onDrawerHide(): void {
-  this.dataService.drawerFormState.set({
-    from_date: this.getFormattedDate(this.fromDate),
-    to_date: this.getFormattedDate(this.toDate),
-    opco: this.opCode?.code ?? '',
-    filters: {
-      name: this.nameModel ? this.nameModel.split(',') : null,
-      extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
-      objectIDs: this.objectIdModel ? this.objectIdModel.split(',') : null,
-      channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
-      aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
-      agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
-      direction: this.selectedDirection?.code ?? null,
-    },
-    pagination: { pageNumber: this.pageNumber, pageSize: 10 },
-  });
+    if (isVpiRoute) {
+      const saved = this.dataService.drawerFormState();
+      if (!saved?.opco) {
+        return;
+      }
 
-  this.dataService.openDrawer.set(false);
-}
+      const matchedOpcode = this.dataService.opcodesSignal()
+        .find(o => o.code === saved.opco);
+      if (!matchedOpcode) {
+        return;
+      }
+
+      this.fromDate = this.parseDate(saved.from_date);
+      this.toDate = this.parseDate(saved.to_date);
+      this.opCode = matchedOpcode;
+      this.selectedDirection = this.findDirection(saved.filters?.direction);
+
+      const filteredArray = saved.filters || {};
+      this.nameModel = this.formatArray(filteredArray.name);
+      this.extensionNumberModel = this.formatArray(filteredArray.extensionNum);
+      this.channelNumberModel = this.formatArray(filteredArray.channelNum);
+      this.aniAliDigitsModel = this.formatArray(filteredArray.aniAliDigits);
+      this.agentIdModel = this.formatArray(filteredArray.agentID);
+      this.objectIdModel = this.formatArray(filteredArray.objectIDs);
+
+      this.cdr.detectChanges();
+    } else {
+      this.dataService.drawerFormState.set(undefined);
+      this.resetAllFields();
+    }
+  }
+
+  private formatArray(arr: string[] | null | undefined): string {
+    const safeArray = arr ?? [];
+    return safeArray.length > 0 ? safeArray.join(',') : '';
+  }
+
+  private parseDate(dateValue: string | Date | undefined | null): Date {
+    return dateValue ? new Date(dateValue) : new Date();
+  }
+
+  private findDirection(code: string | number | boolean | null | undefined) {
+    if (code === null || code === undefined) {
+      return null;
+    }
+    return this.directions.find(d => String(d.code) === String(code)) ?? null;
+  }
+
+  private resetAllFields(): void {
+    this.fromDate = new Date();
+    this.toDate = new Date();
+    this.toDateError = false;
+    this.fromDateError = false;
+    this.dateRangeError = false;
+    this.opCode = null;
+    this.selectedDirection = null;
+    this.aniAliDigitsModel = '';
+    this.extensionNumberModel = '';
+    this.channelNumberModel = null;
+    this.agentIdModel = '';
+    this.objectIdModel = '';
+    this.nameModel = '';
+  }
+
+  public onDrawerHide(): void {
+    this.dataService.drawerFormState.set({
+      from_date: this.getFormattedDate(this.fromDate),
+      to_date: this.getFormattedDate(this.toDate),
+      opco: this.opCode?.code ?? '',
+      filters: {
+        name: this.nameModel ? this.nameModel.split(',') : null,
+        extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
+        objectIDs: this.objectIdModel ? this.objectIdModel.split(',') : null,
+        channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
+        aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
+        agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
+        direction: this.selectedDirection?.code ?? null,
+      },
+      pagination: { pageNumber: this.pageNumber, pageSize: 15 },
+    });
+
+    this.dataService.openDrawer.set(false);
+  }
 
   public isValidUUID(uuid: string): boolean {
     return UUIDREGEX.test(uuid);
@@ -311,5 +342,4 @@ public onDrawerHide(): void {
       opCodeRef.control.setErrors({ required: true });
     }
   }
-
 }

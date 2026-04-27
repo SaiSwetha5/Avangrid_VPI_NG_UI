@@ -32,7 +32,7 @@
 <div class="table-wrapper">
   <p-table ngSkipHydration #dt class="custom-table" size="small" selectionMode="multiple" [(selection)]="selectedRow"
     dataKey="objectId" [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()"
-    [rowsPerPageOptions]="[5,10, 15]" [responsiveLayout]="'scroll'" [resizableColumns]="true" columnResizeMode="fit"
+    [rowsPerPageOptions]="[15,20,25]" [responsiveLayout]="'scroll'" [resizableColumns]="true" columnResizeMode="fit"
     [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
     [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
     [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -62,6 +62,13 @@
             <ng-container *ngSwitchCase="'direction'">
               {{ (rowData[header.id] === true || rowData[header.id] === 'true') ? 'Inbound' : 'Outbound' }}
             </ng-container>
+            <ng-container *ngSwitchCase="'dateAdded'">
+              {{ convertUtcToEst(rowData[header.id]) }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'startTime'">
+              {{ convertUtcToEst(rowData[header.id]) }}
+            </ng-container>
             <ng-container *ngSwitchDefault>
               {{ rowData[header.id] }}
             </ng-container>
@@ -70,23 +77,29 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="emptymessage">
-      <p-panel class="empty-panel">
-        <div class="empty-message-container">
-          <p class="overlay-text">
-            Please choose an Opco from
-            <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
-              (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
-              FILTERS
-            </a>
-            to get call records
-          </p>
-        </div>
-      </p-panel>
+<ng-template pTemplate="emptymessage">
+  <p-panel class="empty-panel">
+    <div class="empty-message-container">
+      <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
+      <p class="overlay-text">
+       Please select an Opco using the  
+        <a
+          class="filters-link"
+          tabindex="0"
+          (click)="_dataService.openDrawer.set(true)"
+          (keydown.enter)="_dataService.onKeydown($event)"
+          (keydown.space)="_dataService.onKeydown($event)"
+        >
+          FILTERS
+        </a>
+         to retrieve call records
+      </p>
+    </div>
+  </p-panel>
+</ng-template>
 
 
 
-    </ng-template>
   </p-table>
 </div>
 
@@ -95,7 +108,6 @@
     'background-color': '#008737',
     'width': '40rem',
     'height': '40rem',
-    'color': '#FFFFFF'
   }">
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
@@ -103,15 +115,22 @@
   <div class="audio-error" *ngIf="hasErrorForAudioFile">
     Recording not found!! {{audioErrorMessage}}
   </div>
-  <ng-template pTemplate="header">
-    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-
-      <h4 style="color: #FFFFFF;">AUDIO RECORDING DETAILS </h4>
-      <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" (click)="downloadAudio()" aria-label="Search audio"
-        (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"> </p-button>
-
+<ng-template pTemplate="header">
+  <div class="dialog-header">
+    <div class="header-left">
+      <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
+      <h4 class="header-title">AUDIO RECORDING DETAILS</h4>
     </div>
-  </ng-template>
+    <div class="header-right">
+      <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download"
+        (click)="downloadAudio()" aria-label="Download audio"
+        (keydown.enter)="_dataService.onKeydown($event)"
+        (keydown.space)="_dataService.onKeydown($event)">
+      </p-button>
+    </div>
+  </div>
+</ng-template>
+
 
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
 
@@ -226,13 +245,17 @@
                         <td><b>Sensitivity Level</b></td>
                         <td>{{ interaction.sensitivityLevel }}</td>
                       </tr>
+                       <tr>
+                        <td><b>User Id</b></td>
+                        <td>{{ interaction.userId }}</td>
+                      </tr>
                       <tr>
                         <td><b>hasTalkover</b></td>
                         <td>{{ interaction.hasTalkover }}</td>
                       </tr>
                       <tr>
-                        <td><b>User Id</b></td>
-                        <td>{{ interaction.userId }}</td>
+                        <td><b>Audio Channels</b></td>
+                        <td>{{ interaction.audioChannels }}</td>
                       </tr>
                     </ng-template>
                   </p-table>
@@ -269,10 +292,6 @@
                       <tr>
                         <td><b>Channel Number</b></td>
                         <td>{{ interaction.channelNum }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Audio Channels</b></td>
-                        <td>{{ interaction.audioChannels }}</td>
                       </tr>
                       <tr>
                         <td><b>Media File Id</b></td>

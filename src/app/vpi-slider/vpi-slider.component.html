@@ -1,4 +1,4 @@
-<p-button label="Filters" severity="warn" (click)="openDrawerFunction(filterForm)"
+<p-button label="Filters" severity="warn" (click)="openDrawerFunction()"
   (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)" />
 
 <p-drawer [(visible)]="dataService.openDrawer" (onHide)="onDrawerHide()" position="left"
@@ -18,7 +18,7 @@
 
       <div class="form-grid">
         <p-floatlabel variant="in">
-          <p-select id="opcode" name="opCode" [options]="opCodes" [(ngModel)]="opCode" optionLabel="name" dataKey="code"  
+          <p-select  id="opcode" name="opCode" [options]="dataService.opcodesSignal()" [(ngModel)]="opCode" optionLabel="name" dataKey="code"  
             #opCodeRef="ngModel" required></p-select>
           <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
         </p-floatlabel>
@@ -129,7 +129,7 @@
       <p-button label="Apply" type="submit" severity="success" (keydown.enter)="dataService.onKeydown($event)"
         (keydown.space)="dataService.onKeydown($event)"
         [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError"
-        (click)="applyDateFilters(filterForm)"></p-button>
+        (click)="applyDateFilters()"></p-button>
       <p-button type="button" label="Cancel" severity="warn" (keydown.enter)="dataService.onKeydown($event)"
         (keydown.space)="dataService.onKeydown($event)" (click)="cancelFilters(filterForm)"></p-button>
       <p-button type="button" label="Reset" severity="info" (keydown.enter)="dataService.onKeydown($event)"

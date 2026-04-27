@@ -1,14 +1,15 @@
 import {  HostListener, Injectable, Input, signal, WritableSignal } from '@angular/core'; 
 import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interface';
-   
+
+interface OPCODES { name: string; code: string; }
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
  @Input() activate?: (e: KeyboardEvent) => void;
-
-public readonly previousRoute = signal<string>('');
+  public opcodesSignal = signal<OPCODES[]>([]);
+ public readonly previousRoute = signal<string>('');
 public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
 public readonly totalRecordsSignal = signal(0);
 public readonly loadingTableDataSignal = signal<boolean>(false);
@@ -20,9 +21,10 @@ public payloadSignal = signal<SearchFilteredDataInput | undefined>({
   filters: {},
   pagination: {
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 15
   }
 });
+
 public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(undefined);
   public payload = this.payloadSignal;
 
@@ -97,6 +99,16 @@ public hasAnyValue(payload: SearchFilteredDataInput | null | undefined): boolean
     }
 
     return false;
+  });
+}
+
+public resetPayload(): void {
+  this.payloadSignal.set({
+    filters: {},
+    pagination: {
+      pageNumber: 1,
+      pageSize: 15
+    }
   });
 }
 }

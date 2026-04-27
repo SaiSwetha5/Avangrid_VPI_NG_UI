@@ -26,7 +26,7 @@ describe('VpiSliderComponent', () => {
     const mockForm = {
       resetForm: jasmine.createSpy('resetForm')
     } as unknown as NgForm;
-    component.openDrawerFunction(mockForm);
+    component.openDrawerFunction();
     expect(mockForm.resetForm).toHaveBeenCalled();
     expect(component.fromDate).toEqual(jasmine.any(Date));
     expect(component.toDate).toEqual(jasmine.any(Date));

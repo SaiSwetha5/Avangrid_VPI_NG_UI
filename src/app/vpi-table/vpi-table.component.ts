@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { ViewEncapsulation,Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
@@ -33,6 +33,7 @@ import { Router } from '@angular/router';
   providers: [DatePipe, MessageService],
   templateUrl: './vpi-table.component.html',
   styleUrl: './vpi-table.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 
@@ -40,7 +41,7 @@ export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
   public pagination = {
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 50,
   };
   public payload = computed(() => this._dataService.getPayload());
   public currentPayload: SearchFilteredDataInput | undefined;
@@ -49,6 +50,7 @@ export class VpiTableComponent {
   private readonly _messageService = inject(MessageService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _router = inject(Router);
+  private readonly datePipe = inject(DatePipe);
   public getSelectedOpcode = this._dataService.selectedOpcode;
   public first = signal<number>(0);
   public hasErrorForAudioFile = false;
@@ -302,5 +304,23 @@ export class VpiTableComponent {
     });
 
     this.wavesurfer?.load(this.audioUrl ?? '');
+
   }
+
+
+convertUtcToEst(value: string): string {
+  if (!value) return '';
+  const utcDate = new Date(value + ' UTC');
+
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).format(utcDate);
+}
+
 }
