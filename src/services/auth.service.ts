@@ -8,8 +8,9 @@ export class AuthService {
   private readonly scope = environment.msal.backendScope;
   private readonly msalService = inject(MsalService);
 
-  getAccessToken(): Observable<string> {
-    const account = this.msalService.instance.getActiveAccount();
+  public getAccessToken(): Observable<string> {
+    const account = this.msalService.instance.getActiveAccount()
+      ?? this.msalService.instance.getAllAccounts()[0];
 
     if (!account) {
       return throwError(() => new Error('No active account set'));

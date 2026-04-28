@@ -1,5 +1,5 @@
-import {  HostListener, Injectable, Input, signal, WritableSignal } from '@angular/core'; 
-import {  SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interface';
+import { HostListener, Injectable, Input, signal, WritableSignal } from '@angular/core';
+import { SearchFilteredDataInput, VPIDataItem } from '../interfaces/vpi-interface';
 
 interface OPCODES { name: string; code: string; }
 
@@ -7,36 +7,36 @@ interface OPCODES { name: string; code: string; }
   providedIn: 'root'
 })
 export class DataService {
- @Input() activate?: (e: KeyboardEvent) => void;
+  @Input() activate?: (e: KeyboardEvent) => void;
   public opcodesSignal = signal<OPCODES[]>([]);
- public readonly previousRoute = signal<string>('');
-public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
-public readonly totalRecordsSignal = signal(0);
-public readonly loadingTableDataSignal = signal<boolean>(false);
-public readonly loadingAudioFile = signal<boolean>(false);
-public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
-public selectedOpcode: WritableSignal<string | null> = signal(null);
-public openDrawer = signal(false);
-public payloadSignal = signal<SearchFilteredDataInput | undefined>({
-  filters: {},
-  pagination: {
-    pageNumber: 1,
-    pageSize: 15
-  }
-});
+  public readonly previousRoute = signal<string>('');
+  public readonly pagedDataSignal = signal<VPIDataItem[]>([]);
+  public readonly totalRecordsSignal = signal(0);
+  public readonly loadingTableDataSignal = signal<boolean>(false);
+  public readonly loadingAudioFile = signal<boolean>(false);
+  public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
+  public selectedOpcode: WritableSignal<string | null> = signal(null);
+  public openDrawer = signal(false);
+  public payloadSignal = signal<SearchFilteredDataInput | undefined>({
+    filters: {},
+    pagination: {
+      pageNumber: 1,
+      pageSize: 20
+    }
+  });
 
-public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(undefined);
+  public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(undefined);
   public payload = this.payloadSignal;
 
   public getPayload() {
     return this.payloadSignal();
   }
 
-  public setPayload(payload: SearchFilteredDataInput | undefined) { 
-     if (!payload?.filters) {
-    return;
-  }
-     this.payloadSignal.set(payload);
+  public setPayload(payload: SearchFilteredDataInput | undefined) {
+    if (!payload?.filters) {
+      return;
+    }
+    this.payloadSignal.set(payload);
   }
 
   public getTotalRecords() {
@@ -47,69 +47,69 @@ public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(un
     this.totalRecordsSignal.set(count);
   }
 
-    
+
   @HostListener('keydown.enter', ['$event'])
   @HostListener('keydown.space', ['$event'])
   onKeydown(e: KeyboardEvent) {
-     e.preventDefault();
+    e.preventDefault();
     this.activate?.(e);
   }
 
 
-public hasAnyValue(payload: SearchFilteredDataInput | null | undefined): boolean {
-  if (!payload) {
-    return false;
-  }
-
-  const hasNonEmptyString = (s?: string | null): boolean => {
-    return typeof s === 'string' && s.trim().length > 0;
-  };
-
-  if (hasNonEmptyString(payload.from_date)) {
-    return true;
-  }
-
-  if (hasNonEmptyString(payload.to_date)) {
-    return true;
-  }
-
-  if (hasNonEmptyString(payload.opco)) {
-    return true;
-  }
-
- const filters = payload.filters as Record<string, string | string[] | null | undefined>;
-
-  if (!filters || typeof filters !== 'object') {
-    return false;
-  }
-
-  return Object.values(filters).some((value: unknown) => {
-    if (value == null) {
+  public hasAnyValue(payload: SearchFilteredDataInput | null | undefined): boolean {
+    if (!payload) {
       return false;
     }
 
-    if (typeof value === 'string') {
-      return value.trim().length > 0;
+    const hasNonEmptyString = (s?: string | null): boolean => {
+      return typeof s === 'string' && s.trim().length > 0;
+    };
+
+    if (hasNonEmptyString(payload.from_date)) {
+      return true;
     }
 
-    if (Array.isArray(value)) {
-      return value.some((item) => {
-        return (item ?? '').toString().trim().length > 0;
-      });
+    if (hasNonEmptyString(payload.to_date)) {
+      return true;
     }
 
-    return false;
-  });
+    if (hasNonEmptyString(payload.opco)) {
+      return true;
+    }
+
+    const filters = payload.filters as Record<string, string | string[] | null | undefined>;
+
+    if (!filters || typeof filters !== 'object') {
+      return false;
+    }
+
+    return Object.values(filters).some((value: unknown) => {
+      if (value == null) {
+        return false;
+      }
+
+      if (typeof value === 'string') {
+        return value.trim().length > 0;
+      }
+
+      if (Array.isArray(value)) {
+        return value.some((item) => {
+          return (item ?? '').toString().trim().length > 0;
+        });
+      }
+
+      return false;
+    });
+  }
+
+  public resetPayload(): void {
+    this.payloadSignal.set({
+      filters: {},
+      pagination: {
+        pageNumber: 1,
+        pageSize: 20
+      }
+    });
+  }
 }
 
-public resetPayload(): void {
-  this.payloadSignal.set({
-    filters: {},
-    pagination: {
-      pageNumber: 1,
-      pageSize: 15
-    }
-  });
-}
-}
- 

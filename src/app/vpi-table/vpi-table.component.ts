@@ -1,4 +1,4 @@
-import { ViewEncapsulation,Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { ViewEncapsulation, Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
@@ -41,7 +41,7 @@ export class VpiTableComponent {
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
   public pagination = {
     pageNumber: 1,
-    pageSize: 50,
+    pageSize: 20,
   };
   public payload = computed(() => this._dataService.getPayload());
   public currentPayload: SearchFilteredDataInput | undefined;
@@ -176,18 +176,9 @@ export class VpiTableComponent {
       };
 
       this._apiService.getAudioRecordings(audioRecordingInput).pipe(
-        catchError((error: HttpErrorResponse) => {
-          this._dataService.loadingAudioFile.set(false);
-          this.hasErrorForAudioFile = false;
-          this.audioErrorMessage = "";
-          if (error.error instanceof Blob && error.error.type === 'application/json') {
-            error.error.text().then((jsonText: string) => {
-              const errObj = JSON.parse(jsonText);
-              this.hasErrorForAudioFile = true;
-              this.audioErrorMessage = errObj.message || 'Failed to load waveform data.';
-            });
-          }
-          return of(null);
+        catchError(async (err: HttpErrorResponse) => {
+          this.handleAudioError(err);
+          return null;
         })
       ).subscribe((audioFile) => {
         this.hasErrorForAudioFile = false;
@@ -205,6 +196,17 @@ export class VpiTableComponent {
     });
   }
 
+  private async handleAudioError(error: HttpErrorResponse) {
+    this._dataService.loadingAudioFile.set(false);
+    this.hasErrorForAudioFile = false;
+    this.audioErrorMessage = "";
+    if (error.error instanceof Blob && error.error.type === 'application/json') {
+      const jsonText = await error.error.text();
+      const errObj = JSON.parse(jsonText);
+      this.hasErrorForAudioFile = true;
+      this.audioErrorMessage = errObj.message || 'Failed to load waveform data.';
+    }
+  }
 
   public downloadAudio(): void {
     const audioUrl = this.audioUrl;
@@ -308,19 +310,19 @@ export class VpiTableComponent {
   }
 
 
-convertUtcToEst(value: string): string {
-  if (!value) return '';
-  const utcDate = new Date(value + ' UTC');
+  convertUtcToEst(value: string): string {
+    if (!value) return '';
+    const utcDate = new Date(value + ' UTC');
 
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).format(utcDate);
-}
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }).format(utcDate);
+  }
 
 }

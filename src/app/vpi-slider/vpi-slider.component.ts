@@ -20,7 +20,7 @@ interface OpCode {
 const UUIDREGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
- 
+
 const DIRECTIONS: { name: string; code: boolean }[] = [
   { name: 'Inbound', code: true },
   { name: 'Outbound', code: false },
@@ -65,22 +65,22 @@ export class VpiSliderComponent implements OnInit {
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
 
-   public ngOnInit(): void {
-        this.router.events.subscribe((event) => {
-    if (event instanceof NavigationEnd) {
-      if (event.url.includes('/vpi')) {
-        if (!this.dataService.drawerFormState()) {
-          this.resetFormForNewSession();
+  public ngOnInit(): void {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (event.url.includes('/vpi')) {
+          if (!this.dataService.drawerFormState()) {
+            this.resetFormForNewSession();
+          }
         }
       }
-    }
-  });
-   }
-   
+    });
+  }
+
   public resetFormForNewSession(): void {
-  this.resetAllFields();
-  this.dataService.drawerFormState.set(undefined);
-} 
+    this.resetAllFields();
+    this.dataService.drawerFormState.set(undefined);
+  }
 
   private readonly opcodeReadyEffect = effect(() => {
     const options = this.dataService.opcodesSignal();
@@ -102,7 +102,7 @@ export class VpiSliderComponent implements OnInit {
   public resetFilters(ngForm?: NgForm): void {
     ngForm?.resetForm();
     this.fromDate = new Date();
-    this.toDate = new Date(); 
+    this.toDate = new Date();
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
@@ -148,7 +148,7 @@ export class VpiSliderComponent implements OnInit {
 
     const opcoCode = this.opCode?.code ?? '';
     this.dataService.selectedOpcode.set(opcoCode);
-    
+
     this.dataService.setPayload({
       from_date: this.getFormattedDate(this.fromDate),
       to_date: this.getFormattedDate(this.toDate),
@@ -164,10 +164,10 @@ export class VpiSliderComponent implements OnInit {
       },
       pagination: {
         pageNumber: this.pageNumber,
-        pageSize: 15,
+        pageSize: 20,
       },
     });
- 
+
     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
   }
@@ -297,7 +297,7 @@ export class VpiSliderComponent implements OnInit {
         agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
         direction: this.selectedDirection?.code ?? null,
       },
-      pagination: { pageNumber: this.pageNumber, pageSize: 15 },
+      pagination: { pageNumber: this.pageNumber, pageSize: 20 },
     });
 
     this.dataService.openDrawer.set(false);

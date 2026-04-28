@@ -7,7 +7,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { InteractionStatus, EventMessage, EventType, AuthenticationResult } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import { DataService } from 'services/data.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -38,30 +38,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public userMenu: UserMenuItem[] = [];
 
   ngOnInit() {
-    this.msalService.instance.handleRedirectPromise()
-      .then((result) => {
-        if (result) {
-          this.msalService.instance.setActiveAccount(result.account);
-        }
-        this.updateUserMenu();
-        this.loadOpcodes();
-      })
-      .catch(err => {
-        console.error('MSAL Redirect Error:', err);
-      });
-
-    this.msalBroadcastService.msalSubject$
-      .pipe(
-        filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
-        takeUntil(this._destroying$)
-      )
-      .subscribe((result: EventMessage) => {
-        const payload = result.payload as AuthenticationResult;
-        this.msalService.instance.setActiveAccount(payload.account);
-        this.updateUserMenu();
-        this.loadOpcodes();
-      });
-
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
@@ -69,33 +45,52 @@ export class AppComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.updateUserMenu();
-        const account = this.msalService.instance.getActiveAccount();
-        if (account) {
-          this.loadOpcodes();
-        }
+        this.checkAndLoadData();
       });
 
     this.initMenus();
   }
 
- 
+  private checkAndLoadData() {
+
+    const account = this.msalService.instance.getActiveAccount()
+      ?? this.msalService.instance.getAllAccounts()[0];
+    if (account) {
+      this.loadOpcodes();
+    }
+  }
+
+  public updateUserMenu(): void {
+    const account = this.msalService.instance.getActiveAccount()
+      ?? this.msalService.instance.getAllAccounts()[0];
+
+    if (account) {
+      const username = account.name ?? account.username ?? 'User';
+      this.userMenu = [
+        { label: username },
+        { label: 'Logout', command: () => this.logout() }
+      ];
+    } else {
+      this.userMenu = [
+        { label: 'Sign In', command: () => this.msalService.loginRedirect() }
+      ];
+    }
+  }
+
   private loadOpcodes(): void {
-     if (this._dataService.opcodesSignal().length > 0) {
+    if (this._dataService.opcodesSignal().length > 0) {
       return;
     }
-
     this.apiService.getOPCODES().subscribe(opcos => {
-       const mapped = opcos.includes('ADMIN')
+      const mapped = opcos.includes('ADMIN')
         ? ADMIN_OPCODES.map(code => ({ name: code, code }))
         : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
-
-      console.log('MAPPED OPCODES =>', mapped);
       this._dataService.opcodesSignal.set(mapped);
 
       const current = this._dataService.getPayload();
       const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
       if (opcoIsInvalid) {
-        this._dataService.resetPayload(); 
+        this._dataService.resetPayload();
       }
     });
   }
@@ -126,22 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  public updateUserMenu(): void {
-    const account = this.msalService.instance.getActiveAccount()
-      ?? this.msalService.instance.getAllAccounts()[0];
 
-    if (account) {
-      const username = account.name ?? account.username ?? 'User';
-      this.userMenu = [
-        { label: username },
-        { label: 'Logout', command: () => this.logout() }
-      ];
-    } else {
-      this.userMenu = [
-        { label: 'Sign In', command: () => this.msalService.loginRedirect() }
-      ];
-    }
-  }
 
   public logout(): void {
     const activeAccount = this.msalService.instance.getActiveAccount();

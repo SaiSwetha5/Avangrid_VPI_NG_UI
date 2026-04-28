@@ -29,79 +29,72 @@
 <div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
-<div class="table-wrapper">
-  <p-table ngSkipHydration #dt class="custom-table" size="small" selectionMode="multiple" [(selection)]="selectedRow"
-    dataKey="objectId" [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()"
-    [rowsPerPageOptions]="[15,20,25]" [responsiveLayout]="'scroll'" [resizableColumns]="true" columnResizeMode="fit"
-    [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
-    [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
-    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
 
+<p-table ngSkipHydration #dt class="custom-table" [scrollable]="true" [scrollHeight]="'flex'" size="small"
+  selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
+  [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[15,20,25]"
+  [resizableColumns]="true" columnResizeMode="fit" [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
+  [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
+  [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+  <ng-template pTemplate="header">
+    <tr *ngIf="_dataService.pagedDataSignal().length > 0">
 
-    <ng-template pTemplate="header">
-      <tr *ngIf="_dataService.pagedDataSignal().length > 0">
+      <th scope="col" class="select-column">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th scope="col" *ngFor="let header of displayHeaders; trackBy: trackById" pResizableColumn class="header-class">
+        {{ header.label | uppercase }}
+      </th>
+    </tr>
+  </ng-template>
 
-        <th scope="col" class="select-column">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
-        <th scope="col" *ngFor="let header of displayHeaders; trackBy: trackById" pResizableColumn class="header-class">
-          {{ header.label | uppercase }}
-        </th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-rowData>
-      <tr [pSelectableRow]="rowData">
-        <td class="select-column">
-          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
-        </td>
-        <td *ngFor="let header of displayHeaders; trackBy: trackById" class="body-cell" (click)="onRowClick(rowData)"
-          (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"
-          [pTooltip]="rowData[header.id]" tooltipPosition="top">
-          <ng-container [ngSwitch]="header.id">
-            <ng-container *ngSwitchCase="'direction'">
-              {{ (rowData[header.id] === true || rowData[header.id] === 'true') ? 'Inbound' : 'Outbound' }}
-            </ng-container>
-            <ng-container *ngSwitchCase="'dateAdded'">
-              {{ convertUtcToEst(rowData[header.id]) }}
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'startTime'">
-              {{ convertUtcToEst(rowData[header.id]) }}
-            </ng-container>
-            <ng-container *ngSwitchDefault>
-              {{ rowData[header.id] }}
-            </ng-container>
+  <ng-template pTemplate="body" let-rowData>
+    <tr [pSelectableRow]="rowData">
+      <td class="select-column">
+        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+      </td>
+      <td *ngFor="let header of displayHeaders; trackBy: trackById" class="body-cell" (click)="onRowClick(rowData)"
+        (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)"
+        [pTooltip]="rowData[header.id]" tooltipPosition="top">
+        <ng-container [ngSwitch]="header.id">
+          <ng-container *ngSwitchCase="'direction'">
+            {{ (rowData[header.id] === true || rowData[header.id] === 'true') ? 'Inbound' : 'Outbound' }}
           </ng-container>
-        </td>
-      </tr>
-    </ng-template>
+          <ng-container *ngSwitchCase="'dateAdded'">
+            {{ convertUtcToEst(rowData[header.id]) }}
+          </ng-container>
 
-<ng-template pTemplate="emptymessage">
-  <p-panel class="empty-panel">
-    <div class="empty-message-container">
-      <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
-      <p class="overlay-text">
-       Please select an Opco using the  
-        <a
-          class="filters-link"
-          tabindex="0"
-          (click)="_dataService.openDrawer.set(true)"
-          (keydown.enter)="_dataService.onKeydown($event)"
-          (keydown.space)="_dataService.onKeydown($event)"
-        >
-          FILTERS
-        </a>
-         to retrieve call records
-      </p>
-    </div>
-  </p-panel>
-</ng-template>
+          <ng-container *ngSwitchCase="'startTime'">
+            {{ convertUtcToEst(rowData[header.id]) }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ rowData[header.id] }}
+          </ng-container>
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <p-panel class="empty-panel">
+      <div class="empty-message-container">
+        <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
+        <p class="overlay-text">
+          Please select an Opco using the
+          <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
+            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
+            FILTERS
+          </a>
+          to retrieve call records
+        </p>
+      </div>
+    </p-panel>
+  </ng-template>
 
 
 
-  </p-table>
-</div>
+</p-table>
+
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
   appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
@@ -115,21 +108,20 @@
   <div class="audio-error" *ngIf="hasErrorForAudioFile">
     Recording not found!! {{audioErrorMessage}}
   </div>
-<ng-template pTemplate="header">
-  <div class="dialog-header">
-    <div class="header-left">
-      <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
-      <h4 class="header-title">AUDIO RECORDING DETAILS</h4>
+  <ng-template pTemplate="header">
+    <div class="dialog-header">
+      <div class="header-left">
+        <img src="assets/logo.jpg" alt="Logo" class="logo-icon" />
+        <h4 class="header-title">AUDIO RECORDING DETAILS</h4>
+      </div>
+      <div class="header-right">
+        <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download" (click)="downloadAudio()"
+          aria-label="Download audio" (keydown.enter)="_dataService.onKeydown($event)"
+          (keydown.space)="_dataService.onKeydown($event)">
+        </p-button>
+      </div>
     </div>
-    <div class="header-right">
-      <p-button *ngIf="audioUrl" [text]="true" icon="pi pi-download"
-        (click)="downloadAudio()" aria-label="Download audio"
-        (keydown.enter)="_dataService.onKeydown($event)"
-        (keydown.space)="_dataService.onKeydown($event)">
-      </p-button>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>
 
 
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
@@ -245,7 +237,7 @@
                         <td><b>Sensitivity Level</b></td>
                         <td>{{ interaction.sensitivityLevel }}</td>
                       </tr>
-                       <tr>
+                      <tr>
                         <td><b>User Id</b></td>
                         <td>{{ interaction.userId }}</td>
                       </tr>

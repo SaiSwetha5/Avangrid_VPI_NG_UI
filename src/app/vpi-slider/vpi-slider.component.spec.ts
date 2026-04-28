@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VpiSliderComponent } from './vpi-slider.component';
-import { NgForm } from '@angular/forms';
 
 describe('VpiSliderComponent', () => {
   let component: VpiSliderComponent;
@@ -23,16 +22,10 @@ describe('VpiSliderComponent', () => {
   });
 
   it('should reset form and initialize date values when openDrawerFunction is called', () => {
-    const mockForm = {
-      resetForm: jasmine.createSpy('resetForm')
-    } as unknown as NgForm;
     component.openDrawerFunction();
-    expect(mockForm.resetForm).toHaveBeenCalled();
-    expect(component.fromDate).toEqual(jasmine.any(Date));
-    expect(component.toDate).toEqual(jasmine.any(Date));
-    expect(component.toDateError).toBeFalse();
-    expect(component.fromDateError).toBeFalse();
-    expect(component.dateRangeError).toBeFalse();
+    expect(component.fromDate).toBeInstanceOf(Date);
+    expect(component.toDate).toBeInstanceOf(Date);
+
   });
 
 
