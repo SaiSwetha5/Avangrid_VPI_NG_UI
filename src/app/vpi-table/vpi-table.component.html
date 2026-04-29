@@ -30,7 +30,7 @@
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
 
-<p-table ngSkipHydration #dt class="custom-table" [scrollable]="true" [scrollHeight]="'flex'" size="small"
+<p-table ngSkipHydration #dt class="custom-table"  size="small"
   selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
   [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[15,20,25]"
   [resizableColumns]="true" columnResizeMode="fit" [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
@@ -76,8 +76,8 @@
   </ng-template>
 
   <ng-template pTemplate="emptymessage">
-    <p-panel class="empty-panel">
-      <div class="empty-message-container">
+  <p-panel class="empty-panel no-padding">
+          <div class="empty-message-container">
         <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
         <p class="overlay-text">
           Please select an Opco using the
@@ -94,7 +94,6 @@
 
 
 </p-table>
-
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
   appendTo="body" [(visible)]="audioPopUpVisible" [style]="{

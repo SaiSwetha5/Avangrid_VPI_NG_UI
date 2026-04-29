@@ -1,3 +1,9 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;  
+}
+
 .highlight-bar {
   display: flex;
   justify-content: space-between;
@@ -5,6 +11,7 @@
   background-color: #008737;
   padding: 10px 20px;
   margin: 10px 0;
+   flex: 0 0 auto;
 }
 
 .left-content {
@@ -81,14 +88,15 @@
   z-index: 9999;
 }
 
+
 .custom-table {
+  height: calc(100vh - 120px); 
+  padding-top: 0px;
+    padding-left: 5px;
+   flex: 1 1 auto;       
+  overflow-y: auto;     
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  height: calc(100vh - 180px);
-  padding: 0 10px;
+  flex-direction: column
 }
 
 .text-color {
@@ -148,4 +156,39 @@
 .header-right {
   display: flex;
   align-items: center;
+}
+
+.no-padding .p-panel-header,
+.no-padding .p-panel-content {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important; 
+  margin-left: 0 !important; 
+}
+
+.empty-panel,
+.empty-panel .p-panel,
+.empty-panel .p-panel .p-panel-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+ }
+
+ .empty-message-container {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+ .dashboard-image {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 70rem;   
+  height: auto;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;  
 }

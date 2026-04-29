@@ -100,7 +100,6 @@ body {
   font-weight: 600;
   text-align: center;
   padding: 12px;
-  border: none;
   white-space: normal;
   word-wrap: break-word;
   font-size: 0.95rem;
@@ -109,7 +108,6 @@ body {
 .custom-table .p-datatable-tbody>tr>td {
   text-align: center;
   padding: 10px;
-  border: none;
   font-size: 0.9rem;
   color: #008737;
   white-space: normal;
@@ -130,13 +128,11 @@ body {
 .custom-table td.select-column {
   text-align: center;
   width: 4rem;
-  border: none;
 }
 
 .custom-table .p-paginator {
   background-color: #ffffff;
   padding: 0.75rem;
-  border-radius: 0 0 12px 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,7 +144,6 @@ body {
 .custom-table .p-paginator .p-paginator-prev {
   color: #008737;
   border: 1px solid #008737;
-  border-radius: 4px;
   padding: 0.4rem 0.6rem;
   margin: 0 4px;
   cursor: pointer;
@@ -193,22 +188,6 @@ body {
 }
 
 
-.empty-panel .p-panel,
-.empty-panel .p-panel .p-panel-content {
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-.empty-message-container {
-  display: flex;
-  align-items: center;
- 
-}
-
-.dashboard-image {
-  width: 960px;
-  height: auto;
-}
 
 .overlay-text {
   flex: 1;
@@ -229,6 +208,5 @@ body {
   height: 22px;             
   width: auto;
   margin-right: 8px;
-  border-radius: 3px;          
-}
+ }
  

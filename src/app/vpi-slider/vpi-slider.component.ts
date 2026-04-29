@@ -127,18 +127,26 @@ export class VpiSliderComponent implements OnInit {
     return cmp.getTime() === today.getTime();
   }
 
-  public applyDateFilters(): void {
-    const isFromToday = this.isToday(this.fromDate);
-    const isToToday = this.isToday(this.toDate);
-    if (isFromToday || isToToday) {
-      this.fromDateError = isFromToday || this.fromDateError;
-      this.toDateError = isToToday || this.toDateError;
-      this.dateRangeError = true;
-      return;
-    }
 
-    const isRangeValid = this.validateRange();
-    if (!isRangeValid) {
+ private checkTodayErrors(): boolean {
+  const isFromToday = this.isToday(this.fromDate);
+  const isToToday = this.isToday(this.toDate);
+
+  if (isFromToday || isToToday) {
+    this.fromDateError = isFromToday || this.fromDateError;
+    this.toDateError = isToToday || this.toDateError;
+    this.dateRangeError = true;
+    return true;   
+  }
+  return false;     
+}
+
+  public applyDateFilters(): void {
+    if (this.checkTodayErrors()) {
+    return;
+  }
+
+    if (!this.validateRange()) {
       return;
     }
 
@@ -153,15 +161,7 @@ export class VpiSliderComponent implements OnInit {
       from_date: this.getFormattedDate(this.fromDate),
       to_date: this.getFormattedDate(this.toDate),
       opco: opcoCode,
-      filters: {
-        name: this.nameModel ? this.nameModel.split(',') : null,
-        extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
-        objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
-        channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
-        aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
-        agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
-        direction: this.selectedDirection?.code ?? null,
-      },
+      filters: this.buildFilters(),
       pagination: {
         pageNumber: this.pageNumber,
         pageSize: 20,
@@ -171,6 +171,19 @@ export class VpiSliderComponent implements OnInit {
     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
   }
+
+
+  private buildFilters() {
+  return {
+    name: this.nameModel ? this.nameModel.split(',') : null,
+    extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
+    objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
+    channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
+    aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
+    agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
+    direction: this.selectedDirection?.code ?? null,
+  };
+}
 
   private normalizeDate(date: Date | string | null): number | null {
     if (!date) {

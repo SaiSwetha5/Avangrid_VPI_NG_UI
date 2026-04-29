@@ -31,7 +31,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public msalBroadcastService = inject(MsalBroadcastService);
   public router = inject(Router);
   public _dataService = inject(DataService);
-
   public title = 'VPI Record System';
   public items: MenuItem[] | undefined;
   public currentUrl = '';
@@ -81,10 +80,12 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this._dataService.opcodesSignal().length > 0) {
       return;
     }
-    this.apiService.getOPCODES().subscribe(opcos => {
+    this.apiService.getOPCODES().subscribe({
+    next: (opcos) => {
       const mapped = opcos.includes('ADMIN')
         ? ADMIN_OPCODES.map(code => ({ name: code, code }))
         : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
+      
       this._dataService.opcodesSignal.set(mapped);
 
       const current = this._dataService.getPayload();
@@ -92,9 +93,9 @@ export class AppComponent implements OnInit, OnDestroy {
       if (opcoIsInvalid) {
         this._dataService.resetPayload();
       }
-    });
-  }
-
+    } 
+  });
+}
   private initMenus() {
     this.items = [
       {

@@ -134,8 +134,7 @@ export class VpiTableComponent {
     this.clearWaveform();
 
     this.audioUrl = null;
-    const getOpcode = this.getSelectedOpcode();
-    this._apiService.getMetaData(rowData.objectId, getOpcode).pipe(
+    this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode()).pipe(
       catchError((error: HttpErrorResponse) => {
         this._router.navigate(['/error'], {
           state: { error: error.error }
@@ -311,7 +310,9 @@ export class VpiTableComponent {
 
 
   convertUtcToEst(value: string): string {
-    if (!value) return '';
+    if (!value)  {
+     return '';
+    }
     const utcDate = new Date(value + ' UTC');
 
     return new Intl.DateTimeFormat('en-US', {
@@ -325,4 +326,5 @@ export class VpiTableComponent {
     }).format(utcDate);
   }
 
+  
 }
