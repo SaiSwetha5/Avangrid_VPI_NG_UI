@@ -183,7 +183,7 @@ body {
 .dashboard-image {
   margin: 0 !important;
   padding: 0 !important;
-  width: 70rem;
+  width: 85rem;
   height: auto;
 }
 
@@ -192,18 +192,4 @@ body {
   flex-direction: column;
   height: 100vh;
 }
-
-.no-api-call {
-    flex: 1;
-  padding: 2.5rem;
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: red
-}
-
-.filters-link1{
-    color: #008737;
-  font-weight: 700;
-  text-decoration: underline;
-  cursor: pointer;
-}
+ 

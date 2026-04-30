@@ -29,10 +29,11 @@
 <div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
-<p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
-  [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined" size="small"
+ <p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
+  [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined"
+  size="small"
   selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
-  [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[50,60,100]"
+  [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[15,20,50]"
   [resizableColumns]="true" columnResizeMode="fit" [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
   [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
   [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -74,20 +75,12 @@
       </td>
     </tr>
   </ng-template>
-  <ng-template pTemplate="emptymessage">
-    <p-panel class="empty-panel no-padding">
-      <div class="empty-message-container">
-        <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
 
-        <p *ngIf="_dataService.hasSearched()" class="no-api-call">
-          No call recordings found for the selected criteria. Please adjust your
-          <a class="filters-link1" tabindex="0" (click)="_dataService.openDrawer.set(true)"
-            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
-            FILTERS
-          </a>
-          and try again.
-        </p>
-        <p *ngIf="!_dataService.hasSearched()" class="overlay-text">
+  <ng-template pTemplate="emptymessage">
+  <p-panel class="empty-panel no-padding">
+          <div class="empty-message-container">
+        <img src="assets/user.jpg" alt="Support illustration" class="dashboard-image" />
+        <p class="overlay-text">
           Please select an Opco using the
           <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
             (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
@@ -95,13 +88,14 @@
           </a>
           to retrieve call records
         </p>
-
       </div>
     </p-panel>
   </ng-template>
 
-</p-table>
 
+
+</p-table>
+ 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
   appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
     'background-color': '#008737',
@@ -111,9 +105,8 @@
   <div class="card">
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
   </div>
-  <div class="audio-error" *ngIf="hasErrorForAudioFile">
-    Recording not found!! {{audioErrorMessage}}
-  </div>
+
+  
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <div class="header-left">
@@ -129,6 +122,14 @@
     </div>
   </ng-template>
 
+  <div *ngIf="hasErrorForAudioFile" class="audio-error"
+    style="display:flex; align-items:center; gap:10px; padding:1rem 0; color:#d32f2f;">
+    <i class="pi pi-exclamation-circle" style="font-size:1.5rem;"></i>
+    <div>
+      <b>Recording Not Found</b>
+      <p style="margin:4px 0 0 0; font-size:0.875rem;">{{ audioErrorMessage }}</p>
+    </div>
+  </div>
 
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
 

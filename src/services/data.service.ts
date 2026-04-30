@@ -17,7 +17,6 @@ export class DataService {
   public readonly vpiDataSignal = signal<VPIDataItem[]>([]);
   public selectedOpcode: WritableSignal<string | null> = signal(null);
   public openDrawer = signal(false);
-  public hasSearched = signal<boolean>(false);
   public payloadSignal = signal<SearchFilteredDataInput | undefined>({
     filters: {},
     pagination: {
