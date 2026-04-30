@@ -74,12 +74,20 @@
       </td>
     </tr>
   </ng-template>
-
   <ng-template pTemplate="emptymessage">
     <p-panel class="empty-panel no-padding">
       <div class="empty-message-container">
         <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
-        <p class="overlay-text">
+
+        <p *ngIf="_dataService.hasSearched()" class="no-api-call">
+          No call recordings found for the selected criteria. Please adjust your
+          <a class="filters-link1" tabindex="0" (click)="_dataService.openDrawer.set(true)"
+            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
+            FILTERS
+          </a>
+          and try again.
+        </p>
+        <p *ngIf="!_dataService.hasSearched()" class="overlay-text">
           Please select an Opco using the
           <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
             (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
@@ -87,11 +95,10 @@
           </a>
           to retrieve call records
         </p>
+
       </div>
     </p-panel>
   </ng-template>
-
-
 
 </p-table>
 

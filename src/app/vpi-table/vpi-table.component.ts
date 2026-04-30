@@ -72,6 +72,7 @@ export class VpiTableComponent {
     this.currentPayload = this.payload();
 
     if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
+      this._dataService.hasSearched.set(false);
       this._dataService.loadingTableDataSignal.set(false);
       return;
     }
@@ -102,6 +103,7 @@ export class VpiTableComponent {
       tap((response: SearchFilteredDataOutput) => {
         if (!response.data || response.data.length === 0) {
           this._dataService.pagedDataSignal.set([]);
+          this._dataService.hasSearched.set(true);
           this._messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -109,6 +111,7 @@ export class VpiTableComponent {
           });
         } else {
           this._dataService.pagedDataSignal.set(response.data);
+          this._dataService.hasSearched.set(true);
           const totalRecords = response.pagination.totalRecords;
           const totalPages = response.pagination.totalPages;
           this._dataService.totalRecordsSignal.set(totalRecords);
