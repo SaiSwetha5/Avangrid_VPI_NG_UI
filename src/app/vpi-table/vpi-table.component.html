@@ -29,10 +29,10 @@
 <div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
-
-<p-table ngSkipHydration #dt class="custom-table"  size="small"
+<p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
+  [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined" size="small"
   selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
-  [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[15,20,25]"
+  [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[50,60,100]"
   [resizableColumns]="true" columnResizeMode="fit" [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
   [totalRecords]="_dataService.totalRecordsSignal()" (onLazyLoad)="onPageChange($event)" [lazy]="true"
   [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -76,8 +76,8 @@
   </ng-template>
 
   <ng-template pTemplate="emptymessage">
-  <p-panel class="empty-panel no-padding">
-          <div class="empty-message-container">
+    <p-panel class="empty-panel no-padding">
+      <div class="empty-message-container">
         <img src="assets/empty.jpg" alt="Support illustration" class="dashboard-image" />
         <p class="overlay-text">
           Please select an Opco using the

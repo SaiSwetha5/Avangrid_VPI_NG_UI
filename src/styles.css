@@ -21,7 +21,6 @@ body {
   font-weight: 300;
 }
 
-
 .my-green-drawer {
   --p-drawer-background: #008737;
   --p-drawer-border-radius: 0.5rem;
@@ -103,6 +102,9 @@ body {
   white-space: normal;
   word-wrap: break-word;
   font-size: 0.95rem;
+  position: sticky !important;
+  top: 0;
+  z-index: 10;
 }
 
 .custom-table .p-datatable-tbody>tr>td {
@@ -205,8 +207,7 @@ body {
 }
 
 .logo-icon {
-  height: 22px;             
+  height: 22px;
   width: auto;
   margin-right: 8px;
- }
- 
+}
