@@ -82,6 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.apiService.getOPCODES().subscribe({
     next: (opcos) => {
+      this._dataService.isOpcodeAvailable.set(false);
       const mapped = opcos.includes('ADMIN')
         ? ADMIN_OPCODES.map(code => ({ name: code, code }))
         : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
@@ -93,7 +94,11 @@ export class AppComponent implements OnInit, OnDestroy {
       if (opcoIsInvalid) {
         this._dataService.resetPayload();
       }
-    } 
+    } ,
+    error: (err) => {
+      this._dataService.isOpcodeAvailable.set(true);
+      console.error('Failed to load opcodes', err);
+    }
   });
 }
   private initMenus() {

@@ -26,6 +26,7 @@ export class DataService {
   });
 
   public readonly drawerFormState = signal<SearchFilteredDataInput | undefined>(undefined);
+  public isOpcodeAvailable = signal<boolean>(false);
   public payload = this.payloadSignal;
 
   public getPayload() {

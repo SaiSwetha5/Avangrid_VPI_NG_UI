@@ -26,9 +26,13 @@
 </div>
 
 <p-toast />
-<div class="spinner-container" *ngIf="loading()">
+<div class="spinner-container" *ngIf="loading() || _dataService.isOpcodeAvailable()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
+
+ 
+ 
+
  <p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
   [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined"
   size="small"
@@ -80,7 +84,7 @@
   <p-panel class="empty-panel no-padding">
           <div class="empty-message-container">
         <img src="assets/user.jpg" alt="Support illustration" class="dashboard-image" />
-        <p class="overlay-text">
+        <p  *ngIf="!_dataService.isOpcodeAvailable()" class="overlay-text">
           Please select an Opco using the
           <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
             (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
@@ -88,6 +92,7 @@
           </a>
           to retrieve call records
         </p>
+        <p *ngIf="_dataService.isOpcodeAvailable()" class="overlay-text">Fetching OPCODES, please wait...</p>
       </div>
     </p-panel>
   </ng-template>
@@ -103,7 +108,9 @@
     'height': '40rem',
   }">
   <div class="card">
+  
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
+
   </div>
 
   
@@ -122,8 +129,7 @@
     </div>
   </ng-template>
 
-  <div *ngIf="hasErrorForAudioFile" class="audio-error"
-    style="display:flex; align-items:center; gap:10px; padding:1rem 0; color:#d32f2f;">
+  <div *ngIf="hasErrorForAudioFile" class="audio-error">
     <i class="pi pi-exclamation-circle" style="font-size:1.5rem;"></i>
     <div>
       <b>Recording Not Found</b>

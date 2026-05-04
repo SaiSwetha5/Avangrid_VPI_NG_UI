@@ -19,7 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, debounceTime, firstValueFrom, from, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { ApiCallsService } from 'services/api-calls.service';
@@ -130,69 +130,70 @@ export class VpiTableComponent {
   }
 
   public onRowClick(rowData: VPIDataItem) {
+    of(rowData).pipe(
+      debounceTime(500),
+      switchMap((data) => from(this.loadDataAsync(data)))
+    ).subscribe();
+  }
+
+  private async loadDataAsync(rowData: VPIDataItem): Promise<void> {
     this._dataService.loadingAudioFile.set(true);
     this.clearWaveform();
-
     this.audioUrl = null;
-    this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode()).pipe(
-      catchError((error: HttpErrorResponse) => {
-        this._router.navigate(['/error'], {
-          state: { error: error.error }
-        });
+    this.hasErrorForAudioFile = false;
+    this.audioErrorMessage = "";
 
-        return of(null);
-      })
-    ).subscribe((metadata) => {
-      if (!metadata) {
-        this._dataService.loadingAudioFile.set(false);
-        return;
-      }
-      this.selectedRowData = metadata;
-      if (this.selectedRowData) {
-        this.rowSelected = true;
-      }
-      this.audioPopUpVisible = true;
-      const isAlreadySelected = this.selectedRow.some(
-        (row: VPIDataItem) => row.objectId === metadata.objectId
+    const audioRecordingInput = {
+      date: rowData.startTime ? rowData.startTime : '',
+      opco: this._dataService.selectedOpcode() ?? '',
+      username: rowData.username ? rowData.username : '',
+      aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
+      extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
+      channelNum: rowData.channelNum ? rowData.channelNum : 0,
+      objectId: rowData.objectId ? rowData.objectId : '',
+      duration: rowData.duration ? rowData.duration : 0
+    };
+
+    try {
+      const metadata = await firstValueFrom(
+        this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode())
       );
-      if (isAlreadySelected) {
-        this.selectedRowData.isChecked = false;
-        this.selectedRow = this.selectedRow.filter(
-          (row: VPIDataItem) =>
-            row.objectId !== metadata.objectId
-        );
-      }
-      this.audioUrl = null;
-      const audioRecordingInput = {
-        date: rowData.startTime ? rowData.startTime : '',
-        opco: this._dataService.selectedOpcode() ?? '',
-        username: rowData.username ? rowData.username : '',
-        aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
-        extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
-        channelNum: rowData.channelNum ? rowData.channelNum : 0,
-        objectId: rowData.objectId ? rowData.objectId : '',
-        duration: rowData.duration ? rowData.duration : 0
-      };
 
-      this._apiService.getAudioRecordings(audioRecordingInput).pipe(
-        catchError(async (err: HttpErrorResponse) => {
-          this.handleAudioError(err);
-          return null;
-        })
-      ).subscribe((audioFile) => {
+      if (metadata) {
+        this.selectedRowData = metadata;
+        this.rowSelected = true;
+        this.audioPopUpVisible = true;
+
+        const isAlreadySelected = this.selectedRow.some(
+          (row: VPIDataItem) => row.objectId === metadata.objectId
+        );
+        if (isAlreadySelected) {
+          this.selectedRowData.isChecked = false;
+          this.selectedRow = this.selectedRow.filter(
+            (row: VPIDataItem) => row.objectId !== metadata.objectId
+          );
+        }
+      }
+
+      const audioFile = await firstValueFrom(
+        this._apiService.getAudioRecordings(audioRecordingInput)
+      );
+
+      if (audioFile instanceof Blob) {
         this.hasErrorForAudioFile = false;
         this.audioErrorMessage = "";
-        if (audioFile) {
-          this._dataService.loadingAudioFile.set(false);
-          this.clearWaveform();
-          this.audioUrl = URL.createObjectURL(audioFile);
-          setTimeout(() => this.waveform(), 0);
-        } else {
-          this._dataService.loadingAudioFile.set(false);
-        }
-      });
+        this.clearWaveform();
+        this.audioUrl = URL.createObjectURL(audioFile);
+        setTimeout(() => this.waveform(), 0);
+      }
 
-    });
+    } catch (error) {
+      await this.handleAudioError(error as HttpErrorResponse);
+      this.audioPopUpVisible = true;
+
+    } finally {
+      this._dataService.loadingAudioFile.set(false);
+    }
   }
 
   private async handleAudioError(error: HttpErrorResponse) {
@@ -308,10 +309,9 @@ export class VpiTableComponent {
 
   }
 
-
   convertUtcToEst(value: string): string {
-    if (!value)  {
-     return '';
+    if (!value) {
+      return '';
     }
     const utcDate = new Date(value + ' UTC');
 
@@ -326,5 +326,5 @@ export class VpiTableComponent {
     }).format(utcDate);
   }
 
-  
+
 }

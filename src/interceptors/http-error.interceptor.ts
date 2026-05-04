@@ -15,6 +15,13 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      const isRecordingRequest = req.url.includes('/audio/') || req.url.includes('/recording');
+
+      if (isRecordingRequest) {
+         return throwError(() => error);
+      }
+
+
         const apiError = {
           timestamp: new Date().toISOString(),
           status: error.status ?? 0,
