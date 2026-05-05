@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { DownloadRecordingInput, SearchFilteredDataInput, SearchFilteredDataOutput, VPIMetaDataOutput } from '../interfaces/vpi-interface';
 import { AuthService } from './auth.service';
@@ -47,20 +47,22 @@ export class ApiCallsService {
   }
 
 
-  public getAudioRecordings(payload: DownloadRecordingInput): Observable<Blob> {
+public getAudioRecordings(payload: DownloadRecordingInput): Observable<HttpResponse<Blob>> {
+  return this.auth.getAccessToken().pipe(
+    switchMap(token => {
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
 
-    return this.auth.getAccessToken().pipe(
-      switchMap(token => {
-        const headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.post(`${environment.apiBaseUrl}/recording`, payload, { headers, responseType: 'blob' });
-      })
-    );
-
-  }
+      return this.http.post(`${environment.apiBaseUrl}/recording`, payload, {
+        headers,
+        responseType: 'blob',
+        observe: 'response'   
+      });
+    })
+  );
+}
 
   public downloadRecordings(payload: DownloadRecordingInput[]): Observable<Blob> {
 

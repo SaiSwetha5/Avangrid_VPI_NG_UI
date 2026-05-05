@@ -80,23 +80,32 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this._dataService.opcodesSignal().length > 0) {
       return;
     }
+
+    const cachedOpcodes = sessionStorage.getItem('VPI_OPCODES');
+    if (cachedOpcodes) {
+    const parsedData = JSON.parse(cachedOpcodes);
+    this._dataService.opcodesSignal.set(parsedData);
+    this._dataService.isOpcodeAvailable.set(true); 
+    return; 
+  }
+
     this.apiService.getOPCODES().subscribe({
     next: (opcos) => {
-      this._dataService.isOpcodeAvailable.set(false);
+      this._dataService.isOpcodeAvailable.set(true);
       const mapped = opcos.includes('ADMIN')
         ? ADMIN_OPCODES.map(code => ({ name: code, code }))
         : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
       
       this._dataService.opcodesSignal.set(mapped);
-
+      sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
       const current = this._dataService.getPayload();
       const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
       if (opcoIsInvalid) {
         this._dataService.resetPayload();
       }
-    } ,
+    },
     error: (err) => {
-      this._dataService.isOpcodeAvailable.set(true);
+      this._dataService.isOpcodeAvailable.set(false);
       console.error('Failed to load opcodes', err);
     }
   });
@@ -130,6 +139,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
   public logout(): void {
+    sessionStorage.clear();
     const activeAccount = this.msalService.instance.getActiveAccount();
 
     if (activeAccount) {
@@ -160,7 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public navigateVPIPage(): void {
-    this._dataService.payload.set(undefined);
+   //  this._dataService.payload.set(undefined);
     this.router.navigate(['/vpi']);
   }
 }

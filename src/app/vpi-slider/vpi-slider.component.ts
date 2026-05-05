@@ -83,10 +83,12 @@ export class VpiSliderComponent implements OnInit {
   }
 
   private readonly opcodeReadyEffect = effect(() => {
-    const options = this.dataService.opcodesSignal();
-    if (options.length > 0) {
-      this.cdr.detectChanges();
+    const options = sessionStorage.getItem('VPI_OPCODES');
+    if (options) {
+      this.dataService.opcodesSignal.set(JSON.parse(options));
     }
+    this.cdr.detectChanges();
+
   });
 
   private readonly drawerOpenEffect = effect(() => {
@@ -128,23 +130,23 @@ export class VpiSliderComponent implements OnInit {
   }
 
 
- private checkTodayErrors(): boolean {
-  const isFromToday = this.isToday(this.fromDate);
-  const isToToday = this.isToday(this.toDate);
+  private checkTodayErrors(): boolean {
+    const isFromToday = this.isToday(this.fromDate);
+    const isToToday = this.isToday(this.toDate);
 
-  if (isFromToday || isToToday) {
-    this.fromDateError = isFromToday || this.fromDateError;
-    this.toDateError = isToToday || this.toDateError;
-    this.dateRangeError = true;
-    return true;   
+    if (isFromToday || isToToday) {
+      this.fromDateError = isFromToday || this.fromDateError;
+      this.toDateError = isToToday || this.toDateError;
+      this.dateRangeError = true;
+      return true;
+    }
+    return false;
   }
-  return false;     
-}
 
   public applyDateFilters(): void {
     if (this.checkTodayErrors()) {
-    return;
-  }
+      return;
+    }
 
     if (!this.validateRange()) {
       return;
@@ -174,16 +176,16 @@ export class VpiSliderComponent implements OnInit {
 
 
   private buildFilters() {
-  return {
-    name: this.nameModel ? this.nameModel.split(',') : null,
-    extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
-    objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
-    channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
-    aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
-    agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
-    direction: this.selectedDirection?.code ?? null,
-  };
-}
+    return {
+      name: this.nameModel ? this.nameModel.split(',') : null,
+      extensionNum: this.extensionNumberModel ? this.extensionNumberModel.split(',') : null,
+      objectIDs: this.validIDs.length > 0 ? this.validIDs : null,
+      channelNum: this.channelNumberModel ? this.channelNumberModel.toString().split(',') : null,
+      aniAliDigits: this.aniAliDigitsModel ? this.aniAliDigitsModel.split(',') : null,
+      agentID: this.agentIdModel ? this.agentIdModel.split(',') : null,
+      direction: this.selectedDirection?.code ?? null,
+    };
+  }
 
   private normalizeDate(date: Date | string | null): number | null {
     if (!date) {
@@ -286,7 +288,6 @@ export class VpiSliderComponent implements OnInit {
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
-    this.opCode = null;
     this.selectedDirection = null;
     this.aniAliDigitsModel = '';
     this.extensionNumberModel = '';

@@ -67,8 +67,10 @@ export class VpiTableComponent {
   public downloadDisabled = true;
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
+  private audioFileName: string | null = null;
 
   private readonly effectData = effect(() => {
+
     this.currentPayload = this.payload();
 
     if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
@@ -178,12 +180,13 @@ export class VpiTableComponent {
       const audioFile = await firstValueFrom(
         this._apiService.getAudioRecordings(audioRecordingInput)
       );
-
-      if (audioFile instanceof Blob) {
+      const contentDisposition = audioFile.headers.get('Content-Disposition');
+      this.audioFileName = this.extractFileName(contentDisposition) ?? 'audio_recording'; 
+              if (audioFile.body instanceof Blob) {
         this.hasErrorForAudioFile = false;
         this.audioErrorMessage = "";
         this.clearWaveform();
-        this.audioUrl = URL.createObjectURL(audioFile);
+        this.audioUrl = URL.createObjectURL(audioFile.body);
         setTimeout(() => this.waveform(), 0);
       }
 
@@ -195,6 +198,16 @@ export class VpiTableComponent {
       this._dataService.loadingAudioFile.set(false);
     }
   }
+
+  private extractFileName(contentDisposition: string | null): string | null {
+  if (!contentDisposition) return null; 
+  const fileNameMatch =
+    contentDisposition.match(/filename\*=UTF-8''([^;]*)/) ??
+    contentDisposition.match(/filename="?([^";\n]*)"?/);
+
+  return fileNameMatch ? decodeURIComponent(fileNameMatch[1]) : null;
+}
+
 
   private async handleAudioError(error: HttpErrorResponse) {
     this._dataService.loadingAudioFile.set(false);
@@ -218,7 +231,7 @@ export class VpiTableComponent {
     this.downloadDisabled = false;
     const a = document.createElement('a');
     a.href = audioUrl;
-    a.download = 'avangridRecording.mp3';
+    a.download = this.audioFileName ? this.audioFileName.toString() : 'audio_recording.wav';
     document.body.appendChild(a);
     a.click();
     if (a) {
@@ -251,7 +264,7 @@ export class VpiTableComponent {
         const url = globalThis.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = 'avangrid-recordings.zip';
+        anchor.download = 'avangrid-audio-recordings.zip';
         anchor.click();
         setTimeout(() => {
           globalThis.URL.revokeObjectURL(url);
@@ -271,7 +284,7 @@ export class VpiTableComponent {
       }
     });
   }
-
+ 
   public onMaximize(): void {
     if (this.waveFormRef) {
       const waveform = this.waveFormRef.nativeElement as HTMLElement;

@@ -26,16 +26,15 @@
 </div>
 
 <p-toast />
-<div class="spinner-container" *ngIf="loading() || _dataService.isOpcodeAvailable()">
+<div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
 </div>
 
- 
- 
 
- <p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
-  [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined"
-  size="small"
+
+
+<p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
+  [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined" size="small"
   selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
   [paginator]="_dataService.pagedDataSignal().length > 0" [first]="first()" [rowsPerPageOptions]="[15,20,50]"
   [resizableColumns]="true" columnResizeMode="fit" [value]="_dataService.pagedDataSignal()" [rows]="pagination.pageSize"
@@ -79,20 +78,20 @@
       </td>
     </tr>
   </ng-template>
-
-  <ng-template pTemplate="emptymessage">
-  <p-panel class="empty-panel no-padding">
-          <div class="empty-message-container">
-        <img src="assets/user.jpg" alt="Support illustration" class="dashboard-image" />
-        <p  *ngIf="!_dataService.isOpcodeAvailable()" class="overlay-text">
-          Please select an Opco using the
-          <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
-            (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
-            FILTERS
-          </a>
-          to retrieve call records
-        </p>
-        <p *ngIf="_dataService.isOpcodeAvailable()" class="overlay-text">Fetching OPCODES, please wait...</p>
+  <ng-template pTemplate="emptymessage"> 
+    <p-panel class="empty-panel no-padding">
+      <div class="empty-message-container">
+        <img src="assets/user1.jpg" alt="Support illustration" class="dashboard-image" />
+        <ng-container *ngIf="_dataService.isOpcodeAvailable()">
+          <p class="overlay-text">
+            Please select an Opco using the
+            <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"
+              (keydown.enter)="_dataService.onKeydown($event)" (keydown.space)="_dataService.onKeydown($event)">
+              FILTERS
+            </a>
+            to retrieve call records
+          </p>
+        </ng-container> 
       </div>
     </p-panel>
   </ng-template>
@@ -100,7 +99,7 @@
 
 
 </p-table>
- 
+
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
   appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
     'background-color': '#008737',
@@ -108,12 +107,12 @@
     'height': '40rem',
   }">
   <div class="card">
-  
+
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
 
   </div>
 
-  
+
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <div class="header-left">
@@ -161,43 +160,48 @@
                 <p-tabpanel value="0">
                   <p-table [value]="[selectedRowData]" [style]="{width: '100%'}" styleClass="detail-table">
                     <ng-template pTemplate="body" let-interaction>
-                      <tr>
-
-                        <td><b>Call Id</b></td>
-                        <td>{{ interaction.callId }}</td>
+                         <tr>
+                        <td><b>Agent ID</b></td>
+                        <td>{{ interaction.agentId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Object Id</b></td>
-                        <td>{{ interaction.objectId }}</td>
+                        <td><b>ANI</b></td>
+                        <td>{{ interaction.anialidigits }}</td>
                       </tr>
                       <tr>
-                        <td><b>Resource Id</b></td>
-                        <td>{{ interaction.resourceId }}</td>
+                        <td><b>Extension Number</b></td>
+                        <td>{{ interaction.extensionNum }}</td>
                       </tr>
-                      <tr>
-                        <td><b>Global Call Id</b></td>
-                        <td>{{ interaction.globalCallId }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Previous Call Id</b></td>
-                        <td>{{ interaction.previousCallId }}</td>
-                      </tr>
-                      <tr>
-                        <td><b>Direction</b></td>
-                        <td>{{ interaction.direction }}</td>
-                      </tr>
+                      
                       <tr>
                         <td><b>Duration</b></td>
                         <td>{{ interaction.duration}} Seconds</td>
                       </tr>
                       <tr>
-                        <td><b>Class Of Service</b></td>
-                        <td>{{ interaction.classOfService }}</td>
+                        <td><b>pbxDnis</b></td>
+                        <td>{{ interaction.pbxDnis }}</td>
                       </tr>
                       <tr>
-                        <td><b>Class Of Service Date</b></td>
-                        <td>{{ interaction.classOfServiceDate }}</td>
+                        <td><b>Channel Name</b></td>
+                        <td>{{ interaction.channelName }}</td>
                       </tr>
+                      <tr>
+                        <td><b>Channel Number</b></td>
+                        <td>{{ interaction.channelNum }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Media File Id</b></td>
+                        <td>{{ interaction.mediaFileId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Media Manager Id</b></td>
+                        <td>{{ interaction.mediaManagerId }}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Media Retention</b></td>
+                        <td>{{ interaction.mediaRetention }}</td>
+                      </tr>
+                   
                       <tr>
                         <td><b>Client Id</b></td>
                         <td>{{ interaction.clientId }}</td>
@@ -273,43 +277,40 @@
                     styleClass="detail-table">
                     <ng-template pTemplate="body" let-interaction>
 
+                          <tr>
 
-                      <tr>
-                        <td><b>Agent ID</b></td>
-                        <td>{{ interaction.agentId }}</td>
+                        <td><b>Call Id</b></td>
+                        <td>{{ interaction.callId }}</td>
                       </tr>
                       <tr>
-                        <td><b>ANI</b></td>
-                        <td>{{ interaction.anialidigits }}</td>
+                        <td><b>Object Id</b></td>
+                        <td>{{ interaction.objectId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Extension Number</b></td>
-                        <td>{{ interaction.extensionNum }}</td>
+                        <td><b>Resource Id</b></td>
+                        <td>{{ interaction.resourceId }}</td>
                       </tr>
                       <tr>
-                        <td><b>pbxDnis</b></td>
-                        <td>{{ interaction.pbxDnis }}</td>
+                        <td><b>Global Call Id</b></td>
+                        <td>{{ interaction.globalCallId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Channel Name</b></td>
-                        <td>{{ interaction.channelName }}</td>
+                        <td><b>Previous Call Id</b></td>
+                        <td>{{ interaction.previousCallId }}</td>
                       </tr>
                       <tr>
-                        <td><b>Channel Number</b></td>
-                        <td>{{ interaction.channelNum }}</td>
+                        <td><b>Direction</b></td>
+                        <td>{{ interaction.direction }}</td>
                       </tr>
                       <tr>
-                        <td><b>Media File Id</b></td>
-                        <td>{{ interaction.mediaFileId }}</td>
+                        <td><b>Class Of Service</b></td>
+                        <td>{{ interaction.classOfService }}</td>
                       </tr>
                       <tr>
-                        <td><b>Media Manager Id</b></td>
-                        <td>{{ interaction.mediaManagerId }}</td>
+                        <td><b>Class Of Service Date</b></td>
+                        <td>{{ interaction.classOfServiceDate }}</td>
                       </tr>
-                      <tr>
-                        <td><b>Media Retention</b></td>
-                        <td>{{ interaction.mediaRetention }}</td>
-                      </tr>
+                   
                       <tr>
                         <td><b>Workstation Id</b></td>
                         <td>{{ interaction.workstationId }}</td>
