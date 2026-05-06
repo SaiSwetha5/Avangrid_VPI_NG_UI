@@ -131,9 +131,9 @@
         [disabled]="filterForm.invalid || fromDateError || toDateError || dateRangeError"
         (click)="applyDateFilters()"></p-button>
       <p-button type="button" label="Cancel" severity="warn" (keydown.enter)="dataService.onKeydown($event)"
-        (keydown.space)="dataService.onKeydown($event)" (click)="cancelFilters(filterForm)"></p-button>
+        (keydown.space)="dataService.onKeydown($event)" (click)="cancelFilters()"></p-button>
       <p-button type="button" label="Reset" severity="info" (keydown.enter)="dataService.onKeydown($event)"
-        (keydown.space)="dataService.onKeydown($event)" (click)="resetFilters(filterForm)"></p-button>
+        (keydown.space)="dataService.onKeydown($event)" (click)="resetFilters()"></p-button>
     </div>
   </form>
 </p-drawer>

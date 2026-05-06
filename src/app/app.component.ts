@@ -39,8 +39,22 @@ export class AppComponent implements OnInit, OnDestroy {
   public userMenu: UserMenuItem[] = [];
   public noAuthVisible = false;
   public loadingOpcodes = false;   
-  ngOnInit() {
-    this.msalBroadcastService.inProgress$
+  public ngOnInit() {
+
+  this.router.events
+    .pipe(filter(e => e instanceof NavigationEnd))
+    .subscribe((e: NavigationEnd) => {
+      const previous = this._dataService.currentUrl();
+      const next = e.urlAfterRedirects.split('?')[0];
+      if (previous?.startsWith('/vpi') && !next.startsWith('/vpi')) {
+        this._dataService.drawerFormState.set(undefined);
+      }
+      this._dataService.currentUrl.set(next);
+    });
+
+ 
+
+  this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
         takeUntil(this._destroying$)
@@ -51,6 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
       });
 
     this.initMenus();
+
   }
 
   private checkAndLoadData() {

@@ -1,9 +1,9 @@
-import { Component, effect, inject, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, effect, inject, ChangeDetectorRef } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DataService } from 'services/data.service';
-import { NgForm, ReactiveFormsModule, FormsModule, NgModel } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, NgModel } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
@@ -40,8 +40,9 @@ const DATERANGES: Record<string, string> = {
   standalone: true,
   providers: [DatePipe]
 })
-export class VpiSliderComponent implements OnInit {
+export class VpiSliderComponent {
   public fromDate: Date = new Date();
+  public toDate: Date = new Date();
   public readonly directions = DIRECTIONS;
   public readonly dateRanges = DATERANGES;
   private readonly datePipe = inject(DatePipe);
@@ -52,7 +53,6 @@ export class VpiSliderComponent implements OnInit {
   public toDateError = false;
   public fromDateError = false;
   public pageNumber = 1;
-  public toDate: Date = new Date();
   public hourFormat = '24';
   public aniAliDigitsModel = '';
   public extensionNumberModel = '';
@@ -64,19 +64,7 @@ export class VpiSliderComponent implements OnInit {
   public invalidIDs: string[] = [];
   public opCode: OpCode | null = null;
   public selectedDirection: { name: string; code: boolean } | null = null;
-
-  public ngOnInit(): void {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        if (event.url.includes('/vpi')) {
-          if (!this.dataService.drawerFormState()) {
-            this.resetFormForNewSession();
-          }
-        }
-      }
-    });
-  }
-
+ 
   public resetFormForNewSession(): void {
     this.resetAllFields();
     this.dataService.drawerFormState.set(undefined);
@@ -101,17 +89,23 @@ export class VpiSliderComponent implements OnInit {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') ?? '';
   }
 
-  public resetFilters(ngForm?: NgForm): void {
-    ngForm?.resetForm();
-    this.fromDate = new Date();
+  public resetFilters(): void {
+     this.fromDate = new Date();
     this.toDate = new Date();
+    this.opCode = null;
+    this.selectedDirection = null;
+    this.nameModel = '';
+    this.extensionNumberModel = '';
+    this.channelNumberModel = null;
+    this.aniAliDigitsModel = '';
+    this.agentIdModel = '';
+    this.objectIdModel = '';
     this.toDateError = false;
     this.fromDateError = false;
     this.dateRangeError = false;
   }
 
-  public cancelFilters(ngForm: NgForm): void {
-    ngForm.resetForm();
+  public cancelFilters(): void {
     this.dataService.openDrawer.set(false);
     this.toDateError = false;
     this.fromDateError = false;
@@ -128,7 +122,6 @@ export class VpiSliderComponent implements OnInit {
     cmp.setHours(0, 0, 0, 0);
     return cmp.getTime() === today.getTime();
   }
-
 
   private checkTodayErrors(): boolean {
     const isFromToday = this.isToday(this.fromDate);
@@ -159,22 +152,24 @@ export class VpiSliderComponent implements OnInit {
     const opcoCode = this.opCode?.code ?? '';
     this.dataService.selectedOpcode.set(opcoCode);
 
-   const currentState = {
-    from_date: this.getFormattedDate(this.fromDate),
-    to_date: this.getFormattedDate(this.toDate),
-    opco: opcoCode,
-    filters: this.buildFilters(),
-    pagination: {
-      pageNumber: this.pageNumber,
-      pageSize: 20,
-    },
-  };
+    const currentState = {
+      from_date: this.getFormattedDate(this.fromDate),
+      to_date: this.getFormattedDate(this.toDate),
+      opco: opcoCode,
+      filters: this.buildFilters(),
+      pagination: {
+        pageNumber: this.pageNumber,
+        pageSize: 20,
+      },
+    };
 
-   this.dataService.drawerFormState.set(currentState);
+    this.dataService.drawerFormState.set(currentState);
 
-   this.dataService.setPayload(currentState);
-     this.dataService.openDrawer.set(false);
-    this.router.navigate(['/vpi']);
+    this.dataService.setPayload(currentState);
+    this.dataService.openDrawer.set(false);
+    if (!this.router.url.startsWith('/vpi')) {
+      this.router.navigate(['/vpi']);
+    }
   }
 
 
@@ -234,39 +229,30 @@ export class VpiSliderComponent implements OnInit {
   }
 
   private restoreFormState(): void {
-    const currentRoute = this.router.url.split('?')[0];
-    const isVpiRoute = currentRoute.startsWith('/vpi');
+    const saved = this.dataService.drawerFormState();
 
-    if (isVpiRoute) {
-      const saved = this.dataService.drawerFormState();
-      if (!saved?.opco) {
-        return;
-      }
-
-      const matchedOpcode = this.dataService.opcodesSignal()
-        .find(o => o.code === saved.opco);
-      if (!matchedOpcode) {
-        return;
-      }
-
-      this.fromDate = this.parseDate(saved.from_date);
-      this.toDate = this.parseDate(saved.to_date);
-      this.opCode = matchedOpcode;
-      this.selectedDirection = this.findDirection(saved.filters?.direction);
-
-      const filteredArray = saved.filters || {};
-      this.nameModel = this.formatArray(filteredArray.name);
-      this.extensionNumberModel = this.formatArray(filteredArray.extensionNum);
-      this.channelNumberModel = this.formatArray(filteredArray.channelNum);
-      this.aniAliDigitsModel = this.formatArray(filteredArray.aniAliDigits);
-      this.agentIdModel = this.formatArray(filteredArray.agentID);
-      this.objectIdModel = this.formatArray(filteredArray.objectIDs);
-
-      this.cdr.detectChanges();
-    } else {
-      this.dataService.drawerFormState.set(undefined);
+    if (!saved) {
       this.resetAllFields();
+      this.cdr.detectChanges();
+      return;
     }
+
+    const matchedOpcode = this.dataService.opcodesSignal()
+      .find(o => o.code === saved.opco) ?? null;
+
+    this.fromDate = this.parseDate(saved.from_date);
+    this.toDate = this.parseDate(saved.to_date);
+    this.opCode = matchedOpcode;
+    this.selectedDirection = this.findDirection(saved.filters?.direction);
+
+    const userFilters = saved.filters || {};
+    this.nameModel = this.formatArray(userFilters.name);
+    this.extensionNumberModel = this.formatArray(userFilters.extensionNum);
+    this.channelNumberModel = this.formatArray(userFilters.channelNum);
+    this.aniAliDigitsModel = this.formatArray(userFilters.aniAliDigits);
+    this.agentIdModel = this.formatArray(userFilters.agentID);
+    this.objectIdModel = this.formatArray(userFilters.objectIDs);
+    this.cdr.detectChanges();
   }
 
   private formatArray(arr: string[] | null | undefined): string {
@@ -274,13 +260,19 @@ export class VpiSliderComponent implements OnInit {
     return safeArray.length > 0 ? safeArray.join(',') : '';
   }
 
+
   private parseDate(dateValue: string | Date | undefined | null): Date {
-    return dateValue ? new Date(dateValue) : new Date();
+    if (!dateValue) {
+      return new Date();
+    }
+    const parsed = new Date(dateValue);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
   }
 
   private findDirection(code: string | number | boolean | null | undefined) {
     if (code === null || code === undefined) {
       return null;
+
     }
     return this.directions.find(d => String(d.code) === String(code)) ?? null;
   }
@@ -301,7 +293,7 @@ export class VpiSliderComponent implements OnInit {
   }
 
   public onDrawerHide(): void {
-    this.dataService.drawerFormState.set({
+     this.dataService.drawerFormState.set({
       from_date: this.getFormattedDate(this.fromDate),
       to_date: this.getFormattedDate(this.toDate),
       opco: this.opCode?.code ?? '',
@@ -316,8 +308,6 @@ export class VpiSliderComponent implements OnInit {
       },
       pagination: { pageNumber: this.pageNumber, pageSize: 20 },
     });
-
-    this.dataService.openDrawer.set(false);
   }
 
   public isValidUUID(uuid: string): boolean {

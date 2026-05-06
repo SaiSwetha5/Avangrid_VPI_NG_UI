@@ -81,7 +81,7 @@
   <ng-template pTemplate="emptymessage"> 
     <p-panel class="empty-panel no-padding">
       <div class="empty-message-container">
-        <img src="assets/user1.jpg" alt="Support illustration" class="dashboard-image" />
+        <img src="assets/user1.jpg" alt="image missing" class="dashboard-image" />
         <ng-container>
           <p class="overlay-text">
             Please select an Opco using the
@@ -131,7 +131,6 @@
   <div *ngIf="hasErrorForAudioFile" class="audio-error">
     <i class="pi pi-exclamation-circle" style="font-size:1.5rem;"></i>
     <div>
-      <b>Recording Not Found</b>
       <p style="margin:4px 0 0 0; font-size:0.875rem;">{{ audioErrorMessage }}</p>
     </div>
   </div>

@@ -103,7 +103,6 @@ export class VpiTableComponent {
     return this._apiService.getFilteredData(payload).pipe(
       tap((response: SearchFilteredDataOutput) => {
         if (!response.data || response.data.length === 0) {
-          // this._dataService.pagedDataSignal.set([]);
           this._messageService.add({
             severity: 'error',
             summary: 'Error',
