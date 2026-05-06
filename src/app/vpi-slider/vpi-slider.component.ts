@@ -159,18 +159,21 @@ export class VpiSliderComponent implements OnInit {
     const opcoCode = this.opCode?.code ?? '';
     this.dataService.selectedOpcode.set(opcoCode);
 
-    this.dataService.setPayload({
-      from_date: this.getFormattedDate(this.fromDate),
-      to_date: this.getFormattedDate(this.toDate),
-      opco: opcoCode,
-      filters: this.buildFilters(),
-      pagination: {
-        pageNumber: this.pageNumber,
-        pageSize: 20,
-      },
-    });
+   const currentState = {
+    from_date: this.getFormattedDate(this.fromDate),
+    to_date: this.getFormattedDate(this.toDate),
+    opco: opcoCode,
+    filters: this.buildFilters(),
+    pagination: {
+      pageNumber: this.pageNumber,
+      pageSize: 20,
+    },
+  };
 
-    this.dataService.openDrawer.set(false);
+   this.dataService.drawerFormState.set(currentState);
+
+   this.dataService.setPayload(currentState);
+     this.dataService.openDrawer.set(false);
     this.router.navigate(['/vpi']);
   }
 

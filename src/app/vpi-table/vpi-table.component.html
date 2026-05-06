@@ -82,7 +82,7 @@
     <p-panel class="empty-panel no-padding">
       <div class="empty-message-container">
         <img src="assets/user1.jpg" alt="Support illustration" class="dashboard-image" />
-        <ng-container *ngIf="_dataService.isOpcodeAvailable()">
+        <ng-container>
           <p class="overlay-text">
             Please select an Opco using the
             <a class="filters-link" tabindex="0" (click)="_dataService.openDrawer.set(true)"

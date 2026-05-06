@@ -26,6 +26,38 @@
   </ng-template>
 </p-toolbar>
 
+ 
+
+<p-dialog 
+  [modal]="true" 
+  appendTo="body"  
+  [(visible)]="noAuthVisible" 
+  [closable]="true"
+  [style]="{
+    'background-color': '#008737',
+    'width': '35rem',
+    'height': '35rem'
+  }"> 
+
+  <ng-template pTemplate="header">
+    <div class="dialog-header" style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="header-left" style="display:flex; align-items:center; gap:0.75rem;">
+        <img src="assets/logo.jpg" alt="Logo" class="logo-icon" style="height:2rem;" />
+        <h4 class="header-title" style="color:#fff; margin:0;">Unauthorized User</h4>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="card" style="text-align:center; margin-top:1rem;">
+    <img src="assets/noAuth.png" alt="Login Error" class="dashboard-image" style="max-width:100%; height:auto;" />
+  </div>
+
+</p-dialog>
+ 
+  <div class="spinner-container" *ngIf="loadingOpcodes">
+  <p-progress-spinner ariaLabel="loading"  [style]="{ width: '150px', height: '150px' }"></p-progress-spinner>
+
+</div>
 
 
 <router-outlet></router-outlet>

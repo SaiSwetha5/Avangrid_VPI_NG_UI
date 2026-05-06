@@ -12,6 +12,8 @@ import { DataService } from 'services/data.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ApiCallsService } from 'services/api-calls.service';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface UserMenuItem { label: string; command?: () => void; }
 
@@ -19,7 +21,7 @@ const ADMIN_OPCODES = ['RGE', 'NYSEG', 'CMP'];
 
 @Component({
   selector: 'app-root',
-  imports: [SplitButton, MenuModule, RouterModule, RouterOutlet, ToolbarModule, CommonModule, ButtonModule],
+  imports: [SplitButton,DialogModule,ProgressSpinnerModule, MenuModule, RouterModule, RouterOutlet, ToolbarModule, CommonModule, ButtonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: true,
@@ -35,7 +37,8 @@ export class AppComponent implements OnInit, OnDestroy {
   public items: MenuItem[] | undefined;
   public currentUrl = '';
   public userMenu: UserMenuItem[] = [];
-
+  public noAuthVisible = false;
+  public loadingOpcodes = false;   
   ngOnInit() {
     this.msalBroadcastService.inProgress$
       .pipe(
@@ -88,23 +91,31 @@ export class AppComponent implements OnInit, OnDestroy {
     this._dataService.isOpcodeAvailable.set(true); 
     return; 
   }
-
+  this.loadingOpcodes = true;   
     this.apiService.getOPCODES().subscribe({
     next: (opcos) => {
-      this._dataService.isOpcodeAvailable.set(true);
+       this.loadingOpcodes = false;  
+       if (opcos.length === 0) { 
+      this._dataService.isOpcodeAvailable.set(false);
+      return;
+    }
+
       const mapped = opcos.includes('ADMIN')
         ? ADMIN_OPCODES.map(code => ({ name: code, code }))
         : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
       
+      this._dataService.isOpcodeAvailable.set(true);
       this._dataService.opcodesSignal.set(mapped);
       sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
-      const current = this._dataService.getPayload();
+      const current = this._dataService.getPayload(); 
       const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
       if (opcoIsInvalid) {
         this._dataService.resetPayload();
       }
     },
     error: (err) => {
+       this.loadingOpcodes = false;  
+
       this._dataService.isOpcodeAvailable.set(false);
       console.error('Failed to load opcodes', err);
     }
@@ -117,7 +128,13 @@ export class AppComponent implements OnInit, OnDestroy {
         command: () => {
           this._dataService.payload.set(undefined);
           this._dataService.pagedDataSignal.set([]);
+           const opcodes = this._dataService.opcodesSignal();
+           
+        if (!opcodes || opcodes.length === 0) {
+          this.noAuthVisible = true;
+        } else {
           this.router.navigate(['/vpi']);
+        }
         }
       },
       {
