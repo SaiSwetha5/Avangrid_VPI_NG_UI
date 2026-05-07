@@ -109,8 +109,7 @@
   <div class="card">
 
     <p-progressbar mode="indeterminate" *ngIf="loadingAudioFile1()" [style]="{'height': '6px'}" />
-
-  </div>
+   </div>
 
 
   <ng-template pTemplate="header">
@@ -131,6 +130,7 @@
   <div *ngIf="hasErrorForAudioFile" class="audio-error">
     <i class="pi pi-exclamation-circle" style="font-size:1.5rem;"></i>
     <div>
+      <b>Recording not found!!</b>
       <p style="margin:4px 0 0 0; font-size:0.875rem;">{{ audioErrorMessage }}</p>
     </div>
   </div>

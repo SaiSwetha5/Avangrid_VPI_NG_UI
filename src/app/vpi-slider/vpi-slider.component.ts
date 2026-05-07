@@ -12,6 +12,9 @@ import { ToastModule } from 'primeng/toast';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 
+type DateInput = string | Date | null;
+type DirectionCode = boolean | null;
+
 interface OpCode {
   name: string;
   code: string;
@@ -240,10 +243,10 @@ export class VpiSliderComponent {
     const matchedOpcode = this.dataService.opcodesSignal()
       .find(o => o.code === saved.opco) ?? null;
 
-    this.fromDate = this.parseDate(saved.from_date);
-    this.toDate = this.parseDate(saved.to_date);
+    this.fromDate = this.parseDate(saved.from_date ?? null);
+    this.toDate = this.parseDate(saved.to_date ?? null);
     this.opCode = matchedOpcode;
-    this.selectedDirection = this.findDirection(saved.filters?.direction);
+    this.selectedDirection = this.findDirection(saved.filters?.direction ?? null);
 
     const userFilters = saved.filters || {};
     this.nameModel = this.formatArray(userFilters.name);
@@ -261,7 +264,7 @@ export class VpiSliderComponent {
   }
 
 
-  private parseDate(dateValue: string | Date | undefined | null): Date {
+  private parseDate(dateValue: DateInput): Date {
     if (!dateValue) {
       return new Date();
     }
@@ -269,7 +272,7 @@ export class VpiSliderComponent {
     return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
   }
 
-  private findDirection(code: string | number | boolean | null | undefined) {
+  private findDirection(code: DirectionCode) {
     if (code === null || code === undefined) {
       return null;
 

@@ -202,7 +202,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public navigateVPIPage(): void {
-   //  this._dataService.payload.set(undefined);
     this.router.navigate(['/vpi']);
   }
 }

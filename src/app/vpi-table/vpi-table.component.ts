@@ -138,7 +138,8 @@ export class VpiTableComponent {
   }
 
   private async loadDataAsync(rowData: VPIDataItem): Promise<void> {
-    this._dataService.loadingAudioFile.set(true);
+    this._dataService.loadingTableDataSignal.set(true);
+
     this.clearWaveform();
     this.audioUrl = null;
     this.hasErrorForAudioFile = false;
@@ -175,13 +176,15 @@ export class VpiTableComponent {
           );
         }
       }
+      this._dataService.loadingTableDataSignal.set(false);
+      this._dataService.loadingAudioFile.set(true);
 
       const audioFile = await firstValueFrom(
         this._apiService.getAudioRecordings(audioRecordingInput)
       );
       const contentDisposition = audioFile.headers.get('Content-Disposition');
-      this.audioFileName = this.extractFileName(contentDisposition) ?? 'audio_recording'; 
-              if (audioFile.body instanceof Blob) {
+      this.audioFileName = this.extractFileName(contentDisposition) ?? 'audio_recording';
+      if (audioFile.body instanceof Blob) {
         this.hasErrorForAudioFile = false;
         this.audioErrorMessage = "";
         this.clearWaveform();
@@ -199,14 +202,13 @@ export class VpiTableComponent {
   }
 
   private extractFileName(contentDisposition: string | null): string | null {
-  if (!contentDisposition) return null; 
-  const fileNameMatch =
-    contentDisposition.match(/filename\*=UTF-8''([^;]*)/) ??
-    contentDisposition.match(/filename="?([^";\n]*)"?/);
+    if (!contentDisposition) return null;
+    const fileNameMatch =
+      contentDisposition.match(/filename\*=UTF-8''([^;]*)/) ??
+      contentDisposition.match(/filename="?([^";\n]*)"?/);
 
-  return fileNameMatch ? decodeURIComponent(fileNameMatch[1]) : null;
-}
-
+    return fileNameMatch ? decodeURIComponent(fileNameMatch[1]) : null;
+  }
 
   private async handleAudioError(error: HttpErrorResponse) {
     this._dataService.loadingAudioFile.set(false);
@@ -283,7 +285,7 @@ export class VpiTableComponent {
       }
     });
   }
- 
+
   public onMaximize(): void {
     if (this.waveFormRef) {
       const waveform = this.waveFormRef.nativeElement as HTMLElement;
