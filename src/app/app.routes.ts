@@ -9,5 +9,5 @@ export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'vpi', component: VpiTableComponent , canActivate: [authGuard] },
   { path: 'home', component: VpiDashboardComponent, canActivate: [MsalGuard] },
-  { path: 'error', component: ErrorComponent },
+  { path: 'error', component: ErrorComponent, canActivate: [authGuard]},
  ];

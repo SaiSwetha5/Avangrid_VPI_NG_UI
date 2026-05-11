@@ -18,8 +18,11 @@ export const authGuard: CanActivateFn = () => {
 
    const opcodes = dataService.opcodesSignal();
   if (!opcodes || opcodes.length === 0) {
-    router.navigate(['/home']);
-    return false;
+    const cachedOpcodes = sessionStorage.getItem('VPI_OPCODES');
+    if (cachedOpcodes) {
+      dataService.opcodesSignal.set(JSON.parse(cachedOpcodes));  
+      dataService.isOpcodeAvailable.set(true);
+    }
   }
 
    return true;
