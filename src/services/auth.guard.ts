@@ -22,6 +22,9 @@ export const authGuard: CanActivateFn = () => {
     if (cachedOpcodes) {
       dataService.opcodesSignal.set(JSON.parse(cachedOpcodes));  
       dataService.isOpcodeAvailable.set(true);
+    } else {
+            router.navigate(['/home']);
+        return false;
     }
   }
 
