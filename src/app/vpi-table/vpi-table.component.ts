@@ -1,8 +1,8 @@
-import { ViewEncapsulation, Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { ViewEncapsulation, Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild, OnInit, WritableSignal } from '@angular/core';
 import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { InputIconModule } from 'primeng/inputicon';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -19,7 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { catchError, debounceTime, firstValueFrom, from, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, debounceTime, EMPTY, firstValueFrom, Observable,Subject, switchMap, tap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TooltipModule } from 'primeng/tooltip';
 import { ApiCallsService } from 'services/api-calls.service';
@@ -30,14 +30,14 @@ import { Router } from '@angular/router';
   selector: 'app-vpi-table',
   imports: [ProgressBar, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
   standalone: true,
-  providers: [DatePipe, MessageService],
+  providers: [MessageService],
   templateUrl: './vpi-table.component.html',
   styleUrl: './vpi-table.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 
-export class VpiTableComponent {
+export class VpiTableComponent implements OnInit{
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
   public pagination = {
     pageNumber: 1,
@@ -50,7 +50,6 @@ export class VpiTableComponent {
   private readonly _messageService = inject(MessageService);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _router = inject(Router);
-  private readonly datePipe = inject(DatePipe);
   public getSelectedOpcode = this._dataService.selectedOpcode;
   public first = signal<number>(0);
   public hasErrorForAudioFile = false;
@@ -60,7 +59,7 @@ export class VpiTableComponent {
   public selectedRow: VPIDataItem[] = [];
   public rowSelected = false;
   public displayHeaders = DISPLAY_HEADERS;
-  public selectedRowData!: VPIMetaDataOutput;
+  public selectedRowData: VPIMetaDataOutput | null = null;
   public audioUrl: string | null = null;
   private wavesurfer: WaveSurfer | null = null;
   public trackById = (index: number, header: { id: string }) => header.id;
@@ -68,6 +67,16 @@ export class VpiTableComponent {
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
   private audioFileName: string | null = null;
+  private rowClick$ = new Subject<VPIDataItem | null>();
+  public isMetaDataAvailable: WritableSignal<boolean> = signal<boolean>(false);
+ 
+  public ngOnInit(): void {
+           this.rowClick$.pipe(
+    debounceTime(500),
+    switchMap((data) => data ? this.loadDataAsync(data) : EMPTY),
+    takeUntilDestroyed(this._destroyRef)   
+  ).subscribe();
+  }
 
   private readonly effectData = effect(() => {
 
@@ -131,16 +140,31 @@ export class VpiTableComponent {
   }
 
   public onRowClick(rowData: VPIDataItem) {
-    of(rowData).pipe(
-      debounceTime(500),
-      switchMap((data) => from(this.loadDataAsync(data)))
-    ).subscribe();
+   this.rowClick$.next(rowData);      
   }
 
-  private async loadDataAsync(rowData: VPIDataItem): Promise<void> {
-    this._dataService.loadingTableDataSignal.set(true);
+  
+public onDialogClose(): void {
+  this.rowClick$.next(null);   
 
-    this.clearWaveform();
+  this.clearWaveform();
+  this.audioUrl = null;
+  this.hasErrorForAudioFile = false;
+  this.audioErrorMessage = "";
+  this.rowSelected = false;
+  this.selectedRowData = null;
+  this._dataService.loadingAudioFile.set(false);
+  this._dataService.loadingTableDataSignal.set(false);
+
+  if (this.audioUrl) {
+    URL.revokeObjectURL(this.audioUrl);
+    this.audioUrl = null;
+  }
+}
+
+  private async loadDataAsync(rowData: VPIDataItem): Promise<void> {
+       this.audioPopUpVisible = true;
+     this.clearWaveform();
     this.audioUrl = null;
     this.hasErrorForAudioFile = false;
     this.audioErrorMessage = "";
@@ -157,14 +181,17 @@ export class VpiTableComponent {
     };
 
     try {
+      this.isMetaDataAvailable.set(true);
       const metadata = await firstValueFrom(
         this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode())
       );
 
       if (metadata) {
+          this.isMetaDataAvailable.set(false);
+
         this.selectedRowData = metadata;
         this.rowSelected = true;
-        this.audioPopUpVisible = true;
+   
 
         const isAlreadySelected = this.selectedRow.some(
           (row: VPIDataItem) => row.objectId === metadata.objectId
@@ -176,7 +203,6 @@ export class VpiTableComponent {
           );
         }
       }
-      this._dataService.loadingTableDataSignal.set(false);
       this._dataService.loadingAudioFile.set(true);
 
       const audioFile = await firstValueFrom(

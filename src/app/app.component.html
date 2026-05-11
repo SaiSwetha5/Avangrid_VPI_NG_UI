@@ -27,32 +27,46 @@
 </p-toolbar>
 
  
-
 <p-dialog 
   [modal]="true" 
   appendTo="body"  
-  [(visible)]="noAuthVisible" 
-  [closable]="true"
-  [style]="{
-    'background-color': '#008737',
-    'width': '35rem',
-    'height': '35rem'
-  }"> 
+  [(visible)]="noAuthVisible"
+  [resizable]="false"
+  [draggable]="false"
+  [style]="{ 'background-color': '#008737', 'width': '35rem' }"
+  [contentStyle]="{ 'padding': '1rem', 'overflow': 'hidden' }"
+  class="custom-dialog">
 
   <ng-template pTemplate="header">
     <div class="dialog-header" style="display:flex; align-items:center; justify-content:space-between;">
       <div class="header-left" style="display:flex; align-items:center; gap:0.75rem;">
         <img src="assets/logo.jpg" alt="Logo" class="logo-icon" style="height:2rem;" />
-        <h4 class="header-title" style="color:#fff; margin:0;">Unauthorized User</h4>
+        <h4 class="header-title" style="color:#FFFFFF; margin:0;">Unauthorized User</h4>
       </div>
     </div>
   </ng-template>
 
-  <div class="card" style="text-align:center; margin-top:1rem;">
-    <img src="assets/noAuth.png" alt="Login Error" class="dashboard-image" style="max-width:100%; height:auto;" />
+  <div class="card" style="text-align:center;">
+    <img src="assets/userAuth1.png" alt="Login Error" class="dashboard-image" style="max-width:100%; height:auto; border:none;" />
   </div>
 
+<div class="card1" style="margin-top:20px; text-align:center; font-family: sans-serif;">
+  <span class="font-color">Please contact </span>
+ 
+<a [href]="outlookComposeUrl"
+   id="supportLink"
+   class="support-link"
+   target="_blank"
+   rel="noopener noreferrer"
+   style="text-decoration: underline; font-weight: bold; color:#FFD700; ">
+   Avangrid ACD‑IVR Support
+</a>
+
+  <span class="font-color"> support team for assistance</span>
+</div>
+
 </p-dialog>
+
  
   <div class="spinner-container" *ngIf="loadingOpcodes">
   <p-progress-spinner ariaLabel="loading"  [style]="{ width: '150px', height: '150px' }"></p-progress-spinner>

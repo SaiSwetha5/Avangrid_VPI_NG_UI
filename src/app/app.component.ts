@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import { ApiCallsService } from 'services/api-calls.service';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 interface UserMenuItem { label: string; command?: () => void; }
 
@@ -21,40 +22,40 @@ const ADMIN_OPCODES = ['RGE', 'NYSEG', 'CMP'];
 
 @Component({
   selector: 'app-root',
-  imports: [SplitButton,DialogModule,ProgressSpinnerModule, MenuModule, RouterModule, RouterOutlet, ToolbarModule, CommonModule, ButtonModule],
+  imports: [SplitButton, DialogModule, ProgressSpinnerModule, MenuModule, RouterModule, RouterOutlet, ToolbarModule, CommonModule, ButtonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: true,
 })
 export class AppComponent implements OnInit, OnDestroy {
+  public outlookComposeUrl: SafeUrl = '';
   private readonly _destroying$ = new Subject<void>();
   public msalService = inject(MsalService);
   public apiService = inject(ApiCallsService);
   public msalBroadcastService = inject(MsalBroadcastService);
   public router = inject(Router);
   public _dataService = inject(DataService);
+  private _sanitizer = inject(DomSanitizer);
   public title = 'VPI Record System';
   public items: MenuItem[] | undefined;
   public currentUrl = '';
   public userMenu: UserMenuItem[] = [];
   public noAuthVisible = false;
-  public loadingOpcodes = false;   
+  public loadingOpcodes = false;
   public ngOnInit() {
 
-  this.router.events
-    .pipe(filter(e => e instanceof NavigationEnd))
-    .subscribe((e: NavigationEnd) => {
-      const previous = this._dataService.currentUrl();
-      const next = e.urlAfterRedirects.split('?')[0];
-      if (previous?.startsWith('/vpi') && !next.startsWith('/vpi')) {
-        this._dataService.drawerFormState.set(undefined);
-      }
-      this._dataService.currentUrl.set(next);
-    });
-
- 
-
-  this.msalBroadcastService.inProgress$
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        const previous = this._dataService.currentUrl();
+        const next = e.urlAfterRedirects.split('?')[0];
+        if (previous?.startsWith('/vpi') && !next.startsWith('/vpi')) {
+          this._dataService.drawerFormState.set(undefined);
+        }
+        this._dataService.currentUrl.set(next);
+      });
+      
+    this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
         takeUntil(this._destroying$)
@@ -83,6 +84,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (account) {
       const username = account.name ?? account.username ?? 'User';
+      const userEmail = '_LD_ACD-IVR@avangrid.com';
+
+      const body = encodeURIComponent('Hello Team,\n\nI need support with...');
+      const subject = encodeURIComponent('Support Request');
+
+      const url = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+
+      this.outlookComposeUrl = this._sanitizer.bypassSecurityTrustUrl(url);
       this.userMenu = [
         { label: username },
         { label: 'Logout', command: () => this.logout() }
@@ -101,41 +110,41 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const cachedOpcodes = sessionStorage.getItem('VPI_OPCODES');
     if (cachedOpcodes) {
-    const parsedData = JSON.parse(cachedOpcodes);
-    this._dataService.opcodesSignal.set(parsedData);
-    this._dataService.isOpcodeAvailable.set(true); 
-    return; 
-  }
-  this.loadingOpcodes = true;   
-    this.apiService.getOPCODES().subscribe({
-    next: (opcos) => {
-       this.loadingOpcodes = false;  
-       if (opcos.length === 0) { 
-      this._dataService.isOpcodeAvailable.set(false);
+      const parsedData = JSON.parse(cachedOpcodes);
+      this._dataService.opcodesSignal.set(parsedData);
+      this._dataService.isOpcodeAvailable.set(true);
       return;
     }
+    this.loadingOpcodes = true;
+    this.apiService.getOPCODES().subscribe({
+      next: (opcos) => {
+        this.loadingOpcodes = false;
+        if (opcos.length === 0) {
+          this._dataService.isOpcodeAvailable.set(false);
+          return;
+        }
 
-      const mapped = opcos.includes('ADMIN')
-        ? ADMIN_OPCODES.map(code => ({ name: code, code }))
-        : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
-      
-      this._dataService.isOpcodeAvailable.set(true);
-      this._dataService.opcodesSignal.set(mapped);
-      sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
-      const current = this._dataService.getPayload(); 
-      const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
-      if (opcoIsInvalid) {
-        this._dataService.resetPayload();
+        const mapped = opcos.includes('ADMIN')
+          ? ADMIN_OPCODES.map(code => ({ name: code, code }))
+          : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
+
+        this._dataService.isOpcodeAvailable.set(true);
+        this._dataService.opcodesSignal.set(mapped);
+        sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
+        const current = this._dataService.getPayload();
+        const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
+        if (opcoIsInvalid) {
+          this._dataService.resetPayload();
+        }
+      },
+      error: (err) => {
+        this.loadingOpcodes = false;
+
+        this._dataService.isOpcodeAvailable.set(false);
+        console.error('Failed to load opcodes', err);
       }
-    },
-    error: (err) => {
-       this.loadingOpcodes = false;  
-
-      this._dataService.isOpcodeAvailable.set(false);
-      console.error('Failed to load opcodes', err);
-    }
-  });
-}
+    });
+  }
   private initMenus() {
     this.items = [
       {
@@ -143,13 +152,13 @@ export class AppComponent implements OnInit, OnDestroy {
         command: () => {
           this._dataService.payload.set(undefined);
           this._dataService.pagedDataSignal.set([]);
-           const opcodes = this._dataService.opcodesSignal();
-           
-        if (!opcodes || opcodes.length === 0) {
-          this.noAuthVisible = true;
-        } else {
-          this.router.navigate(['/vpi']);
-        }
+          const opcodes = this._dataService.opcodesSignal();
+
+          if (!opcodes || opcodes.length === 0) {
+            this.noAuthVisible = true;
+          } else {
+            this.router.navigate(['/vpi']);
+          }
         }
       },
       {

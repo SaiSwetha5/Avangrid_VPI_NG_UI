@@ -41,57 +41,23 @@
   }
 }
  
- .p-dialog {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
- .dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #008737;   
-  padding: 0.75rem 1rem;
-  color: #fff;
-}
-
-.dialog-header .header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.dialog-header .logo-icon {
-  height: 2rem;
-  width: auto;
-}
-
-.dialog-header .header-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #fff;
-}
-
- .card {
-  text-align: center;
-  margin-top: 1rem;
+ 
+.font-color {
+  color: #FFFFFF;
+  display: inline;
 }
 
 .dashboard-image {
-  max-width: 100%;
-  height: auto;
+  border: none;  
 }
 
- .p-dialog .p-dialog-footer .p-button {
-  border-color: #008737;
-  color: #008737;
+.support-link {
+  color: rgb(249, 115, 22); 
+  font-weight: bold;
+  text-decoration: underline;
 }
 
-.p-dialog .p-dialog-footer .p-button:hover {
-  background-color: #008737;
-  color: #fff;
-}
+
 
 .spinner-container {
   display: flex;
@@ -104,3 +70,5 @@
   left: 0;
   z-index: 9999;
 }
+
+ 

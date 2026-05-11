@@ -28,11 +28,14 @@
 <p-toast />
 <div class="spinner-container" *ngIf="loading()">
   <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
+   
 </div>
-
-
-
-
+ <div class="spinner-container" *ngIf="isMetaDataAvailable()">
+  <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
+  <div style="color:white" >
+    Fetching metadata details and audio recordings...
+  </div>
+</div>
 <p-table ngSkipHydration #dt class="custom-table" [scrollable]="_dataService.pagedDataSignal().length > 0"
   [scrollHeight]="_dataService.pagedDataSignal().length > 0 ? 'calc(100vh - 250px)' : undefined" size="small"
   selectionMode="multiple" [(selection)]="selectedRow" dataKey="objectId"
@@ -101,7 +104,7 @@
 </p-table>
 
 <p-dialog [modal]="true" [contentStyle]="{ height: '300px' }" [maximizable]="true" (onMaximize)="onMaximize()"
-  appendTo="body" [(visible)]="audioPopUpVisible" [style]="{
+  appendTo="body" [(visible)]="audioPopUpVisible" (onHide)="onDialogClose()" [style]="{
     'background-color': '#008737',
     'width': '40rem',
     'height': '40rem',
@@ -138,8 +141,7 @@
   <div *ngIf="!hasErrorForAudioFile" #waveform id="waveform" style="width: 100%; max-width: 800px;"></div>
 
 
-
-  <div class="cardPadding">
+  <div class="cardPadding" *ngIf="!isMetaDataAvailable()">
     <p-tabs value="0">
       <p-tablist class="tab-header d-flex justify-content-between align-items-center">
         <p-tab value="0" class="tab-text-color">VPI META DATA</p-tab>
