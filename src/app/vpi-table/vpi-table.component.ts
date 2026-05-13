@@ -1,87 +1,82 @@
-import { ViewEncapsulation, Component, computed, DestroyRef, effect, ElementRef, inject, signal, ViewChild, OnInit, WritableSignal } from '@angular/core';
-import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
-import { CheckboxModule } from 'primeng/checkbox';
-import { TableModule } from 'primeng/table';
-import { CommonModule } from '@angular/common';
-import { InputIconModule } from 'primeng/inputicon';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, OnInit, signal, ViewChild, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, EMPTY, firstValueFrom, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { AccordionModule } from 'primeng/accordion';
+import { CheckboxModule } from 'primeng/checkbox';
+import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
-import { PanelModule } from 'primeng/panel';
-import { TabsModule } from 'primeng/tabs';
-import { DataService } from 'services/data.service';
-import { VpiSliderComponent } from '../vpi-slider/vpi-slider.component';
-import WaveSurfer from 'wavesurfer.js';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ToastModule } from 'primeng/toast';
+import { InputIconModule } from 'primeng/inputicon';
 import { MessageService } from 'primeng/api';
-import { catchError, debounceTime, EMPTY, firstValueFrom, Observable,Subject, switchMap, tap, throwError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TooltipModule } from 'primeng/tooltip';
-import { ApiCallsService } from 'services/api-calls.service';
+import { PanelModule } from 'primeng/panel';
 import { ProgressBar } from 'primeng/progressbar';
-import { Router } from '@angular/router';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TableModule } from 'primeng/table';
+import { TabsModule } from 'primeng/tabs';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
+import WaveSurfer from 'wavesurfer.js';
+import { ApiCallsService } from 'services/api-calls.service';
+import { DataService } from 'services/data.service';
+import { DISPLAY_HEADERS, DownloadRecordingInput, PaginatorState, SearchFilteredDataInput, SearchFilteredDataOutput, VPIDataItem, VPIMetaDataOutput } from 'interfaces/vpi-interface';
+import { VpiSliderComponent } from 'app/vpi-slider/vpi-slider.component';
 
 @Component({
   selector: 'app-vpi-table',
-  imports: [ProgressBar, TooltipModule, ToastModule, ProgressSpinnerModule, VpiSliderComponent, CheckboxModule, PanelModule, TabsModule, DialogModule, AccordionModule, CardModule, CommonModule, TableModule, InputIconModule, FormsModule, ButtonModule],
+  imports: [AccordionModule, ButtonModule, CardModule, CheckboxModule, CommonModule, DialogModule, FormsModule, InputIconModule, PanelModule, ProgressBar, ProgressSpinnerModule, TableModule, TabsModule, ToastModule, TooltipModule, VpiSliderComponent],
   standalone: true,
   providers: [MessageService],
   templateUrl: './vpi-table.component.html',
   styleUrl: './vpi-table.component.scss',
   encapsulation: ViewEncapsulation.None
 })
+export class VpiTableComponent implements OnInit {
 
-
-export class VpiTableComponent implements OnInit{
   @ViewChild('waveform') waveFormRef!: ElementRef<HTMLDivElement>;
-  public pagination = {
-    pageNumber: 1,
-    pageSize: 20,
-  };
-  public payload = computed(() => this._dataService.getPayload());
-  public currentPayload: SearchFilteredDataInput | undefined;
-  public _dataService = inject(DataService);
   private readonly _apiService = inject(ApiCallsService);
-  private readonly _messageService = inject(MessageService);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _messageService = inject(MessageService);
   private readonly _router = inject(Router);
-  public getSelectedOpcode = this._dataService.selectedOpcode;
-  public first = signal<number>(0);
-  public hasErrorForAudioFile = false;
-  public audioErrorMessage = ''
-  public totalPages = signal(0);
-  public audioPopUpVisible = false;
-  public selectedRow: VPIDataItem[] = [];
-  public rowSelected = false;
-  public displayHeaders = DISPLAY_HEADERS;
-  public selectedRowData: VPIMetaDataOutput | null = null;
-  public audioUrl: string | null = null;
+  public _dataService = inject(DataService);
+
+  private readonly rowClick$ = new Subject<VPIDataItem | null>();
+  private audioFileName: string | null = null;
   private wavesurfer: WaveSurfer | null = null;
-  public trackById = (index: number, header: { id: string }) => header.id;
+
+  public audioErrorMessage = '';
+  public audioPopUpVisible = false;
+  public audioUrl: string | null = null;
+  public currentPayload: SearchFilteredDataInput | undefined;
+  public displayHeaders = DISPLAY_HEADERS;
   public downloadDisabled = true;
+  public first = signal<number>(0);
+  public getSelectedOpcode = this._dataService.selectedOpcode;
+  public hasErrorForAudioFile = false;
+  public isMetaDataAvailable: WritableSignal<boolean> = signal<boolean>(false);
   public loading = computed(() => this._dataService.loadingTableDataSignal());
   public loadingAudioFile1 = computed(() => this._dataService.loadingAudioFile());
-  private audioFileName: string | null = null;
-  private rowClick$ = new Subject<VPIDataItem | null>();
-  public isMetaDataAvailable: WritableSignal<boolean> = signal<boolean>(false);
- 
+  public pagination = { pageNumber: 1, pageSize: 20 };
+  public payload = computed(() => this._dataService.getPayload());
+  public rowSelected = false;
+  public selectedRow: VPIDataItem[] = [];
+  public selectedRowData: VPIMetaDataOutput | null = null;
+  public totalPages = signal(0);
+  public trackById = (index: number, header: { id: string }) => header.id;
+
   public ngOnInit(): void {
-           this.rowClick$.pipe(
-    debounceTime(500),
-    switchMap((data) => data ? this.loadDataAsync(data) : EMPTY),
-    takeUntilDestroyed(this._destroyRef)   
-  ).subscribe();
+    this.rowClick$.pipe(
+      debounceTime(500),
+      switchMap((data) => data ? this.loadMetaData(data) : EMPTY),
+      takeUntilDestroyed(this._destroyRef)
+    ).subscribe();
   }
 
   private readonly effectData = effect(() => {
-
     this.currentPayload = this.payload();
-
     if (!this.currentPayload || !this._dataService.hasAnyValue(this.currentPayload)) {
       this._dataService.loadingTableDataSignal.set(false);
       return;
@@ -140,101 +135,132 @@ export class VpiTableComponent implements OnInit{
   }
 
   public onRowClick(rowData: VPIDataItem) {
-   this.rowClick$.next(rowData);      
+    this.rowClick$.next(rowData);
   }
 
-  
-public onDialogClose(): void {
-  this.rowClick$.next(null);   
 
-  this.clearWaveform();
-  this.audioUrl = null;
-  this.hasErrorForAudioFile = false;
-  this.audioErrorMessage = "";
-  this.rowSelected = false;
-  this.selectedRowData = null;
-  this._dataService.loadingAudioFile.set(false);
-  this._dataService.loadingTableDataSignal.set(false);
-
-  if (this.audioUrl) {
-    URL.revokeObjectURL(this.audioUrl);
-    this.audioUrl = null;
-  }
-}
-
-  private async loadDataAsync(rowData: VPIDataItem): Promise<void> {
-       this.audioPopUpVisible = true;
-     this.clearWaveform();
+  public onDialogClose(): void {
+    this.rowClick$.next(null);
+    this.clearWaveform();
     this.audioUrl = null;
     this.hasErrorForAudioFile = false;
     this.audioErrorMessage = "";
+    this.rowSelected = false;
+    this.selectedRowData = null;
+    this._dataService.loadingAudioFile.set(false);
+    this._dataService.loadingTableDataSignal.set(false);
 
-    const audioRecordingInput = {
-      date: rowData.startTime ? rowData.startTime : '',
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
+      this.audioUrl = null;
+    }
+  }
+
+  private initializeAudioPopup(): void {
+    this.audioPopUpVisible = true;
+    this.clearWaveform();
+    this.audioUrl = null;
+    this.hasErrorForAudioFile = false;
+    this.audioErrorMessage = "";
+  }
+
+  private buildAudioRecordingInput(rowData: VPIDataItem): DownloadRecordingInput {
+    return {
+      date: rowData.startTime ?? '',
       opco: this._dataService.selectedOpcode() ?? '',
-      username: rowData.username ? rowData.username : '',
-      aniAliDigits: rowData.aniAliDigits ? rowData.aniAliDigits : '',
-      extensionNum: rowData.extensionNum ? rowData.extensionNum : '',
-      channelNum: rowData.channelNum ? rowData.channelNum : 0,
-      objectId: rowData.objectId ? rowData.objectId : '',
-      duration: rowData.duration ? rowData.duration : 0
+      username: rowData.username ?? '',
+      aniAliDigits: rowData.aniAliDigits ?? '',
+      extensionNum: rowData.extensionNum ?? '',
+      channelNum: rowData.channelNum ?? 0,
+      objectId: rowData.objectId ?? '',
+      duration: rowData.duration ?? 0
     };
+  }
+
+  private async getMetadata(rowData: VPIDataItem): Promise<void> {
+    this.isMetaDataAvailable.set(true);
+    const metadata = await firstValueFrom(
+      this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode())
+    );
+
+    if (!metadata) return;
+
+    this.isMetaDataAvailable.set(false);
+    this.selectedRowData = metadata;
+    this.rowSelected = true;
+    this.isCheckBoxSelected(metadata);
+  }
+
+
+  private isCheckBoxSelected(metadata: VPIMetaDataOutput): void {
+    const isAlreadySelected = this.selectedRow.some(
+      (row: VPIDataItem) => row.objectId === metadata.objectId
+    );
+
+    if (isAlreadySelected) {
+      if (this.selectedRowData) {
+        this.selectedRowData.isChecked = false;
+      }
+      this.selectedRow = this.selectedRow.filter(
+        (row: VPIDataItem) => row.objectId !== metadata.objectId
+      );
+    }
+  }
+
+  private async fetchAndApplyAudio(audioRecordingInput: DownloadRecordingInput): Promise<void> {
+    this._dataService.loadingAudioFile.set(true);
+
+    const audioFile = await firstValueFrom(
+      this._apiService.getAudioRecordings(audioRecordingInput)
+    );
+
+    const contentDisposition = audioFile.headers.get('Content-Disposition');
+    this.audioFileName = this.extractFileName(contentDisposition) ?? 'audio_recording';
+
+    if (audioFile.body instanceof Blob) {
+      this.applyAudioBlob(audioFile.body);
+    }
+  }
+
+  private applyAudioBlob(blob: Blob): void {
+    this.hasErrorForAudioFile = false;
+    this.audioErrorMessage = "";
+    this.clearWaveform();
+    this.audioUrl = URL.createObjectURL(blob);
+    setTimeout(() => this.waveform(), 0);
+  }
+
+
+  private async loadMetaData(rowData: VPIDataItem): Promise<void> {
+    this.initializeAudioPopup();
+    const audioRecordingInput = this.buildAudioRecordingInput(rowData);
 
     try {
-      this.isMetaDataAvailable.set(true);
-      const metadata = await firstValueFrom(
-        this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode())
-      );
-
-      if (metadata) {
-          this.isMetaDataAvailable.set(false);
-
-        this.selectedRowData = metadata;
-        this.rowSelected = true;
-   
-
-        const isAlreadySelected = this.selectedRow.some(
-          (row: VPIDataItem) => row.objectId === metadata.objectId
-        );
-        if (isAlreadySelected) {
-          this.selectedRowData.isChecked = false;
-          this.selectedRow = this.selectedRow.filter(
-            (row: VPIDataItem) => row.objectId !== metadata.objectId
-          );
-        }
-      }
-      this._dataService.loadingAudioFile.set(true);
-
-      const audioFile = await firstValueFrom(
-        this._apiService.getAudioRecordings(audioRecordingInput)
-      );
-      const contentDisposition = audioFile.headers.get('Content-Disposition');
-      this.audioFileName = this.extractFileName(contentDisposition) ?? 'audio_recording';
-      if (audioFile.body instanceof Blob) {
-        this.hasErrorForAudioFile = false;
-        this.audioErrorMessage = "";
-        this.clearWaveform();
-        this.audioUrl = URL.createObjectURL(audioFile.body);
-        setTimeout(() => this.waveform(), 0);
-      }
-
+      await this.getMetadata(rowData);
+      await this.fetchAndApplyAudio(audioRecordingInput);
     } catch (error) {
       await this.handleAudioError(error as HttpErrorResponse);
       this.audioPopUpVisible = true;
-
     } finally {
       this._dataService.loadingAudioFile.set(false);
     }
   }
 
   private extractFileName(contentDisposition: string | null): string | null {
-    if (!contentDisposition) return null;
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utf8Pattern = /filename\*=UTF-8''([^;]*)/;
+    const standardPattern = /filename="?([^";\n]*)"?/;
+
     const fileNameMatch =
-      contentDisposition.match(/filename\*=UTF-8''([^;]*)/) ??
-      contentDisposition.match(/filename="?([^";\n]*)"?/);
+      utf8Pattern.exec(contentDisposition) ??
+      standardPattern.exec(contentDisposition);
 
     return fileNameMatch ? decodeURIComponent(fileNameMatch[1]) : null;
   }
+
 
   private async handleAudioError(error: HttpErrorResponse) {
     this._dataService.loadingAudioFile.set(false);

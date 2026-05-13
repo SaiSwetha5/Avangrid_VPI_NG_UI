@@ -1,20 +1,20 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
-import { NavigationEnd, RouterModule, RouterOutlet, Router } from '@angular/router';
-import { SplitButton } from 'primeng/splitbutton';
-import { ToolbarModule } from 'primeng/toolbar';
-import { MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { InteractionStatus } from '@azure/msal-browser';
-import { DataService } from 'services/data.service';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { ApiCallsService } from 'services/api-calls.service';
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
+import { InteractionStatus } from '@azure/msal-browser';
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { SplitButton } from 'primeng/splitbutton';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ApiCallsService } from 'services/api-calls.service';
+import { DataService } from 'services/data.service';
 
 interface UserMenuItem { label: string; command?: () => void; }
 
@@ -22,28 +22,30 @@ const ADMIN_OPCODES = ['RGE', 'NYSEG', 'CMP'];
 
 @Component({
   selector: 'app-root',
-  imports: [SplitButton, DialogModule, ProgressSpinnerModule, MenuModule, RouterModule, RouterOutlet, ToolbarModule, CommonModule, ButtonModule],
+  imports: [ButtonModule, CommonModule, DialogModule, MenuModule, ProgressSpinnerModule, RouterModule, RouterOutlet, SplitButton, ToolbarModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: true,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  public outlookComposeUrl: SafeUrl = '';
+
   private readonly _destroying$ = new Subject<void>();
-  public msalService = inject(MsalService);
+  private readonly _sanitizer = inject(DomSanitizer);
+  public _dataService = inject(DataService);
   public apiService = inject(ApiCallsService);
   public msalBroadcastService = inject(MsalBroadcastService);
+  public msalService = inject(MsalService);
   public router = inject(Router);
-  public _dataService = inject(DataService);
-  private _sanitizer = inject(DomSanitizer);
-  public title = 'VPI Record System';
-  public items: MenuItem[] | undefined;
-  public currentUrl = '';
-  public userMenu: UserMenuItem[] = [];
-  public noAuthVisible = false;
-  public loadingOpcodes = false;
-  public ngOnInit() {
 
+  public currentUrl = '';
+  public items: MenuItem[] | undefined;
+  public loadingOpcodes = false;
+  public noAuthVisible = false;
+  public outlookComposeUrl: SafeUrl = '';
+  public title = 'VPI Record System';
+  public userMenu: UserMenuItem[] = [];
+
+  public ngOnInit() {
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
@@ -54,7 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
         this._dataService.currentUrl.set(next);
       });
-      
+
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),

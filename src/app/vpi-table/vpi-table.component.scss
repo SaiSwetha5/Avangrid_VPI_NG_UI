@@ -45,11 +45,6 @@ body {
   gap: 10px;
 }
 
-.progress-text {
-   font-weight: 500;
-  color: #555;
-}
-
 .audio-error {
   margin: 1rem auto;
   padding: 1rem;
@@ -73,21 +68,16 @@ body {
   cursor: pointer;
 }
 
-.disabled-icon {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 .cardPadding {
   margin-top: 20px;
 }
 
 .spinner-container {
   display: flex;
-  flex-direction: column;   
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-    height: 100vh;
+  height: 100vh;
   width: 100vw;
   position: fixed;
   top: 0;
@@ -106,10 +96,6 @@ body {
   flex-direction: column
 }
 
-.text-color {
-  color: #FFFFFF;
-}
-
 .tab-text-color {
   color: #008737;
 }
@@ -118,21 +104,6 @@ body {
 .tab-header {
   padding: 0.5rem 1rem;
   background-color: #f8f9fa;
-}
-
-.details-table .p-datatable-tbody>tr>td {
-  color: #008737 !important;
-}
-
-.details-table .p-datatable-tbody>tr>td b {
-  color: #333333;
-}
-
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
 }
 
 .dialog-header {
@@ -194,8 +165,18 @@ body {
   height: auto;
 }
 
-.page-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+.details-table .p-datatable-tbody>tr>td {
+  color: #008737 !important;
+}
+
+.details-table .p-datatable-tbody>tr>td b {
+  color: #333333;
+}
+
+.dashboard-image-placeholder {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #e8f5e9;
+  border-radius: 4px;
 }

@@ -1,16 +1,16 @@
-import { Component, effect, inject, ChangeDetectorRef } from '@angular/core';
-import { DrawerModule } from 'primeng/drawer';
-import { ButtonModule } from 'primeng/button';
+import { ChangeDetectorRef, Component, effect, inject } from '@angular/core';
+import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { DataService } from 'services/data.service';
-import { ReactiveFormsModule, FormsModule, NgModel } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
-import { DatePickerModule } from 'primeng/datepicker';
-import { CardModule } from 'primeng/card';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DatePickerModule } from 'primeng/datepicker';
+import { DrawerModule } from 'primeng/drawer';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { ToastModule } from 'primeng/toast';
+import { DataService } from 'services/data.service';
 
 type DateInput = string | Date | null;
 type DirectionCode = boolean | null;
@@ -24,9 +24,10 @@ const UUIDREGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 
-const DIRECTIONS: { name: string; code: boolean }[] = [
+const DIRECTIONS: { name: string; code: boolean | null }[] = [
   { name: 'Inbound', code: true },
   { name: 'Outbound', code: false },
+  { name: '-- Select --', code: null },
 ];
 
 const DATERANGES: Record<string, string> = {
@@ -44,30 +45,36 @@ const DATERANGES: Record<string, string> = {
   providers: [DatePipe]
 })
 export class VpiSliderComponent {
-  public fromDate: Date = new Date();
-  public toDate: Date = new Date();
-  public readonly directions = DIRECTIONS;
-  public readonly dateRanges = DATERANGES;
+
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly datePipe = inject(DatePipe);
   private readonly router = inject(Router);
   public dataService = inject(DataService);
-  private readonly cdr = inject(ChangeDetectorRef);
-  public dateRangeError = false;
-  public toDateError = false;
-  public fromDateError = false;
-  public pageNumber = 1;
-  public hourFormat = '24';
-  public aniAliDigitsModel = '';
-  public extensionNumberModel = '';
-  public channelNumberModel: string | null = null;
-  public agentIdModel = '';
-  public objectIdModel = '';
-  public nameModel = '';
-  public validIDs: string[] = [];
-  public invalidIDs: string[] = [];
+
+  public readonly dateRanges = DATERANGES;
+  public readonly directions = DIRECTIONS;
+
   public opCode: OpCode | null = null;
-  public selectedDirection: { name: string; code: boolean } | null = null;
- 
+  public selectedDirection: { name: string; code: boolean | null } | null = null;
+  public fromDate: Date = new Date();
+  public toDate: Date = new Date();
+
+  public agentIdModel = '';
+  public aniAliDigitsModel = '';
+  public channelNumberModel: string | null = null;
+  public extensionNumberModel = '';
+  public nameModel = '';
+  public objectIdModel = '';
+
+  public dateRangeError = false;
+  public fromDateError = false;
+  public toDateError = false;
+  public invalidIDs: string[] = [];
+  public validIDs: string[] = [];
+
+  public hourFormat = '24';
+  public pageNumber = 1;
+
   public resetFormForNewSession(): void {
     this.resetAllFields();
     this.dataService.drawerFormState.set(undefined);
@@ -93,7 +100,7 @@ export class VpiSliderComponent {
   }
 
   public resetFilters(): void {
-     this.fromDate = new Date();
+    this.fromDate = new Date();
     this.toDate = new Date();
     this.opCode = null;
     this.selectedDirection = null;
@@ -296,7 +303,7 @@ export class VpiSliderComponent {
   }
 
   public onDrawerHide(): void {
-     this.dataService.drawerFormState.set({
+    this.dataService.drawerFormState.set({
       from_date: this.getFormattedDate(this.fromDate),
       to_date: this.getFormattedDate(this.toDate),
       opco: this.opCode?.code ?? '',

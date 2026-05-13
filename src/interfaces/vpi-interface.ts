@@ -2,12 +2,14 @@ export interface SearchFilteredDataOutput {
   message: string;
   status: number;
   data: VPIDataItem[];
-  pagination: {
-    totalRecords: number;
-    totalPages: number;
-    pageNumber: number;
-    pageSize: number;
-  };
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  totalRecords: number;
+  totalPages: number;
+  pageNumber: number;
+  pageSize: number;
 }
 
 export interface PaginatorState {
@@ -18,65 +20,38 @@ export interface PaginatorState {
 }
 
 export interface VPIDataItem {
-  objectId: string,
-  dateAdded: string,
-  userId: string,
-  startTime: string,
-  duration: number,
-  tags: string | null,
-  channelName: string,
-  channelNum: number,
-  callId: string,
-  username: string,
-  aniAliDigits: string | null,
-  extensionNum: string | null,
-  direction: string,
-  agentId: string,
-  opco: string
-  isChecked?: boolean;
-}
-
-export interface DownloadRecordingInput {
-
-  date: string | null;
-  opco: string | null;
-  username: string | null;
-  aniAliDigits: string | null;
-  extensionNum: string | null;
-  channelNum: number | null;
-  objectId: string | null;
-  duration: number | null;
-
-}
-
-export interface VPIMetaDataOutput {
-  isChecked?: boolean;
   objectId: string;
   dateAdded: string;
-  resourceId: string;
-  workstationId: string;
   userId: string;
   startTime: string;
+  duration: number;
+  tags: string | null;
+  channelName: string;
+  channelNum: number;
+  callId: string;
+  username: string;
+  aniAliDigits: string | null;
+  extensionNum: string | null;
+  direction: string;
+  agentId: string;
+  opco: string;
+  isChecked?: boolean;
+} 
+
+export interface VPIMetaDataOutput extends VPIDataItem {
+  resourceId: string;
+  workstationId: string;
   gmtOffset: number;
   gmtStartTime: string;
-  duration: number;
   triggeredByResourceTypeId: string;
   triggeredByObjectId: string;
   flagId: string;
-  tags: string;
   sensitivityLevel: string;
   clientId: string;
-  channelNum: number;
-  channelName: string;
-  extensionNum: string;
-  agentId: string;
   pbxDnis: string;
-  aniAliDigits: string;
-  direction: string;
   mediaFileId: string;
   mediaManagerId: string;
   mediaRetention: string;
-  callId: string;
   previousCallId: string;
   globalCallId: string;
   classOfService: string;
@@ -88,11 +63,16 @@ export interface VPIMetaDataOutput {
   audioChannels: number;
   hasTalkover: boolean;
 }
-export interface Pagination {
-  totalRecords: number;
-  totalPages: number;
-  pageNumber: number;
-  pageSize: number;
+
+export interface DownloadRecordingInput {
+  date: string | null;
+  opco: string | null;
+  username: string | null;
+  aniAliDigits: string | null;
+  extensionNum: string | null;
+  channelNum: number | null;
+  objectId: string | null;
+  duration: number | null;
 }
 
 export interface MetaDataPayload {
@@ -126,7 +106,10 @@ export interface ApiError {
   message: string;
 }
 
-export interface HeaderItem { id: string; label: string; }
+export interface HeaderItem {
+  id: string;
+  label: string;
+}
 
 export const DISPLAY_HEADERS: HeaderItem[] = [
   { id: 'username', label: 'User Name' },
@@ -139,7 +122,6 @@ export const DISPLAY_HEADERS: HeaderItem[] = [
   { id: 'extensionNum', label: 'Extension Num' },
   { id: 'dateAdded', label: 'Date' },
   { id: 'objectId', label: 'Object ID' }
-
 ];
 
- 
+

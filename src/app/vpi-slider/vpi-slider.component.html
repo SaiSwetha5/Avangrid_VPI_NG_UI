@@ -1,8 +1,7 @@
-<p-button label="Filters" severity="warn" (click)="openDrawerFunction()"
-  (keydown.enter)="dataService.onKeydown($event)" (keydown.space)="dataService.onKeydown($event)" />
+<p-button label="Filters" severity="warn" (click)="openDrawerFunction()" (keydown.enter)="dataService.onKeydown($event)"
+  (keydown.space)="dataService.onKeydown($event)" />
 
-<p-drawer [(visible)]="dataService.openDrawer" (onHide)="onDrawerHide()" position="left"
-  styleClass="my-green-drawer">
+<p-drawer [(visible)]="dataService.openDrawer" (onHide)="onDrawerHide()" position="left" styleClass="my-green-drawer">
   <ng-template pTemplate="header">
     <div class="drawer-header">
       <div class="drawer-title">
@@ -13,13 +12,11 @@
     </div>
   </ng-template>
   <form #filterForm="ngForm" class="drawer-content">
-
     <p-card class="filter-card">
-
       <div class="form-grid">
         <p-floatlabel variant="in">
-          <p-select  id="opcode" name="opCode" [options]="dataService.opcodesSignal()" [(ngModel)]="opCode" optionLabel="name" dataKey="code"  
-            #opCodeRef="ngModel" required></p-select>
+          <p-select id="opcode" name="opCode" [options]="dataService.opcodesSignal()" [(ngModel)]="opCode"
+            optionLabel="name" dataKey="code" #opCodeRef="ngModel" required></p-select>
           <label for="opcode">Select Opcode<span class="asterick-color">*</span></label>
         </p-floatlabel>
         <div *ngIf="opCodeRef.invalid && (opCodeRef.dirty || opCodeRef.touched)" class="info-box">
@@ -54,7 +51,6 @@
         </div>
       </div>
 
-
       <div *ngIf="fromDateError || toDateError" class="info-box">
         Data for {{opCode?.name}} is available between {{dateRanges[opCode?.name]}}
       </div>
@@ -63,18 +59,13 @@
       </div>
     </p-card>
 
-
-
     <p-card class="filter-card optional-card">
-
-
       <div class="form-grid">
         <p-floatlabel variant="in">
           <input pInputText id="aniAliDigits" name="aniId" [(ngModel)]="aniAliDigitsModel" autocomplete="off" />
           <label for="aniAliDigits">ANI (Customer Number)</label>
         </p-floatlabel>
       </div>
-
 
       <div class="form-grid">
         <p-floatlabel variant="in">

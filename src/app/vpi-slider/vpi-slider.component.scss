@@ -3,7 +3,7 @@
   flex-direction: column;
   margin-bottom: 1rem;
 }
- 
+
 .button-row {
   display: flex;
   justify-content: flex-end;
@@ -11,7 +11,8 @@
   margin-top: 20px;
 }
 
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", Arial, sans-serif;
@@ -23,7 +24,7 @@ body, html {
 
 .p-floatlabel label {
   font-size: 0.85rem;
-  color: #008737; 
+  color: #008737;
 }
 
 .p-inputtext,
@@ -31,12 +32,6 @@ body, html {
 .p-datepicker {
   width: 100% !important;
   box-sizing: border-box;
-}
-
-.error {
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-  color: #FFA500;
 }
 
 .info-box {
@@ -57,21 +52,11 @@ body, html {
   min-width: 100px;
 }
 
-.iconClass{
-  color:rgb(249, 115, 22);
-}
-
-.mandatory-card {
-   padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-
- .button-apply {
+.button-apply {
   --p-button-primary-background: #008737;
   --p-button-primary-color: #ffffff;
 }
 
-.asterick-color{
-  color:red;
+.asterick-color {
+  color: red;
 }
