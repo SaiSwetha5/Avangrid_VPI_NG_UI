@@ -1,0 +1,51 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  align-items: center;    
+   position: relative;   
+  min-height: calc(100vh - 70px); 
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #ffffff;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  border: 1px solid #d9e2d9;
+  border-radius: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 2rem 2rem 1rem 2rem;  
+  width: 80%;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.borderClass{
+  border: 1px solid #d9e2d9;  
+  border-radius: 22px;     
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);  
+  padding: 2rem; 
+}
+
+.header {
+  font-size: 3rem;
+  color: #008737;
+  margin: 0;
+  font-weight: 700;
+}
+
+.message {
+  font-size: 1.25rem;
+  color: #008737;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.logo-section {
+  position: absolute;   
+  top: 0.5rem;
+
+  .logo {
+    height: 100px;
+  }
+}

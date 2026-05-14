@@ -180,28 +180,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
+public logout(): void {
+  sessionStorage.clear();
+  const activeAccount = this.msalService.instance.getActiveAccount()
+    ?? this.msalService.instance.getAllAccounts()[0];
 
-  public logout(): void {
-    sessionStorage.clear();
-    const activeAccount = this.msalService.instance.getActiveAccount();
-
-    if (activeAccount) {
-      this.msalService.logoutRedirect({
-        account: activeAccount,
-        postLogoutRedirectUri: globalThis.location.origin
-      });
-    } else {
-      const allAccounts = this.msalService.instance.getAllAccounts();
-      if (allAccounts.length > 0) {
-        this.msalService.logoutRedirect({
-          account: allAccounts[0],
-          postLogoutRedirectUri: globalThis.location.origin
-        });
-      } else {
-        this.msalService.logoutRedirect();
-      }
-    }
-  }
+  this.msalService.logoutRedirect({
+    account: activeAccount ?? undefined,
+    postLogoutRedirectUri: globalThis.location.origin + '/logout'
+  });
+}
 
   public ngOnDestroy(): void {
     this._destroying$.next(undefined);
