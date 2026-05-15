@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { ButtonModule } from 'primeng/button';
- 
+import { DataService } from 'services/data.service';
+
 @Component({
   selector: 'app-logout',
   standalone: true,
@@ -10,12 +11,13 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './logout.component.scss',
 })
 export class LogoutComponent {
-  private readonly  msalService = inject(MsalService);
- 
+  private readonly msalService = inject(MsalService);
+  public _dataService = inject(DataService);
+
   public onLogin(): void {
     this.msalService.loginRedirect({
-      scopes: [],
-      redirectUri: globalThis.location.origin + '/home'
-    });
+    scopes: ['User.Read'],
+    redirectStartPage: '/home'  
+  });
   }
 }

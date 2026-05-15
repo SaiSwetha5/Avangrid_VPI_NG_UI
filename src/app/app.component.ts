@@ -15,6 +15,7 @@ import { SplitButton } from 'primeng/splitbutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ApiCallsService } from 'services/api-calls.service';
 import { DataService } from 'services/data.service';
+import { environment } from 'environments/environment';
 
 interface UserMenuItem { label: string; command?: () => void; }
 
@@ -46,6 +47,17 @@ export class AppComponent implements OnInit, OnDestroy {
   public userMenu: UserMenuItem[] = [];
 
   public ngOnInit() {
+   this.msalService.handleRedirectObservable().subscribe({
+    next: (result) => {
+      if (result?.account) {
+        this.msalService.instance.setActiveAccount(result.account);
+        if (this.router.url.includes('/logout')) {
+          this.router.navigate(['/home']);
+        }
+      }
+    },
+    error: (err) => console.error('Redirect error:', err)
+  });
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
@@ -63,19 +75,21 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
+           if (!this.msalService.instance.getActiveAccount()) {
+      const accounts = this.msalService.instance.getAllAccounts();
+      if (accounts.length > 0) {
+        this.msalService.instance.setActiveAccount(accounts[0]);
+      }
+    }
         this.updateUserMenu();
         this.checkAndLoadData();
-      });
-
+      }); 
     this.initMenus();
-
   }
-
-  private checkAndLoadData() {
-
+  private checkAndLoadData() { 
     const account = this.msalService.instance.getActiveAccount()
       ?? this.msalService.instance.getAllAccounts()[0];
-    if (account) {
+     if (account) {
       this.loadOpcodes();
     }
   }
@@ -108,20 +122,23 @@ export class AppComponent implements OnInit, OnDestroy {
   private loadOpcodes(): void {
     if (this._dataService.opcodesSignal().length > 0) {
       return;
-    }
-
+    } 
     const cachedOpcodes = sessionStorage.getItem('VPI_OPCODES');
+
+    
     if (cachedOpcodes) {
       const parsedData = JSON.parse(cachedOpcodes);
       this._dataService.opcodesSignal.set(parsedData);
       this._dataService.isOpcodeAvailable.set(true);
       return;
     }
+ 
     this.loadingOpcodes = true;
     this.apiService.getOPCODES().subscribe({
       next: (opcos) => {
-        this.loadingOpcodes = false;
+         this.loadingOpcodes = false;
         if (opcos.length === 0) {
+
           this._dataService.isOpcodeAvailable.set(false);
           return;
         }
@@ -140,6 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
+ 
         this.loadingOpcodes = false;
 
         this._dataService.isOpcodeAvailable.set(false);
@@ -179,17 +197,19 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
+  public logout(): void {
+    const activeAccount = this.msalService.instance.getActiveAccount()
+      ?? this.msalService.instance.getAllAccounts()[0];
 
-public logout(): void {
-  sessionStorage.clear();
-  const activeAccount = this.msalService.instance.getActiveAccount()
-    ?? this.msalService.instance.getAllAccounts()[0];
-
-  this.msalService.logoutRedirect({
-    account: activeAccount ?? undefined,
-    postLogoutRedirectUri: globalThis.location.origin + '/logout'
-  });
-}
+    this.msalService.logoutRedirect({
+      account: activeAccount ?? undefined,
+      onRedirectNavigate: () => false
+    });
+      sessionStorage.removeItem('VPI_OPCODES');
+ 
+  sessionStorage.setItem(`msal.${environment.msal.clientId}.request.origin`, globalThis.location.origin + '/home');
+    this.router.navigate(['/logout']);
+  }
 
   public ngOnDestroy(): void {
     this._destroying$.next(undefined);

@@ -38,10 +38,11 @@ export const appConfig: ApplicationConfig = {
     MsalGuard,
     MsalBroadcastService,
 
-    provideAppInitializer(() => {
-      const msalService = inject(MsalService);
-      return msalService.instance.initialize();
-    }),
+   provideAppInitializer(async () => {
+  const msalService = inject(MsalService);
+  await msalService.instance.initialize();
+ await msalService.handleRedirectObservable().toPromise();
+ }),
 
     {
       provide: MSAL_GUARD_CONFIG,
