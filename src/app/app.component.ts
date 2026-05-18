@@ -47,17 +47,14 @@ export class AppComponent implements OnInit, OnDestroy {
   public userMenu: UserMenuItem[] = [];
 
   public ngOnInit() {
-   this.msalService.handleRedirectObservable().subscribe({
-    next: (result) => {
-      if (result?.account) {
-        this.msalService.instance.setActiveAccount(result.account);
-        if (this.router.url.includes('/logout')) {
-          this.router.navigate(['/home']);
-        }
+ this.msalService.instance.handleRedirectPromise().then((result) => {
+    if (result?.account) {
+      this.msalService.instance.setActiveAccount(result.account);
+      if (this.router.url.includes('/logout')) {
+        this.router.navigate(['/home']);
       }
-    },
-    error: (err) => console.error('Redirect error:', err)
-  });
+    }
+  }).catch((err) => console.error('Redirect error:', err));
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
@@ -106,7 +103,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const subject = encodeURIComponent('Support Request');
 
       const url = `mailto:${userEmail}?subject=${subject}&body=${body}`;
-
+     // Safe: mailto link built from trusted constants, no user input
       this.outlookComposeUrl = this._sanitizer.bypassSecurityTrustUrl(url);
       this.userMenu = [
         { label: username },
@@ -151,7 +148,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this._dataService.opcodesSignal.set(mapped);
         sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
         const current = this._dataService.getPayload();
-        const opcoIsInvalid = current?.opco && !mapped.find(o => o.code === current.opco);
+        const opcoIsInvalid = current?.opco && !mapped.some(o => o.code === current.opco);
         if (opcoIsInvalid) {
           this._dataService.resetPayload();
         }
