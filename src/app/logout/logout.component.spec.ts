@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LogoutComponent } from './logout.component';
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { of } from 'rxjs';
@@ -9,10 +8,10 @@ class MockMsalService {
     handleRedirectPromise: () => Promise.resolve(null),
     getActiveAccount: () => null,
     getAllAccounts: () => [],
-    setActiveAccount: () => {}
+     setActiveAccount: jasmine.createSpy('setActiveAccount')
   };
-  loginRedirect = () => of(null);
-  logoutRedirect = () => of(null);
+  loginRedirect = jasmine.createSpy('loginRedirect').and.returnValue(of(null));
+  logoutRedirect = jasmine.createSpy('logoutRedirect').and.returnValue(of(null));
 }
 
 class MockMsalBroadcastService {
@@ -30,8 +29,7 @@ describe('LogoutComponent', () => {
         { provide: MsalService, useClass: MockMsalService },
         { provide: MsalBroadcastService, useClass: MockMsalBroadcastService }
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LogoutComponent);
     component = fixture.componentInstance;

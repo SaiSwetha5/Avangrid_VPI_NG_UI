@@ -25,9 +25,7 @@ describe('VpiSliderComponent', () => {
     component.openDrawerFunction();
     expect(component.fromDate).toBeInstanceOf(Date);
     expect(component.toDate).toBeInstanceOf(Date);
-
   });
-
 
   it('should reset all errors when no dates are provided', () => {
     component.toDate = new Date();

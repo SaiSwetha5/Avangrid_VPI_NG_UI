@@ -163,7 +163,6 @@ body {
   font-size: 0.85rem;
 }
 
-
 .detail-table .p-datatable-tbody>tr>td {
   color: #008737 !important;
 }
@@ -188,8 +187,6 @@ body {
 .p-checkbox .p-checkbox-box {
   border: 2px solid #008737 !important;
 }
-
-
 
 .overlay-text {
   flex: 1;

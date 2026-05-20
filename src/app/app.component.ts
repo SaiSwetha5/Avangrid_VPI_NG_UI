@@ -47,14 +47,14 @@ export class AppComponent implements OnInit, OnDestroy {
   public userMenu: UserMenuItem[] = [];
 
   public ngOnInit() {
- this.msalService.instance.handleRedirectPromise().then((result) => {
-    if (result?.account) {
-      this.msalService.instance.setActiveAccount(result.account);
-      if (this.router.url.includes('/logout')) {
-        this.router.navigate(['/home']);
+    this.msalService.instance.handleRedirectPromise().then((result) => {
+      if (result?.account) {
+        this.msalService.instance.setActiveAccount(result.account);
+        if (this.router.url.includes('/logout')) {
+          this.router.navigate(['/home']);
+        }
       }
-    }
-  }).catch((err) => console.error('Redirect error:', err));
+    }).catch((err) => console.error('Redirect error:', err));
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
@@ -72,21 +72,21 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
-           if (!this.msalService.instance.getActiveAccount()) {
-      const accounts = this.msalService.instance.getAllAccounts();
-      if (accounts.length > 0) {
-        this.msalService.instance.setActiveAccount(accounts[0]);
-      }
-    }
+        if (!this.msalService.instance.getActiveAccount()) {
+          const accounts = this.msalService.instance.getAllAccounts();
+          if (accounts.length > 0) {
+            this.msalService.instance.setActiveAccount(accounts[0]);
+          }
+        }
         this.updateUserMenu();
         this.checkAndLoadData();
-      }); 
+      });
     this.initMenus();
   }
-  private checkAndLoadData() { 
+  private checkAndLoadData() {
     const account = this.msalService.instance.getActiveAccount()
       ?? this.msalService.instance.getAllAccounts()[0];
-     if (account) {
+    if (account) {
       this.loadOpcodes();
     }
   }
@@ -97,14 +97,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (account) {
       const username = account.name ?? account.username ?? 'User';
-      const userEmail = '_LD_ACD-IVR@avangrid.com';
-
-      const body = encodeURIComponent('Hello Team,\n\nI need support with...');
-      const subject = encodeURIComponent('Support Request');
-
-      const url = `mailto:${userEmail}?subject=${subject}&body=${body}`;
-     // Safe: mailto link built from trusted constants, no user input
-      this.outlookComposeUrl = this._sanitizer.bypassSecurityTrustUrl(url);
       this.userMenu = [
         { label: username },
         { label: 'Logout', command: () => this.logout() }
@@ -116,24 +108,33 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  private buildMailtoLink(): SafeUrl {
+    const email = '_LD_ACD-IVR@avangrid.com';
+    const subject = encodeURIComponent('Support Request');
+    const body = encodeURIComponent('Hello Team,\n\nI need support with...');
+    const url = `mailto:${email}?subject=${subject}&body=${body}`;
+    return this._sanitizer.bypassSecurityTrustUrl(url);
+  }
+
   private loadOpcodes(): void {
     if (this._dataService.opcodesSignal().length > 0) {
       return;
-    } 
+    }
     const cachedOpcodes = sessionStorage.getItem('VPI_OPCODES');
 
-    
+
     if (cachedOpcodes) {
       const parsedData = JSON.parse(cachedOpcodes);
       this._dataService.opcodesSignal.set(parsedData);
       this._dataService.isOpcodeAvailable.set(true);
       return;
     }
- 
+
     this.loadingOpcodes = true;
     this.apiService.getOPCODES().subscribe({
       next: (opcos) => {
-         this.loadingOpcodes = false;
+        this.loadingOpcodes = false;
         if (opcos.length === 0) {
 
           this._dataService.isOpcodeAvailable.set(false);
@@ -148,13 +149,13 @@ export class AppComponent implements OnInit, OnDestroy {
         this._dataService.opcodesSignal.set(mapped);
         sessionStorage.setItem('VPI_OPCODES', JSON.stringify(mapped));
         const current = this._dataService.getPayload();
-        const opcoIsInvalid = current?.opco && !mapped.some(o => o.code === current.opco);
+        const opcoIsInvalid = current?.opco && !mapped.filter(o => o.code === current.opco);
         if (opcoIsInvalid) {
           this._dataService.resetPayload();
         }
       },
       error: (err) => {
- 
+
         this.loadingOpcodes = false;
 
         this._dataService.isOpcodeAvailable.set(false);
@@ -172,7 +173,9 @@ export class AppComponent implements OnInit, OnDestroy {
           const opcodes = this._dataService.opcodesSignal();
 
           if (!opcodes || opcodes.length === 0) {
+            this.outlookComposeUrl = this.buildMailtoLink();
             this.noAuthVisible = true;
+
           } else {
             this.router.navigate(['/vpi']);
           }
@@ -202,9 +205,9 @@ export class AppComponent implements OnInit, OnDestroy {
       account: activeAccount ?? undefined,
       onRedirectNavigate: () => false
     });
-      sessionStorage.removeItem('VPI_OPCODES');
- 
-  sessionStorage.setItem(`msal.${environment.msal.clientId}.request.origin`, globalThis.location.origin + '/home');
+    sessionStorage.removeItem('VPI_OPCODES');
+
+    sessionStorage.setItem(`msal.${environment.msal.clientId}.request.origin`, globalThis.location.origin + '/home');
     this.router.navigate(['/logout']);
   }
 

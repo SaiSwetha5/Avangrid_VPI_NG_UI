@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiError } from 'interfaces/vpi-interface';
- 
+
 @Injectable({ providedIn: 'root' })
 export class ErrorService {
   private lastError: ApiError | undefined = undefined;
@@ -12,5 +12,5 @@ export class ErrorService {
   get(): ApiError | undefined {
     return this.lastError;
   }
-  
+
 }

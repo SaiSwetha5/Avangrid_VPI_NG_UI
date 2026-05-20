@@ -5,12 +5,12 @@ import { VpiDashboardComponent } from './vpi-dashboard/vpi-dashboard.component';
 import { ErrorComponent } from './error/error.component';
 import { authGuard } from 'services/auth.guard';
 import { LogoutComponent } from './logout/logout.component';
- 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'vpi', component: VpiTableComponent , canActivate: [authGuard] },
+  { path: 'vpi', component: VpiTableComponent, canActivate: [authGuard] },
   { path: 'home', component: VpiDashboardComponent, canActivate: [MsalGuard] },
-  { path: 'logout', component: LogoutComponent  },
-    { path: 'error', component: ErrorComponent, canActivate: [authGuard]},
+  { path: 'logout', component: LogoutComponent },
+  { path: 'error', component: ErrorComponent, canActivate: [authGuard] },
 
- ];
+];

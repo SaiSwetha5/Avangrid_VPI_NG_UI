@@ -183,7 +183,7 @@ export class VpiTableComponent implements OnInit {
       this._apiService.getMetaData(rowData.objectId, this.getSelectedOpcode())
     );
 
-    if (!metadata){
+    if (!metadata) {
       return;
     }
 

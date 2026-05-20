@@ -8,6 +8,7 @@ import { environment } from 'environments/environment';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ApiCallsService {
   public apiResponse = '';
   private readonly http = inject(HttpClient);
@@ -47,22 +48,22 @@ export class ApiCallsService {
   }
 
 
-public getAudioRecordings(payload: DownloadRecordingInput): Observable<HttpResponse<Blob>> {
-  return this.auth.getAccessToken().pipe(
-    switchMap(token => {
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      });
+  public getAudioRecordings(payload: DownloadRecordingInput): Observable<HttpResponse<Blob>> {
+    return this.auth.getAccessToken().pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        });
 
-      return this.http.post(`${environment.apiBaseUrl}/recording`, payload, {
-        headers,
-        responseType: 'blob',
-        observe: 'response'   
-      });
-    })
-  );
-}
+        return this.http.post(`${environment.apiBaseUrl}/recording`, payload, {
+          headers,
+          responseType: 'blob',
+          observe: 'response'
+        });
+      })
+    );
+  }
 
   public downloadRecordings(payload: DownloadRecordingInput[]): Observable<Blob> {
 
@@ -80,19 +81,17 @@ public getAudioRecordings(payload: DownloadRecordingInput): Observable<HttpRespo
     );
   }
 
-public getOPCODES(): Observable<string[]> {
-  return this.auth.getAccessToken().pipe(
-    switchMap(token => {
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      });
+  public getOPCODES(): Observable<string[]> {
+    return this.auth.getAccessToken().pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        });
 
-      return this.http.get<string[]>(`${environment.apiBaseUrl}/opcos`, { headers });
-    })
-  );
-}
-
-
+        return this.http.get<string[]>(`${environment.apiBaseUrl}/opcos`, { headers });
+      })
+    );
+  }
 }
 
 

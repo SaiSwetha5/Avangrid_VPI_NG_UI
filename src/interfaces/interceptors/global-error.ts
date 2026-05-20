@@ -16,11 +16,8 @@ export class GlobalErrorHandler implements ErrorHandler {
   handleError(error: unknown): void {
     const router = this.injector.get(Router);
     const errorService = this.injector.get(ErrorService);
-
     const appError = error as AppError;
-
     const message = appError.message ?? appError.toString();
-
     const apiError = {
       timestamp: new Date().toISOString(),
       status: appError.status ?? 0,

@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ErrorService } from 'services/error.service';
- 
+
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   private readonly router = inject(Router);
@@ -14,12 +14,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      const isRecordingRequest = req.url.includes('/audio/') || req.url.includes('/recording');
+      catchError((error: HttpErrorResponse) => {
+        const isRecordingRequest = req.url.includes('/audio/') || req.url.includes('/recording');
 
-      if (isRecordingRequest) {
-         return throwError(() => error);
-      }
+        if (isRecordingRequest) {
+          return throwError(() => error);
+        }
 
 
         const apiError = {
@@ -31,27 +31,27 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
         this.errorService.set(apiError);
 
-         if (!this.router.url.startsWith('/error')) {
-          this.router.navigate(['/error'], { state: { error: apiError } }); 
-               }
+        if (!this.router.url.startsWith('/error')) {
+          this.router.navigate(['/error'], { state: { error: apiError } });
+        }
 
-         return throwError(() => error);
+        return throwError(() => error);
       })
     );
   }
- private normalizeErrorMessage(error: HttpErrorResponse): string {
-   if (typeof error.error === 'string' && error.error.trim().length > 0) {
-    return error.error;
-  }
+  private normalizeErrorMessage(error: HttpErrorResponse): string {
+    if (typeof error.error === 'string' && error.error.trim().length > 0) {
+      return error.error;
+    }
 
-   if (error.error?.message) {
-    return error.error.message;
-  }
+    if (error.error?.message) {
+      return error.error.message;
+    }
 
-   if (error.message) {
-    return error.message;
-  }
+    if (error.message) {
+      return error.message;
+    }
 
-   return `Unexpected error (HTTP ${error.status || 'unknown'})`;
-}
+    return `Unexpected error (HTTP ${error.status || 'unknown'})`;
+  }
 }
