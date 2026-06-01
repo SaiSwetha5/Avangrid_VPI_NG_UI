@@ -16,6 +16,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ApiCallsService } from 'services/api-calls.service';
 import { DataService } from 'services/data.service';
 import { environment } from 'environments/environment';
+import { ErrorService } from 'services/error.service';
 
 interface UserMenuItem { label: string; command?: () => void; }
 
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private readonly _destroying$ = new Subject<void>();
   private readonly _sanitizer = inject(DomSanitizer);
+  private readonly errorService = inject(ErrorService);
   public _dataService = inject(DataService);
   public apiService = inject(ApiCallsService);
   public msalBroadcastService = inject(MsalBroadcastService);
@@ -135,15 +137,26 @@ export class AppComponent implements OnInit, OnDestroy {
     this.apiService.getOPCODES().subscribe({
       next: (opcos) => {
         this.loadingOpcodes = false;
-        if (opcos.length === 0) {
 
+        if (typeof opcos === 'string' && /<html/i.test(opcos)) {
           this._dataService.isOpcodeAvailable.set(false);
+          this.errorService.set({
+            timestamp: new Date().toISOString(),
+            status: 503,
+            error: 'Service Unavailable',
+            message: 'Received HTML instead of expected data. The service may be down.'
+          });
+          this.router.navigate(['/error']);
           return;
         }
 
+        if (!Array.isArray(opcos) || opcos.length === 0) {
+          this._dataService.isOpcodeAvailable.set(false);
+          return;
+        }
         const mapped = opcos.includes('ADMIN')
           ? ADMIN_OPCODES.map(code => ({ name: code, code }))
-          : opcos.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
+          : opcos?.filter(c => c !== 'ADMIN').map(code => ({ name: code, code }));
 
         this._dataService.isOpcodeAvailable.set(true);
         this._dataService.opcodesSignal.set(mapped);
@@ -154,13 +167,14 @@ export class AppComponent implements OnInit, OnDestroy {
           this._dataService.resetPayload();
         }
       },
+
       error: (err) => {
-
         this.loadingOpcodes = false;
-
         this._dataService.isOpcodeAvailable.set(false);
         console.error('Failed to load opcodes', err);
+        this.router.navigate(['error']);
       }
+
     });
   }
   private initMenus() {

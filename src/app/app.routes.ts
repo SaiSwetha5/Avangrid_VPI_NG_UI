@@ -11,6 +11,6 @@ export const routes: Routes = [
   { path: 'vpi', component: VpiTableComponent, canActivate: [authGuard] },
   { path: 'home', component: VpiDashboardComponent, canActivate: [MsalGuard] },
   { path: 'logout', component: LogoutComponent },
-  { path: 'error', component: ErrorComponent, canActivate: [authGuard] },
+  { path: 'error', component: ErrorComponent  },
 
 ];
